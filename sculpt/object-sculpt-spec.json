@@ -1,0 +1,2259 @@
+{
+  "targetName": "Clear Tumbler Glass",
+  "targetId": "clear-tumbler-glass",
+  "schemaVersion": "2.0",
+  "terminologyProfile": {
+    "domain": "real-time procedural Three.js asset",
+    "geometryTerms": [
+      "silhouette",
+      "topology",
+      "primitive",
+      "bevel",
+      "chamfer",
+      "taper",
+      "bend",
+      "boolean cut",
+      "edge loop",
+      "surface normal",
+      "displacement"
+    ],
+    "materialTerms": [
+      "albedo",
+      "baseColor",
+      "roughness",
+      "metalness",
+      "normal map",
+      "bump map",
+      "ambient occlusion",
+      "cavity dirt",
+      "edge wear",
+      "clearcoat"
+    ],
+    "lightingTerms": [
+      "key light",
+      "fill light",
+      "rim light",
+      "HDRI/environment reflection",
+      "contact shadow"
+    ],
+    "descriptionRule": "Use measurable 3D graphics terms. Avoid vague words unless they are paired with concrete geometry/material/shader parameters."
+  },
+  "sourceImage": "assets\\reference-glass.png",
+  "referenceCamera": {
+    "solved": false,
+    "fovDegrees": 40,
+    "aspect": 1,
+    "orientation": {
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0
+    },
+    "positionHint": [
+      0,
+      0,
+      3
+    ],
+    "note": "For likeness work, solve the reference camera (forge/stage1_intake/solve_camera_pose.py) so the review render aligns with the photo and the reference can be projected. Confirm by overlay review."
+  },
+  "suitability": "conditional",
+  "scores": {
+    "object_isolation": 3,
+    "silhouette_readability": 3,
+    "depth_inference": 2,
+    "primitive_decomposition": 3,
+    "material_procedurality": 2,
+    "occlusion_risk": 2,
+    "interaction_fit": 3
+  },
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "clear tapered drinking tumbler",
+      "primaryDomain": "object",
+      "formLanguage": [
+        "hard-surface",
+        "transparent-like",
+        "rotationally-symmetric",
+        "smooth"
+      ],
+      "structureKind": [
+        "single body",
+        "layered shell"
+      ],
+      "motionPotential": [
+        "static prop",
+        "whole-object transform"
+      ],
+      "materialFamilies": [
+        "glass-like"
+      ],
+      "notes": "A simple axisymmetric tumbler with outward wall taper, a thick rounded base, a double-reading rim, and a recessed inner floor. Exact refraction and caustics remain an approximation."
+    },
+    "complexity": {
+      "tier": "simple",
+      "scores": {
+        "silhouetteComplexity": 1,
+        "componentCount": 1,
+        "hierarchyDepth": 1,
+        "repetitionDensity": 0,
+        "materialLayerCount": 2,
+        "localDetailDensity": 1,
+        "occlusionRisk": 1,
+        "actionReadinessNeed": 1
+      },
+      "estimatedCounts": {
+        "macroComponents": 1,
+        "mesoComponents": 2,
+        "microFeatureGroups": 0,
+        "materialLayers": 1,
+        "repetitionSystems": 0
+      },
+      "reasoning": [
+        "The silhouette is rotationally symmetric and decomposes into one lathed shell plus rim and base optical accents.",
+        "Transparency raises shading risk, but does not increase geometric complexity for a real-time approximation."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "simple",
+      "minimumComponentLevels": [
+        "macro",
+        "meso"
+      ],
+      "needsRepetitionSystems": false,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "A lathed profile is sufficient, while the rim and base require separate named optical forms for reliable review and later tuning."
+    },
+    "unknownsToResolveBeforeImplementation": [],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 3,
+      "note": "Identity details mapped to concrete geometry or material entries.",
+      "details": [
+        {
+          "id": "double-rim",
+          "kind": "bevel",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "mapsTo": {
+            "ref": "rim/double-lip"
+          }
+        },
+        {
+          "id": "heavy-base-step",
+          "kind": "ridge",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "mapsTo": {
+            "ref": "base-ring/base-step"
+          }
+        },
+        {
+          "id": "clear-specular-columns",
+          "kind": "gloss",
+          "evidenceRefs": [
+            "full-object"
+          ],
+          "mapsTo": {
+            "ref": "glass/optical-highlight"
+          }
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0,
+      "proportions": {
+        "headUnit": 0,
+        "torso": 0,
+        "legs": 0,
+        "shoulderWidth": 0,
+        "hipWidth": 0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0,
+        "eyeSpacing": 0,
+        "noseBase": 0,
+        "mouthLine": 0,
+        "hairline": 0
+      },
+      "features": [],
+      "confidence": 0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "assets\\reference-glass.png"
+  },
+  "qualityContract": {
+    "qualityBar": "simple",
+    "definitionOfDone": [
+      "At the reference camera, the cup matches the outward taper, overall aspect ratio, elliptical opening, thick base, and double rim.",
+      "The glass remains readable on a dark neutral background using physically based transmission, refraction, and controlled studio reflections."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 1,
+      "mesoComponents": 2,
+      "microFeatureGroups": 0,
+      "materialLayers": 1,
+      "repetitionSystems": 0,
+      "reviewViewpoints": 3
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Bounding shape, dominant curves, negative spaces, and scale relationships are explicitly described."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic placeholder instead of the reference object",
+          "major proportions are guessed without evidence"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Major parts, joints, seams, contact points, and parent-child relationships are named before code generation."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every visible child appendage, branch, limb, handle, connector, tube, cable, horn, wing, leg, or hinged part has an attachment contract with parent socket, localStart/localEnd, contact type, embed/overlap, and gap tolerance."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Albedo zones, roughness, normal/bump/displacement intent, cavity dirt, edge wear, and local overrides are specified where visible.",
+          "Important materials define independent albedo, roughness, height/normal, and AO responses instead of reusing one texture for unrelated PBR channels.",
+          "Surface response is decomposed into macro, meso, and micro frequency bands with scale and amplitude tied to object scale."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Material-pass names the reference-derived albedo palette, roughness variation, tactile normal/bump/displacement response, and local masks.",
+          "When a source image is available, run reference PBR extraction and require confidence >= 0.7 before treating maps as implementation-ready.",
+          "Lighting-pass names key/fill/rim or environment light, exposure, tone mapping, background, and contact shadow behavior.",
+          "Neutral, grazing-angle, and reference-matched renders prove that surface relief survives relighting and is not painted into albedo."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "colors are a generic average instead of reference-observed local color zones",
+          "lighting is evenly ambient and cannot reproduce the source value range"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "silhouette and negative-space delta",
+      "component hierarchy depth delta",
+      "repetition density and distribution delta",
+      "material albedo/roughness/normal response delta",
+      "local feature placement and scale delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity."
+    ]
+  },
+  "qualityTargets": {
+    "targetFidelity": 0.8,
+    "mustMatch": [
+      "height-to-top-width ratio near 1.35",
+      "top opening wider than base by roughly 24 percent",
+      "thick transparent base occupying roughly 18 percent of height",
+      "rounded double-reading rim and recessed inner floor",
+      "glass transmission with narrow vertical reflection bands"
+    ],
+    "niceToHave": [
+      "subtle internal refraction at the base",
+      "soft contact shadow under the tumbler"
+    ],
+    "fpsTarget": 60,
+    "reviewViewpoints": [
+      "reference-front",
+      "three-quarter",
+      "side-profile"
+    ]
+  },
+  "selfCorrectLoop": {
+    "enabled": true,
+    "visualAcceptance": {
+      "reviewer": "ai-vision",
+      "threshold": 0.7,
+      "comparisonArtifactRequired": true,
+      "layerScoresRequired": true,
+      "codePixelDiffIsAcceptanceAuthority": false,
+      "scoringRule": "AI vision must inspect a side-by-side reference/render sheet and score the current pass from 0 to 1. Pixel-diff code may assist diagnostics but cannot approve a pass.",
+      "requiredLayerScores": [
+        "silhouetteProportion",
+        "componentStructure",
+        "formDetail",
+        "materialSurface",
+        "lightingCamera"
+      ],
+      "featureReviewPolicy": {
+        "enabled": true,
+        "reviewUnit": "semantic-subsystem",
+        "maxCriticalFeaturesPerPass": 5,
+        "maxImportantFeaturesPerPass": 3,
+        "criticalDefaultThreshold": 0.8,
+        "importantAverageThreshold": 0.65,
+        "adaptiveEscalation": true,
+        "singleImagePairOnly": true,
+        "selectionRule": "Choose only the most visually salient, identity-defining, user-prioritized, or high-risk semantic systems. Group repeated parts instead of reviewing every mesh. AI vision scores every selected feature from the same full reference/render pair."
+      }
+    },
+    "reviewAfterPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "allowedActions": [
+      "continue",
+      "refine-spec",
+      "refine-code",
+      "request-input",
+      "stop"
+    ],
+    "specRefineTriggers": [
+      "missing component",
+      "wrong primitive family",
+      "wrong proportions",
+      "material layer under-specified",
+      "local feature not traceable to viewEvidence",
+      "reference ambiguity discovered during implementation"
+    ],
+    "codeRefineTriggers": [
+      "spec is adequate but generated geometry/material does not match",
+      "browser render differs from reference",
+      "performance budget exceeded",
+      "lighting hides geometry or material response"
+    ],
+    "stopCriteria": [
+      "target fidelity reached or user accepts current approximation",
+      "remaining gaps require new reference images or manual art"
+    ],
+    "screenshotPolicy": {
+      "requiredForPasses": [
+        "blockout",
+        "structural-pass",
+        "form-refinement",
+        "material-pass",
+        "surface-pass",
+        "lighting-pass",
+        "interaction-pass"
+      ],
+      "preferredCapture": "in-app-browser-screenshot",
+      "fallbackCapture": "user-supplied-screenshot-path",
+      "minimumEvidence": "Each visual pass needs a reference image, rendered screenshot, side-by-side comparison sheet, AI vision score, layer scores, and critique before choosing continue.",
+      "reviewPairRule": "Compare the same camera/viewpoint whenever possible; do not judge a front reference against a random render angle.",
+      "acceptanceAuthority": "AI vision review of the comparison sheet. Code-generated pixel similarity is not sufficient evidence."
+    }
+  },
+  "featureReviewTargets": [
+    {
+      "id": "tapered-shell-silhouette",
+      "name": "Tapered shell silhouette",
+      "tier": "critical",
+      "passIds": [
+        "blockout",
+        "structural-pass",
+        "form-refinement"
+      ],
+      "minimumScore": 0.8,
+      "mustPass": true,
+      "componentRefs": [
+        "glass-shell"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "rim-opening-system",
+      "name": "Elliptical opening and double rim",
+      "tier": "critical",
+      "passIds": [
+        "structural-pass",
+        "form-refinement",
+        "material-pass"
+      ],
+      "minimumScore": 0.78,
+      "mustPass": true,
+      "componentRefs": [
+        "rim"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "heavy-base-system",
+      "name": "Thick base and recessed inner floor",
+      "tier": "critical",
+      "passIds": [
+        "structural-pass",
+        "form-refinement",
+        "material-pass"
+      ],
+      "minimumScore": 0.78,
+      "mustPass": true,
+      "componentRefs": [
+        "base-ring"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    },
+    {
+      "id": "clear-glass-optics",
+      "name": "Clear glass transmission and reflection bands",
+      "tier": "critical",
+      "passIds": [
+        "material-pass",
+        "surface-pass",
+        "lighting-pass"
+      ],
+      "minimumScore": 0.75,
+      "mustPass": true,
+      "componentRefs": [
+        "glass-shell",
+        "rim",
+        "base-ring"
+      ],
+      "evidenceRefs": [
+        "full-object"
+      ]
+    }
+  ],
+  "sculptPipeline": {
+    "passGateMode": "locked-sequential",
+    "passOrder": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "currentPass": "complete",
+    "completedPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "lastCompletedPass": "optimization-pass",
+    "blockedReason": "all build passes completed",
+    "nextRequiredEvidence": []
+  },
+  "lookDevTargets": {
+    "qualityPriority": "reference-fidelity",
+    "materialPass": {
+      "albedoPaletteRequired": true,
+      "roughnessVariationRequired": true,
+      "normalOrBumpRequired": true,
+      "localOverridesRequired": true,
+      "minimumTextureResolution": 1024,
+      "preferredTextureResolution": 2048,
+      "independentMapChannels": [
+        "albedo",
+        "roughness",
+        "height",
+        "normal",
+        "ambient-occlusion"
+      ],
+      "requiredSurfaceFrequencyBands": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "geometryReliefRequiredWhenSilhouetteAffected": true,
+      "referencePbrExtraction": {
+        "requiredWhenSourceImagePresent": false,
+        "targetThreshold": 0.7,
+        "stopOnLowConfidence": false,
+        "script": "forge/stage1_intake/extract_pbr_evidence.py",
+        "acceptedLimitation": "Transparent glass does not expose intrinsic albedo/roughness maps in a single image; use observed contour, Fresnel, transmission, and studio reflection evidence instead."
+      },
+      "mustAvoid": [
+        "single flat albedo per material",
+        "uniform roughness",
+        "albedo texture reused as roughness/height/normal/AO",
+        "single-frequency random noise",
+        "plastic-looking smooth bark, stone, cloth, foliage, or aged material",
+        "local color/detail described only in prose without material masks",
+        "claiming exact PBR recovery when confidence is below the target threshold"
+      ]
+    },
+    "lightingPass": {
+      "requiredTerms": [
+        "key light",
+        "fill light",
+        "rim or environment light",
+        "exposure",
+        "tone mapping",
+        "background",
+        "contact shadow"
+      ],
+      "mustAvoid": [
+        "ambient-only lighting",
+        "flat value range",
+        "missing contact shadow",
+        "reference lighting copied without separating material readability"
+      ]
+    },
+    "screenshotReview": [
+      "Compare albedo palette and local color zones.",
+      "Compare roughness/normal/bump response under light.",
+      "Compare cavity dirt, edge wear, stains, moss, scratches, or other local masks.",
+      "Compare key/fill/rim structure, exposure, tone mapping, background, and contact shadows.",
+      "Capture a neutral-light render to verify material readability without reference lighting.",
+      "Capture a grazing-light close-up to expose flat normals, uniform roughness, tiling, and plastic highlights.",
+      "Capture a reference-matched render from the same camera framing as the source."
+    ]
+  },
+  "actionReadiness": {
+    "contract": "Every macro/meso component should be generated as a stable named Object3D pivot node with a mesh child, action metadata, optional sockets, collider proxy, and destruction metadata.",
+    "defaultRigType": "action-ready-static-rig",
+    "rootMotionNode": "root",
+    "requiredComponentFields": [
+      "id",
+      "parent",
+      "transform",
+      "attachment for child appendages, connectors, limbs, tubes, handles, legs, horns, wings, branches, or cables",
+      "actionProfile.animationRole",
+      "actionProfile.pivot",
+      "actionProfile.collider",
+      "actionProfile.destruction"
+    ],
+    "transformChannels": [
+      "translate",
+      "rotate",
+      "scale",
+      "bend",
+      "twist",
+      "detach",
+      "visibility",
+      "material-state"
+    ],
+    "authoringRules": [
+      "Do not collapse independently movable parts into one mesh.",
+      "Put transforms on component pivot groups, not only on raw meshes.",
+      "For attached child parts, put the pivot at the semantic root/socket and build visible geometry from localStart to localEnd.",
+      "Represent hinge, socket, detachable, and breakable intent even when no animation is implemented yet.",
+      "Use simplified collider proxies for runtime physics instead of visual mesh colliders by default."
+    ],
+    "destructionPolicy": {
+      "defaultBreakable": false,
+      "fractureGroupNaming": "Use stable semantic names such as body-shell, left-hinge, glass-panel, branch-segment.",
+      "debrisStrategy": "Prefer detachable component groups and a small number of procedural fragments over random mesh explosion."
+    }
+  },
+  "assumptions": [
+    "The unseen back is rotationally symmetric with the visible front.",
+    "Wall thickness is approximated at 4 percent of top diameter.",
+    "The output targets a convincing browser render rather than exact optical caustics or manufacturing dimensions."
+  ],
+  "coordinateFrame": {
+    "front": "positive Z faces the reference camera",
+    "up": "positive Y follows image up",
+    "scaleReference": "glass height = 2.2 scene units"
+  },
+  "silhouette": {
+    "boundingShape": "upright truncated cone with gently convex side walls and a heavy cylindrical base",
+    "aspectRatios": [
+      "height:topDiameter = 1.39",
+      "bottomDiameter:topDiameter = 0.79",
+      "baseHeight:totalHeight = 0.18"
+    ],
+    "symmetry": "continuous rotational symmetry around Y",
+    "dominantCurves": [
+      "walls flare outward by about 7 degrees",
+      "top and bottom edges are rounded",
+      "inner floor rises into a shallow central dish"
+    ],
+    "negativeSpaces": [
+      "large open interior",
+      "elliptical mouth opening"
+    ],
+    "landmarks": [
+      "outer lip at y=1.10",
+      "inner floor at y=-0.76",
+      "bottom contact at y=-1.10"
+    ]
+  },
+  "viewEvidence": [
+    {
+      "id": "full-object",
+      "view": "front-three-quarter",
+      "imageRegion": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1,
+        "units": "normalized"
+      },
+      "observations": [
+        "Top rim spans approximately 58 percent of image width and is wider than the foot.",
+        "The straight side walls flare outward with mild convexity.",
+        "The base is visibly thicker and optically denser than the wall.",
+        "Bright vertical studio reflections define both side walls."
+      ],
+      "confidence": 0.92
+    }
+  ],
+  "componentTree": [
+    {
+      "id": "glass-shell",
+      "name": "Tapered glass shell",
+      "level": "macro",
+      "role": "body",
+      "importance": 1,
+      "confidence": 0.9,
+      "primitive": "lathe",
+      "geometryDescriptor": {
+        "topologyIntent": "closed lathed cross-section with outer wall, rounded lip, inner wall, and thick concave base",
+        "edgeTreatment": {
+          "type": "rounded",
+          "bevelRadius": 0.035,
+          "segments": 8
+        },
+        "deformationStack": [],
+        "uvStrategy": "cylindrical procedural coordinates",
+        "normalStrategy": "smooth analytic vertex normals"
+      },
+      "parent": null,
+      "attachment": null,
+      "dimensions": {
+        "width": 1.58,
+        "height": 2.2,
+        "depth": 1.58,
+        "units": "relative",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "root",
+        "pivot": {
+          "mode": "base",
+          "localPosition": [
+            0,
+            -1.1,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.5
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": true,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [
+          {
+            "id": "top-rim-seat",
+            "localPosition": [
+              0,
+              1.08,
+              0
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ],
+            "role": "surface-contact"
+          },
+          {
+            "id": "base-ring-seat",
+            "localPosition": [
+              0,
+              -0.94,
+              0
+            ],
+            "localRotation": [
+              0,
+              0,
+              0
+            ],
+            "role": "surface-contact"
+          }
+        ],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.77,
+            1.1,
+            0.77
+          ],
+          "isTrigger": false,
+          "notes": "Approximate solid collider; cavity is intentionally ignored."
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "glass-body",
+          "seamRefs": [
+            "rim-seam",
+            "base-seam"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "glass"
+        }
+      },
+      "material": "glass",
+      "materialLayers": [
+        "glass"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "wall-taper",
+          "type": "contour"
+        },
+        {
+          "id": "inner-cavity",
+          "type": "hole"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.04,
+        "microRoughness": 0.015,
+        "bumpAmplitude": 0.002,
+        "normalPattern": "subtle manufacturing waviness",
+        "displacementPattern": "none",
+        "occlusionPattern": "contact-only",
+        "edgeWearPattern": "none",
+        "notes": "Glass is optically smooth; surface detail is intentionally below silhouette scale."
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [
+        "wall-taper",
+        "inner-cavity"
+      ],
+      "fidelityTier": "reference"
+    },
+    {
+      "id": "rim",
+      "name": "Rounded double lip",
+      "level": "meso",
+      "role": "edge accent",
+      "importance": 0.82,
+      "confidence": 0.9,
+      "primitive": "torus",
+      "geometryDescriptor": {
+        "topologyIntent": "two close concentric rounded lip curves integrated into the shell profile",
+        "edgeTreatment": {
+          "type": "rounded",
+          "bevelRadius": 0.045,
+          "segments": 12
+        },
+        "deformationStack": [],
+        "uvStrategy": "cylindrical procedural coordinates",
+        "normalStrategy": "smooth analytic vertex normals"
+      },
+      "parent": "glass-shell",
+      "attachment": {
+        "parentId": "glass-shell",
+        "parentSocket": "top-rim-seat",
+        "localStart": [
+          0,
+          1.04,
+          0
+        ],
+        "localEnd": [
+          0,
+          1.1,
+          0
+        ],
+        "contactType": "overlap",
+        "overlap": 0.04,
+        "gapTolerance": 0.005,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 1.58,
+        "height": 0.12,
+        "depth": 1.58,
+        "units": "relative",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          0,
+          1.08,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "root",
+        "pivot": {
+          "mode": "base",
+          "localPosition": [
+            0,
+            -1.1,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.5
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": true,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.77,
+            1.1,
+            0.77
+          ],
+          "isTrigger": false,
+          "notes": "Approximate solid collider; cavity is intentionally ignored."
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "glass-body",
+          "seamRefs": [
+            "rim-seam",
+            "base-seam"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "glass"
+        }
+      },
+      "material": "glass",
+      "materialLayers": [
+        "glass"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "double-lip",
+          "type": "bevel"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.04,
+        "microRoughness": 0.015,
+        "bumpAmplitude": 0.002,
+        "normalPattern": "subtle manufacturing waviness",
+        "displacementPattern": "none",
+        "occlusionPattern": "contact-only",
+        "edgeWearPattern": "none",
+        "notes": "Glass is optically smooth; surface detail is intentionally below silhouette scale."
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [
+        "double-lip"
+      ],
+      "fidelityTier": "reference"
+    },
+    {
+      "id": "base-ring",
+      "name": "Heavy optical base ring",
+      "level": "meso",
+      "role": "optical accent",
+      "importance": 0.82,
+      "confidence": 0.9,
+      "primitive": "torus",
+      "geometryDescriptor": {
+        "topologyIntent": "rounded base perimeter with a shallow recessed inner floor and dense refraction band",
+        "edgeTreatment": {
+          "type": "rounded",
+          "bevelRadius": 0.06,
+          "segments": 12
+        },
+        "deformationStack": [],
+        "uvStrategy": "cylindrical procedural coordinates",
+        "normalStrategy": "smooth analytic vertex normals"
+      },
+      "parent": "glass-shell",
+      "attachment": {
+        "parentId": "glass-shell",
+        "parentSocket": "base-ring-seat",
+        "localStart": [
+          0,
+          -1.08,
+          0
+        ],
+        "localEnd": [
+          0,
+          -0.82,
+          0
+        ],
+        "contactType": "overlap",
+        "overlap": 0.06,
+        "gapTolerance": 0.005,
+        "evidenceRefs": [
+          "full-object"
+        ]
+      },
+      "dimensions": {
+        "width": 1.28,
+        "height": 0.3,
+        "depth": 1.28,
+        "units": "relative",
+        "confidence": 0.9
+      },
+      "transform": {
+        "position": [
+          0,
+          -0.94,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "actionProfile": {
+        "animationRole": "root",
+        "pivot": {
+          "mode": "base",
+          "localPosition": [
+            0,
+            -1.1,
+            0
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "confidence": 0.5
+        },
+        "transformChannels": {
+          "translate": true,
+          "rotate": true,
+          "scale": true,
+          "bend": false,
+          "twist": false,
+          "detach": false,
+          "visibility": true,
+          "materialState": true
+        },
+        "sockets": [],
+        "collider": {
+          "type": "cylinder",
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.77,
+            1.1,
+            0.77
+          ],
+          "isTrigger": false,
+          "notes": "Approximate solid collider; cavity is intentionally ignored."
+        },
+        "constraints": [],
+        "destruction": {
+          "breakable": false,
+          "fractureGroup": "glass-body",
+          "seamRefs": [
+            "rim-seam",
+            "base-seam"
+          ],
+          "detachableFragments": [],
+          "breakImpulse": 0,
+          "debrisMaterial": "glass"
+        }
+      },
+      "material": "glass",
+      "materialLayers": [
+        "glass"
+      ],
+      "deformations": [],
+      "joints": [],
+      "seams": [],
+      "localFeatures": [
+        {
+          "id": "base-step",
+          "type": "ridge"
+        },
+        {
+          "id": "inner-dish",
+          "type": "contour"
+        }
+      ],
+      "surfaceDetail": {
+        "macroRoughness": 0.04,
+        "microRoughness": 0.015,
+        "bumpAmplitude": 0.002,
+        "normalPattern": "subtle manufacturing waviness",
+        "displacementPattern": "none",
+        "occlusionPattern": "contact-only",
+        "edgeWearPattern": "none",
+        "notes": "Glass is optically smooth; surface detail is intentionally below silhouette scale."
+      },
+      "evidenceRefs": [
+        "full-object"
+      ],
+      "details": [
+        "base-step",
+        "inner-dish"
+      ],
+      "fidelityTier": "reference"
+    }
+  ],
+  "materials": [
+    {
+      "id": "glass",
+      "name": "Clear soda-lime glass approximation",
+      "type": "physical-transparent",
+      "shaderModel": "MeshPhysicalMaterial with transmission",
+      "baseColor": "#EAF7FF",
+      "color": "#EAF7FF",
+      "albedo": {
+        "dominant": "#F4FBFF",
+        "secondary": [
+          "#BFD0D8",
+          "#FFFFFF"
+        ],
+        "samplingNotes": "Near-colorless body; grey-blue and white values are reflection/refraction cues rather than opaque paint."
+      },
+      "colorVariation": {
+        "palette": [
+          "#F4FBFF",
+          "#BFD0D8",
+          "#FFFFFF"
+        ],
+        "pattern": "vertical optical reflection bands",
+        "amplitude": 0.08,
+        "heightCorrelation": 0.1
+      },
+      "textureResolution": 1024,
+      "textureProjection": {
+        "mode": "cylindrical",
+        "repeat": [
+          1,
+          1
+        ],
+        "anisotropy": 8,
+        "texelDensityIntent": "Object-space reflection bands; no visible tiling."
+      },
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "frequency": 1,
+          "amplitude": 0.09,
+          "role": "broad studio reflection columns"
+        },
+        {
+          "id": "meso",
+          "frequency": 10,
+          "amplitude": 0.015,
+          "role": "subtle glass waviness and base refraction breakup"
+        },
+        {
+          "id": "micro",
+          "frequency": 80,
+          "amplitude": 0.002,
+          "role": "very fine highlight breakup without frosted appearance"
+        }
+      ],
+      "roughness": {
+        "base": 0.055,
+        "variation": 0.018,
+        "map": "independent-optical-roughness-field",
+        "localResponse": "rim and base slightly smoother than broad walls"
+      },
+      "metalness": {
+        "base": 0,
+        "variation": 0
+      },
+      "transmission": {
+        "base": 1,
+        "thickness": 0.16,
+        "ior": 1.52,
+        "attenuationDistance": 6,
+        "attenuationColor": "#EAF7FF"
+      },
+      "clearcoat": 1,
+      "clearcoatRoughness": 0.025,
+      "normal": {
+        "pattern": "independent-manufacturing-waviness",
+        "strength": 0.015,
+        "scale": 18,
+        "space": "tangent"
+      },
+      "bump": {
+        "pattern": "independent-micro-wave",
+        "amplitude": 0.002,
+        "scale": 80
+      },
+      "displacement": {
+        "pattern": "none",
+        "amplitude": 0,
+        "scale": 1,
+        "silhouetteAffects": false
+      },
+      "ambientOcclusion": {
+        "cavityStrength": 0.08,
+        "contactShadowBias": 0.2,
+        "notes": "Only rim/base contacts and inner floor receive subtle occlusion."
+      },
+      "wear": {
+        "edgeWear": 0,
+        "scratches": [],
+        "chips": []
+      },
+      "dirt": {
+        "amount": 0,
+        "cavityBias": 0,
+        "color": "#FFFFFF"
+      },
+      "localOverrides": [
+        {
+          "id": "optical-highlight",
+          "region": "left and right outer walls",
+          "roughness": 0.025,
+          "transmission": 0.94,
+          "evidenceRefs": [
+            "full-object"
+          ]
+        },
+        {
+          "id": "rim-density",
+          "region": "top lip",
+          "roughness": 0.035,
+          "transmission": 0.88,
+          "evidenceRefs": [
+            "full-object"
+          ]
+        },
+        {
+          "id": "base-density",
+          "region": "bottom 18 percent",
+          "roughness": 0.045,
+          "transmission": 0.82,
+          "evidenceRefs": [
+            "full-object"
+          ]
+        }
+      ],
+      "shaderNotes": [
+        "Use front/back transmission with thickness authored in geometry, not opacity-only blending.",
+        "Use PMREM environment reflections and ACES tone mapping to keep clear glass readable.",
+        "Reference PBR extraction is intentionally skipped because transparent pixels contain background and baked refraction rather than recoverable albedo."
+      ],
+      "notes": "Real-time optical approximation; exact caustics are outside scope."
+    }
+  ],
+  "repetitionSystems": [],
+  "buildPasses": [
+    {
+      "id": "blockout",
+      "goal": "Match macro silhouette and proportions.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Silhouette reads correctly without materials.",
+        "Quality contract has named all required macro feature groups before code generation.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "structural-pass",
+      "goal": "Build the component hierarchy implied by the pre-spec complexity assessment.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Macro, meso, and repeated structures meet qualityContract.minimumSpecDepth.",
+        "Parent-child relations, joints, seams, sockets, and contact points are explicit.",
+        "Every attached child appendage/connector has parentSocket, localStart/localEnd, contactType, embedDepth or overlap, and gapTolerance.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "form-refinement",
+      "goal": "Refine shape, deformation, bevels, tapers, curves, asymmetry, and visible local geometry.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Important visible forms are represented in component geometryDescriptor, deformations, localFeatures, or repetitionSystems.",
+        "Endpoint-based child parts are rooted at their attachment sockets and do not visibly float away from parents.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "material-pass",
+      "goal": "Match material color, roughness, bump, and local variation.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Reference-derived albedo palette records dominant, secondary, and accent colors per visible material.",
+        "Each important material defines roughness variation and at least one normal/bump/displacement response.",
+        "Local material overrides, dirt/wear/stains/moss/chips/scratches or equivalent masks are tied to evidenceRefs.",
+        "Thin, transparent, reflective, wet, or fibrous materials document alpha/transmission/clearcoat/metalness/fiber response when relevant.",
+        "Generated preview uses procedural albedo/roughness/bump texture or vertex color variation instead of one flat color.",
+        "Generated preview uses independent PBR maps at 1024px or higher for the quality-first tier.",
+        "If source pixels are available, referencePbr extraction passed at confidence >= 0.7 or the pass is stopped/requesting better references.",
+        "Macro, meso, and micro surface frequency bands are visible at the intended review distance without obvious tiling.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "surface-pass",
+      "goal": "Add procedural surface locality such as normal/bump/displacement, AO, dirt, stains, chips, grain, moss, scratches, and wear.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Every required material feature group has local overrides or surfaceDetail tied to evidenceRefs.",
+        "A grazing-angle close-up proves that normal/height detail breaks highlights naturally and does not read as smooth plastic.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "lighting-pass",
+      "goal": "Make material and form readable under neutral turntable lighting plus optional reference lighting.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "lightingFromPhoto identifies key light direction/color/intensity, fill light, rim or environment light, and ambient color.",
+        "Exposure, tone mapping, background color/gradient, shadow softness, and contact shadow behavior are specified.",
+        "Lighting does not hide geometry/material gaps and screenshots can be compared fairly to the reference.",
+        "Neutral, grazing, and reference-matched lighting checks distinguish material errors from lighting errors.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "interaction-pass",
+      "goal": "Make the model ready for future animation, transformation, physics, or destruction.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Macro and movable meso components have stable pivot nodes.",
+        "Sockets, collider proxies, and destruction metadata are present for future runtime actions.",
+        "AI vision comparison score meets selfCorrectLoop.visualAcceptance.threshold."
+      ]
+    },
+    {
+      "id": "optimization-pass",
+      "goal": "Protect runtime performance after visual fidelity is accepted.",
+      "componentRefs": [
+        "root"
+      ],
+      "acceptance": [
+        "Triangle count, draw calls, instancing, LOD strategy, and FPS target are documented or verified.",
+        "Repeated detail is instanced or simplified where possible without breaking silhouette/material believability."
+      ]
+    }
+  ],
+  "visualEvidence": [
+    {
+      "timestamp": "2026-07-22T08:46:53.819335+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.82,
+      "aiVisionScore": 0.82,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.72,
+        "formDetail": 0.58,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.83,
+          "visible": true,
+          "notes": "Outer taper and top-to-bottom width relationship match; render is about ten percent taller in frame and the opaque blockout intentionally does not show the open interior."
+        }
+      ],
+      "referenceScreenshot": "assets\\reference-glass.png",
+      "renderScreenshot": "review\\blockout.png",
+      "comparisonImage": "review\\comparison-blockout.png",
+      "cameraView": "reference-front",
+      "notes": "",
+      "aiVisionNotes": "Outer contour, taper, and approximate width-height relation are credible. The render is roughly ten percent taller in frame and material cues are intentionally deferred."
+    },
+    {
+      "timestamp": "2026-07-22T08:49:17.817243+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.66,
+      "aiVisionScore": 0.66,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.67,
+        "formDetail": 0.54,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Outer mass and taper remain sound."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.52,
+          "visible": true,
+          "notes": "The opaque back wall hides the interior opening and the double lip does not separate visually."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.76,
+          "visible": true,
+          "notes": "Base band is present but reads as a protruding ring rather than a dense integral glass foot."
+        }
+      ],
+      "referenceScreenshot": "assets\\reference-glass.png",
+      "renderScreenshot": "review\\structural.png",
+      "comparisonImage": "review\\comparison-structural.png",
+      "cameraView": "reference-front",
+      "notes": "",
+      "aiVisionNotes": "The spec is adequate, but neutral opaque shading hides the open mouth and merges the lip system. Fix the diagnostic render rather than changing the object decomposition."
+    },
+    {
+      "timestamp": "2026-07-22T08:55:45.894574+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.81,
+      "aiVisionScore": 0.81,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.82,
+        "formDetail": 0.66,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Outer taper and symmetry match the reference."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The mouth is now a clear ellipse with a readable rounded lip; final double-lip density is deferred to material shading."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.78,
+          "visible": true,
+          "notes": "A separate heavy base system is readable and attached, though its integration will be softened during form refinement."
+        }
+      ],
+      "referenceScreenshot": "assets\\reference-glass.png",
+      "renderScreenshot": "review\\structural-fixed.png",
+      "comparisonImage": "review\\comparison-structural-fixed.png",
+      "cameraView": "reference-front",
+      "notes": "",
+      "aiVisionNotes": "The correction exposes the opening and separates rim/base systems. All critical structural features meet their thresholds, with form integration intentionally deferred."
+    },
+    {
+      "timestamp": "2026-07-22T08:59:04.182738+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.82,
+      "aiVisionScore": 0.82,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.83,
+        "formDetail": 0.81,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Refined wall curvature preserves the reference taper and rounded outer transitions."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "Opening ellipse and rounded lip are clean and concentric."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The base is now integrated into the profile and no longer floats; optical density remains for material pass."
+        }
+      ],
+      "referenceScreenshot": "assets\\reference-glass.png",
+      "renderScreenshot": "review\\form-refinement.png",
+      "comparisonImage": "review\\comparison-form-refinement.png",
+      "cameraView": "reference-front",
+      "notes": "",
+      "aiVisionNotes": "The refined lathe profile resolves the main shape differences and all critical form systems meet threshold. Remaining mismatch is small and can be masked by final optical shading."
+    },
+    {
+      "timestamp": "2026-07-22T09:20:20.593709+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.8,
+        "formDetail": 0.79,
+        "materialSurface": 0.77,
+        "lightingCamera": 0.76
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.79,
+          "visible": true,
+          "notes": "The concentric outer and inner lip remain readable against the transparency-check background."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The thick foot, recessed inner floor and lower optical ring create the required dense glass base."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.77,
+          "visible": true,
+          "notes": "The checkerboard is visible through the shell with edge refraction and bright specular columns; the single-view reference does not permit exact caustic recovery."
+        }
+      ],
+      "referenceScreenshot": "assets/reference-glass.png",
+      "renderScreenshot": "review/material-pass.png",
+      "comparisonImage": "review/comparison-material-pass.png",
+      "cameraView": "front-elevated",
+      "notes": "Transparent checkerboard proof plus dark-background look-dev review completed.",
+      "aiVisionNotes": "The checkerboard review proves live transmission. Proportions, glass edge highlights and dense base match; exact photographic caustics are intentionally approximate."
+    },
+    {
+      "timestamp": "2026-07-22T09:28:25.097935+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.8,
+        "formDetail": 0.8,
+        "materialSurface": 0.78,
+        "lightingCamera": 0.77
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.79,
+          "visible": true,
+          "notes": "The grazing view keeps the rounded double lip attached and optically crisp."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The grazing view confirms continuous rounded transitions across the heavy foot and inner floor."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.78,
+          "visible": true,
+          "notes": "Sub-silhouette radial waviness breaks the grazing highlight without creating visible dents or plastic-like noise."
+        }
+      ],
+      "referenceScreenshot": "assets/reference-glass.png",
+      "renderScreenshot": "review/surface-pass-front.png",
+      "comparisonImage": "review/comparison-surface-pass.png",
+      "cameraView": "front-and-grazing",
+      "notes": "Grazing proof shows a continuous highlight with minute non-uniformity, not coarse surface noise.",
+      "aiVisionNotes": "Front and grazing-angle views confirm restrained waviness breaks highlights naturally while preserving the reference silhouette."
+    },
+    {
+      "timestamp": "2026-07-22T09:31:38.152511+00:00",
+      "passId": "lighting-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.81,
+        "formDetail": 0.8,
+        "materialSurface": 0.79,
+        "lightingCamera": 0.82
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "Overhead and side area lights create a continuous, rounded double-lip highlight."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "The base retains layered refraction bands under both neutral and dark backgrounds."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.79,
+          "visible": true,
+          "notes": "Neutral, grazing and dark-background checks separate transmission from lighting while preserving reference-like vertical highlights."
+        }
+      ],
+      "referenceScreenshot": "assets/reference-glass.png",
+      "renderScreenshot": "review/lighting-neutral.png",
+      "comparisonImage": "review/comparison-lighting-pass.png",
+      "cameraView": "front-neutral-and-reference-dark",
+      "notes": "Four area lights plus a soft hemisphere environment reproduce the source's long white reflections and gentle contact shadow.",
+      "aiVisionNotes": "Neutral checker, grazing-angle and dark-background renders all preserve geometry and glass cues. The lighting exposes rather than hides the rim and base construction."
+    },
+    {
+      "timestamp": "2026-07-22T09:34:16.761053+00:00",
+      "passId": "interaction-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.82,
+        "formDetail": 0.8,
+        "materialSurface": 0.79,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The rim remains concentric and attached after orbit and zoom interaction."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "The base ring and inner floor move as a stable child system of the shell pivot."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.79,
+          "visible": true,
+          "notes": "Transmission and area-light reflections remain stable through interactive camera changes."
+        }
+      ],
+      "referenceScreenshot": "assets/reference-glass.png",
+      "renderScreenshot": "review/interaction-front.png",
+      "comparisonImage": "review/comparison-interaction-pass.png",
+      "cameraView": "interactive-front-and-orbit",
+      "notes": "Manual drag and wheel zoom were exercised in the browser; no runtime errors were logged.",
+      "aiVisionNotes": "Before/after browser screenshots and zero console errors confirm stable orbit/zoom behavior while the attached rim and base preserve their relationships."
+    },
+    {
+      "timestamp": "2026-07-22T09:38:31.078080+00:00",
+      "passId": "optimization-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": null,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {},
+      "featureReviews": [],
+      "referenceScreenshot": "assets\\reference-glass.png",
+      "renderScreenshot": "review/optimization-pass.png",
+      "comparisonImage": "",
+      "cameraView": "optimized-front",
+      "notes": "Optimization reduces look-dev radial segments from 160 to 128 while preserving the round silhouette.",
+      "aiVisionNotes": ""
+    }
+  ],
+  "reviewHistory": [
+    {
+      "timestamp": "2026-07-22T08:46:53.819335+00:00",
+      "passId": "blockout",
+      "estimatedFidelity": 0.82,
+      "aiVisionScore": 0.82,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.72,
+        "formDetail": 0.58,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.83,
+          "visible": true,
+          "notes": "Outer taper and top-to-bottom width relationship match; render is about ten percent taller in frame and the opaque blockout intentionally does not show the open interior."
+        }
+      ],
+      "action": "continue",
+      "summary": "Outer taper and mass distribution match the reference closely enough to unlock structure; open interior and thick base remain for later passes.",
+      "matched": [
+        "top diameter",
+        "bottom taper",
+        "upright symmetry"
+      ],
+      "mismatches": [
+        "render framing is slightly taller",
+        "opaque blockout hides interior negative space"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "assets\\reference-glass.png",
+        "renderScreenshot": "review\\blockout.png",
+        "comparisonImage": "review\\comparison-blockout.png",
+        "cameraView": "reference-front",
+        "notes": "",
+        "aiVisionNotes": "Outer contour, taper, and approximate width-height relation are credible. The render is roughly ten percent taller in frame and material cues are intentionally deferred."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T08:49:17.817243+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.66,
+      "aiVisionScore": 0.66,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.67,
+        "formDetail": 0.54,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.72
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Outer mass and taper remain sound."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.52,
+          "visible": true,
+          "notes": "The opaque back wall hides the interior opening and the double lip does not separate visually."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.76,
+          "visible": true,
+          "notes": "Base band is present but reads as a protruding ring rather than a dense integral glass foot."
+        }
+      ],
+      "action": "refine-code",
+      "summary": "Rim opening is not readable in the neutral structural material, and the base accent reads too detached.",
+      "matched": [
+        "outer taper",
+        "named base structure"
+      ],
+      "mismatches": [
+        "interior opening hidden",
+        "double rim merged",
+        "base accent too ring-like"
+      ],
+      "specFixes": [],
+      "codeFixes": [
+        "add structural opening proxy",
+        "add inner lip geometry",
+        "integrate base ring visually"
+      ],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "assets\\reference-glass.png",
+        "renderScreenshot": "review\\structural.png",
+        "comparisonImage": "review\\comparison-structural.png",
+        "cameraView": "reference-front",
+        "notes": "",
+        "aiVisionNotes": "The spec is adequate, but neutral opaque shading hides the open mouth and merges the lip system. Fix the diagnostic render rather than changing the object decomposition."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T08:55:45.894574+00:00",
+      "passId": "structural-pass",
+      "estimatedFidelity": 0.81,
+      "aiVisionScore": 0.81,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.82,
+        "formDetail": 0.66,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Outer taper and symmetry match the reference."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The mouth is now a clear ellipse with a readable rounded lip; final double-lip density is deferred to material shading."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.78,
+          "visible": true,
+          "notes": "A separate heavy base system is readable and attached, though its integration will be softened during form refinement."
+        }
+      ],
+      "action": "continue",
+      "summary": "Named shell, mouth, rim and base systems are attached and readable; refinement can proceed.",
+      "matched": [
+        "tapered shell",
+        "elliptical opening",
+        "rounded lip",
+        "attached base system"
+      ],
+      "mismatches": [
+        "base transition remains too ring-like",
+        "double lip is simplified"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "assets\\reference-glass.png",
+        "renderScreenshot": "review\\structural-fixed.png",
+        "comparisonImage": "review\\comparison-structural-fixed.png",
+        "cameraView": "reference-front",
+        "notes": "",
+        "aiVisionNotes": "The correction exposes the opening and separates rim/base systems. All critical structural features meet their thresholds, with form integration intentionally deferred."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T08:59:04.182738+00:00",
+      "passId": "form-refinement",
+      "estimatedFidelity": 0.82,
+      "aiVisionScore": 0.82,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.84,
+        "componentStructure": 0.83,
+        "formDetail": 0.81,
+        "materialSurface": 0.2,
+        "lightingCamera": 0.75
+      },
+      "featureReviews": [
+        {
+          "id": "tapered-shell-silhouette",
+          "score": 0.84,
+          "visible": true,
+          "notes": "Refined wall curvature preserves the reference taper and rounded outer transitions."
+        },
+        {
+          "id": "rim-opening-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "Opening ellipse and rounded lip are clean and concentric."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The base is now integrated into the profile and no longer floats; optical density remains for material pass."
+        }
+      ],
+      "action": "continue",
+      "summary": "Rounded lip, mild wall convexity, inner floor and integrated heavy base match the reference form language.",
+      "matched": [
+        "wall flare",
+        "rounded lip",
+        "integrated foot",
+        "inner-floor landmark"
+      ],
+      "mismatches": [
+        "base remains slightly more bulbous than reference",
+        "frame height slightly tall"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [],
+      "visualEvidence": {
+        "referenceScreenshot": "assets\\reference-glass.png",
+        "renderScreenshot": "review\\form-refinement.png",
+        "comparisonImage": "review\\comparison-form-refinement.png",
+        "cameraView": "reference-front",
+        "notes": "",
+        "aiVisionNotes": "The refined lathe profile resolves the main shape differences and all critical form systems meet threshold. Remaining mismatch is small and can be masked by final optical shading."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T09:20:20.593709+00:00",
+      "passId": "material-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.8,
+        "formDetail": 0.79,
+        "materialSurface": 0.77,
+        "lightingCamera": 0.76
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.79,
+          "visible": true,
+          "notes": "The concentric outer and inner lip remain readable against the transparency-check background."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The thick foot, recessed inner floor and lower optical ring create the required dense glass base."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.77,
+          "visible": true,
+          "notes": "The checkerboard is visible through the shell with edge refraction and bright specular columns; the single-view reference does not permit exact caustic recovery."
+        }
+      ],
+      "action": "continue",
+      "summary": "Physical transparency, IOR, Fresnel edges and the dense base now read as clear glass.",
+      "matched": [
+        "transparent shell",
+        "double rim",
+        "heavy optical base",
+        "reference taper"
+      ],
+      "mismatches": [
+        "single-view caustics remain approximate",
+        "rim opening contrast is slightly softer than the source"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "review/material-pass.png",
+        "review/comparison-material-pass.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "assets/reference-glass.png",
+        "renderScreenshot": "review/material-pass.png",
+        "comparisonImage": "review/comparison-material-pass.png",
+        "cameraView": "front-elevated",
+        "notes": "Transparent checkerboard proof plus dark-background look-dev review completed.",
+        "aiVisionNotes": "The checkerboard review proves live transmission. Proportions, glass edge highlights and dense base match; exact photographic caustics are intentionally approximate."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T09:28:25.097935+00:00",
+      "passId": "surface-pass",
+      "estimatedFidelity": 0.79,
+      "aiVisionScore": 0.79,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.8,
+        "formDetail": 0.8,
+        "materialSurface": 0.78,
+        "lightingCamera": 0.77
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.79,
+          "visible": true,
+          "notes": "The grazing view keeps the rounded double lip attached and optically crisp."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The grazing view confirms continuous rounded transitions across the heavy foot and inner floor."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.78,
+          "visible": true,
+          "notes": "Sub-silhouette radial waviness breaks the grazing highlight without creating visible dents or plastic-like noise."
+        }
+      ],
+      "action": "continue",
+      "summary": "Subtle manufacturing waviness is localized to the glass shell and remains below silhouette scale.",
+      "matched": [
+        "smooth glass body",
+        "natural grazing highlights",
+        "rounded rim",
+        "continuous base"
+      ],
+      "mismatches": [
+        "micro-caustic detail remains view-dependent"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "review/surface-pass-front.png",
+        "review/surface-pass-grazing.png",
+        "review/comparison-surface-pass.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "assets/reference-glass.png",
+        "renderScreenshot": "review/surface-pass-front.png",
+        "comparisonImage": "review/comparison-surface-pass.png",
+        "cameraView": "front-and-grazing",
+        "notes": "Grazing proof shows a continuous highlight with minute non-uniformity, not coarse surface noise.",
+        "aiVisionNotes": "Front and grazing-angle views confirm restrained waviness breaks highlights naturally while preserving the reference silhouette."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T09:31:38.152511+00:00",
+      "passId": "lighting-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.81,
+        "formDetail": 0.8,
+        "materialSurface": 0.79,
+        "lightingCamera": 0.82
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "Overhead and side area lights create a continuous, rounded double-lip highlight."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "The base retains layered refraction bands under both neutral and dark backgrounds."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.79,
+          "visible": true,
+          "notes": "Neutral, grazing and dark-background checks separate transmission from lighting while preserving reference-like vertical highlights."
+        }
+      ],
+      "action": "continue",
+      "summary": "Reference-matched rectangular highlights, neutral transmission and soft contact behavior are verified.",
+      "matched": [
+        "soft key and fill",
+        "vertical specular columns",
+        "bright rim light",
+        "controlled exposure",
+        "neutral transmission"
+      ],
+      "mismatches": [
+        "photographic caustics are approximated by real-time transmission"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "review/lighting-neutral.png",
+        "review/lighting-reference.png",
+        "review/surface-pass-grazing.png",
+        "review/comparison-lighting-pass.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "assets/reference-glass.png",
+        "renderScreenshot": "review/lighting-neutral.png",
+        "comparisonImage": "review/comparison-lighting-pass.png",
+        "cameraView": "front-neutral-and-reference-dark",
+        "notes": "Four area lights plus a soft hemisphere environment reproduce the source's long white reflections and gentle contact shadow.",
+        "aiVisionNotes": "Neutral checker, grazing-angle and dark-background renders all preserve geometry and glass cues. The lighting exposes rather than hides the rim and base construction."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T09:34:16.761053+00:00",
+      "passId": "interaction-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": 0.8,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {
+        "silhouetteProportion": 0.82,
+        "componentStructure": 0.82,
+        "formDetail": 0.8,
+        "materialSurface": 0.79,
+        "lightingCamera": 0.81
+      },
+      "featureReviews": [
+        {
+          "id": "rim-opening-system",
+          "score": 0.8,
+          "visible": true,
+          "notes": "The rim remains concentric and attached after orbit and zoom interaction."
+        },
+        {
+          "id": "heavy-base-system",
+          "score": 0.81,
+          "visible": true,
+          "notes": "The base ring and inner floor move as a stable child system of the shell pivot."
+        },
+        {
+          "id": "clear-glass-optics",
+          "score": 0.79,
+          "visible": true,
+          "notes": "Transmission and area-light reflections remain stable through interactive camera changes."
+        }
+      ],
+      "action": "continue",
+      "summary": "Orbit and zoom work without separating the rim, shell or base; runtime attachment metadata is present.",
+      "matched": [
+        "stable root pivot",
+        "rim child pivot",
+        "base child pivot",
+        "interaction controls",
+        "sockets",
+        "collider metadata"
+      ],
+      "mismatches": [
+        "the rotationally symmetric shape gives subtle visual feedback for horizontal orbit"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "review/interaction-front.png",
+        "review/interaction-moved.png",
+        "review/comparison-interaction-pass.png"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "assets/reference-glass.png",
+        "renderScreenshot": "review/interaction-front.png",
+        "comparisonImage": "review/comparison-interaction-pass.png",
+        "cameraView": "interactive-front-and-orbit",
+        "notes": "Manual drag and wheel zoom were exercised in the browser; no runtime errors were logged.",
+        "aiVisionNotes": "Before/after browser screenshots and zero console errors confirm stable orbit/zoom behavior while the attached rim and base preserve their relationships."
+      }
+    },
+    {
+      "timestamp": "2026-07-22T09:38:31.078080+00:00",
+      "passId": "optimization-pass",
+      "estimatedFidelity": 0.8,
+      "aiVisionScore": null,
+      "visualAcceptanceThreshold": 0.7,
+      "layerScores": {},
+      "featureReviews": [],
+      "action": "continue",
+      "summary": "Optimized delivery uses 128 radial segments and sustains the 60 FPS target without visible silhouette loss.",
+      "matched": [
+        "128-segment delivery mesh",
+        "58.5 measured FPS",
+        "60288 rendered triangles",
+        "16 render calls",
+        "no repeated geometry suitable for instancing"
+      ],
+      "mismatches": [
+        "bundle-size warning remains because Three.js is shipped as one entry chunk"
+      ],
+      "specFixes": [],
+      "codeFixes": [],
+      "evidence": [
+        "review/optimization-pass.png",
+        "browser diagnostics: 60288 triangles, 16 calls, 58.5 FPS"
+      ],
+      "visualEvidence": {
+        "referenceScreenshot": "assets\\reference-glass.png",
+        "renderScreenshot": "review/optimization-pass.png",
+        "comparisonImage": "",
+        "cameraView": "optimized-front",
+        "notes": "Optimization reduces look-dev radial segments from 160 to 128 while preserving the round silhouette.",
+        "aiVisionNotes": ""
+      }
+    }
+  ],
+  "lodPlan": [
+    {
+      "tier": "near",
+      "distance": 0,
+      "strategy": "full component tree and material layers"
+    },
+    {
+      "tier": "far",
+      "distance": 30,
+      "strategy": "merge static components and reduce local feature geometry"
+    }
+  ],
+  "performanceBudget": {
+    "qualityPriority": "reference-fidelity",
+    "targetTriangles": 18000,
+    "maxDrawCalls": 12,
+    "textureSize": 1024,
+    "fpsTarget": 60,
+    "optimizationPolicy": "Use one lathed shell and a small number of optical accent meshes; retain smooth profile segments near the rim and base."
+  },
+  "lightingFromPhoto": [
+    "key light: large cool-white rectangular area above-left, intensity 4.5, soft shadow",
+    "fill light: broad neutral front panel, intensity 1.4, preserving transparent interior",
+    "rim/environment light: white vertical reflection cards on both sides plus dim cool environment",
+    "exposure and tone mapping: ACES filmic, exposure 1.15, restrained white clipping",
+    "background and contact shadow: near-black neutral background with a soft ground contact shadow and subtle ambient occlusion beneath the base"
+  ],
+  "proceduralStrategy": [
+    "Create a closed LatheGeometry cross-section for outer wall, rounded lip, inner wall, inner dish, and bottom.",
+    "Add narrow rim and base optical accent geometry only where it materially improves reflection readability.",
+    "Use MeshPhysicalMaterial transmission and a generated studio environment; avoid opacity-only glass.",
+    "Match the reference with a mild orthographic-like perspective camera and a dark neutral background."
+  ],
+  "animationAnchors": [
+    "glass-shell base pivot supports whole-object turntable rotation and placement"
+  ],
+  "destructionAnchors": [
+    "glass-body fracture group is recorded but disabled by default"
+  ],
+  "risks": [
+    "Transparent materials are highly dependent on the environment and renderer settings.",
+    "Single-view evidence cannot determine exact wall thickness or underside shape.",
+    "Screen-space transmission will not reproduce path-traced caustics."
+  ]
+}

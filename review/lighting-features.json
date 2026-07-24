@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rim-opening-system",
+    "score": 0.8,
+    "visible": true,
+    "notes": "Overhead and side area lights create a continuous, rounded double-lip highlight."
+  },
+  {
+    "id": "heavy-base-system",
+    "score": 0.81,
+    "visible": true,
+    "notes": "The base retains layered refraction bands under both neutral and dark backgrounds."
+  },
+  {
+    "id": "clear-glass-optics",
+    "score": 0.79,
+    "visible": true,
+    "notes": "Neutral, grazing and dark-background checks separate transmission from lighting while preserving reference-like vertical highlights."
+  }
+]

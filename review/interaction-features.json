@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rim-opening-system",
+    "score": 0.8,
+    "visible": true,
+    "notes": "The rim remains concentric and attached after orbit and zoom interaction."
+  },
+  {
+    "id": "heavy-base-system",
+    "score": 0.81,
+    "visible": true,
+    "notes": "The base ring and inner floor move as a stable child system of the shell pivot."
+  },
+  {
+    "id": "clear-glass-optics",
+    "score": 0.79,
+    "visible": true,
+    "notes": "Transmission and area-light reflections remain stable through interactive camera changes."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tapered-shell-silhouette",
+    "score": 0.84,
+    "visible": true,
+    "notes": "Outer taper and symmetry match the reference."
+  },
+  {
+    "id": "rim-opening-system",
+    "score": 0.8,
+    "visible": true,
+    "notes": "The mouth is now a clear ellipse with a readable rounded lip; final double-lip density is deferred to material shading."
+  },
+  {
+    "id": "heavy-base-system",
+    "score": 0.78,
+    "visible": true,
+    "notes": "A separate heavy base system is readable and attached, though its integration will be softened during form refinement."
+  }
+]

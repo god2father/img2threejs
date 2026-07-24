@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tapered-shell-silhouette",
+    "score": 0.84,
+    "visible": true,
+    "notes": "Outer mass and taper remain sound."
+  },
+  {
+    "id": "rim-opening-system",
+    "score": 0.52,
+    "visible": true,
+    "notes": "The opaque back wall hides the interior opening and the double lip does not separate visually."
+  },
+  {
+    "id": "heavy-base-system",
+    "score": 0.76,
+    "visible": true,
+    "notes": "Base band is present but reads as a protruding ring rather than a dense integral glass foot."
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "rim-opening-system",
+    "score": 0.79,
+    "visible": true,
+    "notes": "The concentric outer and inner lip remain readable against the transparency-check background."
+  },
+  {
+    "id": "heavy-base-system",
+    "score": 0.8,
+    "visible": true,
+    "notes": "The thick foot, recessed inner floor and lower optical ring create the required dense glass base."
+  },
+  {
+    "id": "clear-glass-optics",
+    "score": 0.77,
+    "visible": true,
+    "notes": "The checkerboard is visible through the shell with edge refraction and bright specular columns; the single-view reference does not permit exact caustic recovery."
+  }
+]
