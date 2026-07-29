@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.909,
+  "estimatedFidelity": 0.909,
+  "targetThreshold": 0.7,
+  "materialId": "driver-composite",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/drivers-refined.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite",
+  "palette": [
+    "#504C46",
+    "#0F0E0B",
+    "#7B6F60",
+    "#2D241B",
+    "#C9B596"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite/driver-composite_albedo.png",
+      "url": "driver-composite_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite/driver-composite_roughness.png",
+      "url": "driver-composite_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite/driver-composite_height.png",
+      "url": "driver-composite_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite/driver-composite_normal.png",
+      "url": "driver-composite_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/driver-composite/driver-composite_ao.png",
+      "url": "driver-composite_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 180,
+    "sourceHeight": 165,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 180,
+      "height": 165
+    },
+    "mask": {
+      "backgroundColor": "#281D16",
+      "backgroundNoise": 25.573,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.2471
+    },
+    "mapStats": {
+      "valueRange": 0.612,
+      "heightP90Gradient": 0.07142,
+      "roughnessBase": 0.69,
+      "roughnessVariation": 0.137,
+      "normalStrength": 0.24,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#504C46",
+      "#0F0E0B",
+      "#7B6F60",
+      "#2D241B",
+      "#C9B596"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.909,
+  "estimatedFidelity": 0.909,
+  "targetThreshold": 0.7,
+  "materialId": "grille-cloth",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/grille.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth",
+  "palette": [
+    "#27221C",
+    "#110E0A",
+    "#443E35",
+    "#726C5C",
+    "#CBC1A8"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth/grille-cloth_albedo.png",
+      "url": "grille-cloth_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth/grille-cloth_roughness.png",
+      "url": "grille-cloth_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth/grille-cloth_height.png",
+      "url": "grille-cloth_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth/grille-cloth_normal.png",
+      "url": "grille-cloth_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/grille-cloth/grille-cloth_ao.png",
+      "url": "grille-cloth_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 275,
+    "sourceHeight": 155,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 275,
+      "height": 155
+    },
+    "mask": {
+      "backgroundColor": "#433F32",
+      "backgroundNoise": 95.174,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.7273
+    },
+    "mapStats": {
+      "valueRange": 0.6374,
+      "heightP90Gradient": 0.11781,
+      "roughnessBase": 0.814,
+      "roughnessVariation": 0.154,
+      "normalStrength": 0.294,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#27221C",
+      "#110E0A",
+      "#443E35",
+      "#726C5C",
+      "#CBC1A8"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.909,
+  "estimatedFidelity": 0.909,
+  "targetThreshold": 0.7,
+  "materialId": "brushed-brass",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/brass.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass",
+  "palette": [
+    "#C7A882",
+    "#B38F66",
+    "#8B6B48",
+    "#E1CEB5",
+    "#31261A"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass/brushed-brass_albedo.png",
+      "url": "brushed-brass_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass/brushed-brass_roughness.png",
+      "url": "brushed-brass_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass/brushed-brass_height.png",
+      "url": "brushed-brass_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass/brushed-brass_normal.png",
+      "url": "brushed-brass_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/brushed-brass/brushed-brass_ao.png",
+      "url": "brushed-brass_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 430,
+    "sourceHeight": 130,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 43,
+      "width": 429,
+      "height": 87
+    },
+    "mask": {
+      "backgroundColor": "#F3F1F0",
+      "backgroundNoise": 1.732,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.288
+    },
+    "mapStats": {
+      "valueRange": 0.645,
+      "heightP90Gradient": 0.05025,
+      "roughnessBase": 0.684,
+      "roughnessVariation": 0.091,
+      "normalStrength": 0.215,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#C7A882",
+      "#B38F66",
+      "#8B6B48",
+      "#E1CEB5",
+      "#31261A"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

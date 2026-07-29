@@ -1,0 +1,305 @@
+{
+  "targetName": "NOIR S1 Modular Speaker",
+  "sourceImage": "assets/reference-speaker-front.png",
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "compact rectangular wireless loudspeaker with a removable front assembly",
+      "primaryDomain": "object",
+      "formLanguage": ["hard-surface", "rectilinear", "softened-corner", "modular", "serviceable"],
+      "structureKind": ["layered enclosure", "front-face stack", "rear-service panel", "internal acoustic chamber"],
+      "motionPotential": ["exploded view", "part picking", "control rotation", "whole-object orbit"],
+      "materialFamilies": ["black leather-like vinyl", "woven grille cloth", "brushed brass", "rubber", "MDF wood", "painted electronics"],
+      "notes": "The front, three-quarter, rear, and exploded references establish exterior proportions and the primary internal stack. Back-side bracing, wiring, and concealed fasteners are inferred conservatively from the exploded reference and are marked as inferred in the final spec."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 2,
+        "componentCount": 3,
+        "hierarchyDepth": 3,
+        "repetitionDensity": 3,
+        "materialLayerCount": 3,
+        "localDetailDensity": 3,
+        "occlusionRisk": 2,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 4,
+        "mesoComponents": 10,
+        "microFeatureGroups": 7,
+        "materialLayers": 6,
+        "repetitionSystems": 4
+      },
+      "reasoning": [
+        "The silhouette is a compact wide enclosure with a 1.60 width-to-height ratio, rounded vertical corners, a shallow depth, and four discrete feet.",
+        "The exploded reference separates grille, trim, driver baffle, cabinet, control deck, amplifier PCB, rear panel, I/O plate, and feet, requiring a multi-level hierarchy rather than one box.",
+        "Screws, woven cloth, driver rings, control knobs, and PCB components create dense repeated details that must remain distinct in the runtime parts manifest."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Choose simple/moderate/complex/ultra-complex from observed structure, not from a hardcoded domain."
+    },
+    "unknownsToResolveBeforeImplementation": [
+      "The reference does not establish exact interior wall thickness or cable routing; use a visually credible MDF chamber and state this is inferred.",
+      "The script-logo glyph is a protected third-party mark in the reference; use a neutral NOIR wordmark rather than reproduce it.",
+      "The exact electrical port standard and PCB trace layout are not legible; represent these as generic audio I/O and a plausible component layout."
+    ],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 10,
+      "note": "Enumerate every identity-defining small detail before authoring the spec. Each detail must map to a component.localFeatures entry or material.localOverrides entry, never prose only. Use forge/stage1_intake/build_detail_inventory.py to scan zones.",
+      "details": [
+        {"id":"rounded-vinyl-shell","kind":"bevel","description":"Continuous softened cabinet corners with a separate black vinyl wrap.","scale":"macro","affects":"silhouette and edge highlights","mapsTo":{"type":"component","ref":"cabinet-shell"},"evidenceRef":"assets/reference-speaker-front-3q.png","confidence":0.92},
+        {"id":"gold-front-piping","kind":"trim","description":"Thin brass/gold rectangular trim seated in the front frame.","scale":"meso","affects":"front-frame perimeter","mapsTo":{"type":"component","ref":"front-trim"},"evidenceRef":"assets/reference-speaker-front.png","confidence":0.95},
+        {"id":"woven-grille","kind":"repetition","description":"Dense warm-metal woven grille with orthogonal warp and weft.","scale":"micro","affects":"front grille albedo and relief","mapsTo":{"type":"material","ref":"grille-cloth"},"evidenceRef":"assets/reference-speaker-front.png","confidence":0.93},
+        {"id":"front-wordmark","kind":"linework","description":"Raised centered metallic brand plaque; replaced by neutral NOIR wordmark.","scale":"meso","affects":"grille centre","mapsTo":{"type":"component","ref":"grille-badge"},"evidenceRef":"assets/reference-speaker-front.png","confidence":0.88},
+        {"id":"driver-concentric-rings","kind":"ridge","description":"Woofer and twin tweeters have concentric diaphragm and retaining-ring structure.","scale":"meso","affects":"driver-array","mapsTo":{"type":"component","ref":"driver-array"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.9},
+        {"id":"top-recess-and-knobs","kind":"recess","description":"Top inset control channel with four knurled gold knobs and one vertical toggle.","scale":"meso","affects":"control-deck","mapsTo":{"type":"component","ref":"top-control-deck"},"evidenceRef":"assets/reference-speaker-views.png","confidence":0.9},
+        {"id":"brushed-brass-plates","kind":"gloss","description":"Warm brass front control and rear I/O plates, with directional brushed response.","scale":"meso","affects":"metal material response","mapsTo":{"type":"material","ref":"brushed-brass"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.92},
+        {"id":"rear-handle-cutout","kind":"negative-space","description":"Wide rounded rectangular rear handle opening above the rear I/O plate.","scale":"meso","affects":"rear-panel silhouette","mapsTo":{"type":"component","ref":"rear-panel"},"evidenceRef":"assets/reference-speaker-rear.png","confidence":0.94},
+        {"id":"perimeter-fasteners","kind":"fastener","description":"Regular dark screws secure front baffle and rear panel.","scale":"micro","affects":"frame and rear panel","mapsTo":{"type":"component","ref":"fastener-system"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.9},
+        {"id":"mdf-chamber","kind":"layered-shell","description":"Visible warm wood acoustic chamber with shelf and rear aperture.","scale":"meso","affects":"exploded interior","mapsTo":{"type":"component","ref":"acoustic-chamber"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.78},
+        {"id":"amplifier-pcb","kind":"assembly","description":"Horizontal dark PCB with capacitors, connectors and raised components.","scale":"meso","affects":"electronics module","mapsTo":{"type":"component","ref":"amplifier-board"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.83},
+        {"id":"rubber-feet-and-washers","kind":"fastener","description":"Four black cylindrical isolation feet with small brass threaded hardware.","scale":"micro","affects":"base contact points","mapsTo":{"type":"component","ref":"isolation-feet"},"evidenceRef":"assets/reference-speaker-exploded.png","confidence":0.9}
+      ]
+    },
+    "anatomy": {
+      "applies": false,
+      "styleHeads": 0.0,
+      "proportions": {
+        "headUnit": 0.0,
+        "torso": 0.0,
+        "legs": 0.0,
+        "shoulderWidth": 0.0,
+        "hipWidth": 0.0
+      },
+      "pose": {
+        "type": "unassessed",
+        "jointAngles": {}
+      },
+      "faceLandmarks": {
+        "eyeLine": 0.0,
+        "eyeSpacing": 0.0,
+        "noseBase": 0.0,
+        "mouthLine": 0.0,
+        "hairline": 0.0
+      },
+      "features": [],
+      "confidence": 0.0,
+      "note": "Only meaningful when objectClass.primaryDomain is character or hybrid. Set applies=true and fill from forge/stage1_intake/extract_landmarks.py. See grimoire/character/reconstruction.md and grimoire/character/likeness_maximization.md."
+    },
+    "sourceImage": "assets/reference-speaker-front.png"
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "The rendered model matches the reference silhouette, primary proportions, visible component hierarchy, material response, and most recognizable local features for the selected fidelity tier."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 3,
+      "mesoComponents": 8,
+      "microFeatureGroups": 5,
+      "materialLayers": 3,
+      "repetitionSystems": 1,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "overall-silhouette",
+        "name": "Overall silhouette and proportions",
+        "required": true,
+        "qualityCriteria": [
+          "Bounding shape, dominant curves, negative spaces, and scale relationships are explicitly described."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model reads as a generic placeholder instead of the reference object",
+          "major proportions are guessed without evidence"
+        ]
+      },
+      {
+        "id": "primary-structure",
+        "name": "Primary structure and hierarchy",
+        "required": true,
+        "qualityCriteria": [
+          "Major parts, joints, seams, contact points, and parent-child relationships are named before code generation."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "large visible parts are merged into one mesh",
+          "component hierarchy is too shallow for the observed complexity"
+        ]
+      },
+      {
+        "id": "attachment-joint-correctness",
+        "name": "Attachment and joint correctness",
+        "required": true,
+        "qualityCriteria": [
+          "Every visible child appendage, branch, limb, handle, connector, tube, cable, horn, wing, leg, or hinged part has an attachment contract with parent socket, localStart/localEnd, contact type, embed/overlap, and gap tolerance."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "child part root floats away from the parent",
+          "branch/limb/tube is centered in space instead of pivoting from its root",
+          "parent-child transform mixes world and local coordinates"
+        ]
+      },
+      {
+        "id": "surface-material-response",
+        "name": "Surface material response",
+        "required": true,
+        "qualityCriteria": [
+          "Albedo zones, roughness, normal/bump/displacement intent, cavity dirt, edge wear, and local overrides are specified where visible.",
+          "Important materials define independent albedo, roughness, height/normal, and AO responses instead of reusing one texture for unrelated PBR channels.",
+          "Surface response is decomposed into macro, meso, and micro frequency bands with scale and amplitude tied to object scale."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "surface looks like flat plastic",
+          "local material variation is missing or not tied to image evidence"
+        ]
+      },
+      {
+        "id": "reference-lookdev",
+        "name": "Reference color, material, and lighting response",
+        "required": true,
+        "qualityCriteria": [
+          "Material-pass names the reference-derived albedo palette, roughness variation, tactile normal/bump/displacement response, and local masks.",
+          "When a source image is available, run reference PBR extraction and require confidence >= 0.7 before treating maps as implementation-ready.",
+          "Lighting-pass names key/fill/rim or environment light, exposure, tone mapping, background, and contact shadow behavior.",
+          "Neutral, grazing-angle, and reference-matched renders prove that surface relief survives relighting and is not painted into albedo."
+        ],
+        "evidenceRefs": [
+          "full-object"
+        ],
+        "failureModes": [
+          "model has acceptable shape but reads as flat shaded or plastic",
+          "colors are a generic average instead of reference-observed local color zones",
+          "lighting is evenly ambient and cannot reproduce the source value range"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "silhouette and negative-space delta",
+      "component hierarchy depth delta",
+      "repetition density and distribution delta",
+      "material albedo/roughness/normal response delta",
+      "local feature placement and scale delta"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "authoringInstruction": "Fill observed object class, complexity reasoning, featureGroups, visualDeltaChecks, and unknowns before generating or implementing ObjectSculptSpec.",
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "NOIR S1 Modular Speaker portable speaker enclosure woven grille cloth leather vinyl wrap brass control plate speaker driver baffle circuit board rear input panel",
+    "index": {
+      "status": "rebuilt",
+      "reason": "missing",
+      "fingerprint": "6857e5ab528b42ac12f4f411f862610a0bffce8e47aee3610a7603c318072fe8"
+    },
+    "matches": [
+      {
+        "record_id": "core.shader-mapping-boxgeometry-slides-receivers-grips",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.rendering_shader_mapping[5]",
+        "score": 3.982060806801,
+        "snippets": [
+          "... ráp hình chữ nhật/khối. Recognition cues: Flat-faced, roughly rectangular volume (pistol slide, receiver/frame, grip, panel) Dấu hiệu nhận diện: Khối gần chữ nhật với các mặt phẳng (khóa nòng súng lục, thân/khung súng, tay cầm, tấm phẳng) ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.rendering_shader_mapping[5]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-opacity-alpha",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[8]",
+        "score": 3.086972024081,
+        "snippets": [
+          "... CS2: kênh alpha của texture màu nền lại mã hóa Wearness Mask, không phải độ trong suốt thị giác Three.js target: MeshPhysicalMaterial.opacity + .alphaTest / .transparent (standard); CS2 alpha channel routed to a custom wear shader input instead"
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[8]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      },
+      {
+        "record_id": "core.pbr-wearness-alpha-mask",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.material_pbr[9]",
+        "score": 3.086972024081,
+        "snippets": [
+          "CS2-specific per-pixel durability control embedded in the alpha channel of the Base Color texture, independent of visible transparency. Cơ chế điều khiển độ bền theo từng pixel đặc thù của CS2, nhúng trong kênh alpha của texture Base Color, độc ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.material_pbr[9]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  }
+}

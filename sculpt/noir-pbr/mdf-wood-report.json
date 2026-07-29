@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.857,
+  "estimatedFidelity": 0.857,
+  "targetThreshold": 0.7,
+  "materialId": "mdf-wood",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/mdf.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood",
+  "palette": [
+    "#3B2A19",
+    "#2A1D0F",
+    "#4E3A26",
+    "#17110B",
+    "#6E6357"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood/mdf-wood_albedo.png",
+      "url": "mdf-wood_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood/mdf-wood_roughness.png",
+      "url": "mdf-wood_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood/mdf-wood_height.png",
+      "url": "mdf-wood_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood/mdf-wood_normal.png",
+      "url": "mdf-wood_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/mdf-wood/mdf-wood_ao.png",
+      "url": "mdf-wood_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 275,
+    "sourceHeight": 220,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 275,
+      "height": 220
+    },
+    "mask": {
+      "backgroundColor": "#3B3331",
+      "backgroundNoise": 22.847,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.6404
+    },
+    "mapStats": {
+      "valueRange": 0.271,
+      "heightP90Gradient": 0.06934,
+      "roughnessBase": 0.715,
+      "roughnessVariation": 0.125,
+      "normalStrength": 0.238,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#3B2A19",
+      "#2A1D0F",
+      "#4E3A26",
+      "#17110B",
+      "#6E6357"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

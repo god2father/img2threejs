@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.909,
+  "estimatedFidelity": 0.909,
+  "targetThreshold": 0.7,
+  "materialId": "rubber",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/rubber.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber",
+  "palette": [
+    "#C1BFBD",
+    "#2A2723",
+    "#ACAAA7",
+    "#948C82",
+    "#6F5840"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber/rubber_albedo.png",
+      "url": "rubber_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber/rubber_roughness.png",
+      "url": "rubber_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber/rubber_height.png",
+      "url": "rubber_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber/rubber_normal.png",
+      "url": "rubber_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/rubber/rubber_ao.png",
+      "url": "rubber_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 110,
+    "sourceHeight": 100,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 0,
+      "width": 45,
+      "height": 100
+    },
+    "mask": {
+      "backgroundColor": "#E3E0DF",
+      "backgroundNoise": 18.601,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.1837
+    },
+    "mapStats": {
+      "valueRange": 0.6641,
+      "heightP90Gradient": 0.03323,
+      "roughnessBase": 0.682,
+      "roughnessVariation": 0.056,
+      "normalStrength": 0.195,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#C1BFBD",
+      "#2A2723",
+      "#ACAAA7",
+      "#948C82",
+      "#6F5840"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

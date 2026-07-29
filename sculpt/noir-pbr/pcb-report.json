@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.909,
+  "estimatedFidelity": 0.909,
+  "targetThreshold": 0.7,
+  "materialId": "pcb",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/pcb.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb",
+  "palette": [
+    "#CDAE8A",
+    "#191613",
+    "#C09D74",
+    "#957654",
+    "#514537"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb/pcb_albedo.png",
+      "url": "pcb_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb/pcb_roughness.png",
+      "url": "pcb_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb/pcb_height.png",
+      "url": "pcb_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb/pcb_normal.png",
+      "url": "pcb_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/pcb/pcb_ao.png",
+      "url": "pcb_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 355,
+    "sourceHeight": 150,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 26,
+      "y": 0,
+      "width": 329,
+      "height": 150
+    },
+    "mask": {
+      "backgroundColor": "#C7A788",
+      "backgroundNoise": 139.072,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.1647
+    },
+    "mapStats": {
+      "valueRange": 0.6731,
+      "heightP90Gradient": 0.06173,
+      "roughnessBase": 0.681,
+      "roughnessVariation": 0.099,
+      "normalStrength": 0.229,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#CDAE8A",
+      "#191613",
+      "#C09D74",
+      "#957654",
+      "#514537"
+    ]
+  },
+  "warnings": [],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}

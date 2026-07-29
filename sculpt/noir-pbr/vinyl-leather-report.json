@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "verdict": "pass",
+  "confidence": 0.751,
+  "estimatedFidelity": 0.751,
+  "targetThreshold": 0.7,
+  "materialId": "vinyl-leather",
+  "sourceImage": "/Users/congt/Documents/img2threejs/assets/material-crops/leather.png",
+  "outDir": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather",
+  "palette": [
+    "#2A2A2A",
+    "#212122",
+    "#393836",
+    "#121212",
+    "#98938D"
+  ],
+  "maps": {
+    "albedo": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather/vinyl-leather_albedo.png",
+      "url": "vinyl-leather_albedo.png",
+      "channel": "albedo",
+      "source": "reference-pixel-extraction"
+    },
+    "roughness": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather/vinyl-leather_roughness.png",
+      "url": "vinyl-leather_roughness.png",
+      "channel": "roughness",
+      "source": "reference-pixel-extraction"
+    },
+    "height": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather/vinyl-leather_height.png",
+      "url": "vinyl-leather_height.png",
+      "channel": "height",
+      "source": "reference-pixel-extraction"
+    },
+    "normal": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather/vinyl-leather_normal.png",
+      "url": "vinyl-leather_normal.png",
+      "channel": "normal",
+      "source": "reference-pixel-extraction"
+    },
+    "ao": {
+      "path": "/Users/congt/Documents/img2threejs/sculpt/noir-pbr/vinyl-leather/vinyl-leather_ao.png",
+      "url": "vinyl-leather_ao.png",
+      "channel": "ao",
+      "source": "reference-pixel-extraction"
+    }
+  },
+  "diagnostics": {
+    "sourceWidth": 180,
+    "sourceHeight": 240,
+    "mapSize": 1024,
+    "cropBBoxPixels": {
+      "x": 0,
+      "y": 15,
+      "width": 180,
+      "height": 225
+    },
+    "mask": {
+      "backgroundColor": "#F6F6F6",
+      "backgroundNoise": 3.464,
+      "transparentPixelFraction": 0.0,
+      "foregroundCoverage": 0.9032
+    },
+    "mapStats": {
+      "valueRange": 0.1461,
+      "heightP90Gradient": 0.09956,
+      "roughnessBase": 0.788,
+      "roughnessVariation": 0.157,
+      "normalStrength": 0.273,
+      "blurRadius": 21
+    },
+    "palette": [
+      "#2A2A2A",
+      "#212122",
+      "#393836",
+      "#121212",
+      "#98938D"
+    ]
+  },
+  "warnings": [
+    "image is not clearly isolated from background; using most pixels as material evidence",
+    "object/background separation is weak",
+    "low value range weakens height/roughness inference"
+  ],
+  "limitation": "single-image PBR extraction is an estimate; 70%+ extraction confidence still needs render screenshot review"
+}
