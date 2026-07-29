@@ -2,193 +2,215 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import {
-  createClearTumblerModel,
-  updateLiquidSlosh,
-  type GlassBuildStage,
-} from './createGlassModel';
-import { createCupTiltController } from './liquidSlosh';
+import { createSpeakerBlockout } from './createSpeakerModel';
 import './style.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene');
 if (!canvas) throw new Error('Scene canvas was not found.');
-
-const params = new URLSearchParams(window.location.search);
-const validStages: GlassBuildStage[] = [
-  'blockout',
-  'structural-pass',
-  'form-refinement',
-  'material-pass',
-  'surface-pass',
-  'lighting-pass',
-  'interaction-pass',
-  'optimization-pass',
-];
-const requestedStage = params.get('stage') as GlassBuildStage | null;
-const stage = requestedStage && validStages.includes(requestedStage)
-  ? requestedStage
-  : 'optimization-pass';
-const reviewMode = params.get('review') === '1';
-const darkReview = params.get('backdrop') === 'dark';
-const liquidParam = params.get('liquid');
-const parsedLiquidLevel = liquidParam === null ? Number.NaN : Number(liquidParam);
-const liquidEnabled = liquidParam !== 'off' && liquidParam !== '0';
-const liquidLevel = Number.isFinite(parsedLiquidLevel)
-  ? THREE.MathUtils.clamp(parsedLiquidLevel, 0.08, 0.92)
-  : 0.58;
-document.body.classList.toggle('review-mode', reviewMode);
-
+const sceneCanvas: HTMLCanvasElement = canvas;
+const explodeButton = document.querySelector<HTMLButtonElement>('#explode-button');
 const stageBadge = document.querySelector<HTMLOutputElement>('#stage-badge');
-if (stageBadge) stageBadge.value = stage.replace('-', ' ');
+const reviewMode = new URLSearchParams(window.location.search).get('review') === '1';
+document.body.classList.toggle('review-mode', reviewMode);
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = stage === 'blockout' ? 1.0 : 1.32;
+renderer.toneMappingExposure = 0.96;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.localClippingEnabled = true;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#020303');
-scene.fog = new THREE.FogExp2('#020303', 0.035);
+scene.background = new THREE.Color('#e9e7e2');
 
 const pmrem = new THREE.PMREMGenerator(renderer);
 const room = new RoomEnvironment();
-scene.environment = pmrem.fromScene(room, 0.04).texture;
+scene.environment = pmrem.fromScene(room, 0.06).texture;
 room.dispose();
 pmrem.dispose();
 
-const camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.05, 100);
-camera.position.set(0, 0.9, 5.7);
-camera.lookAt(0, -0.12, 0);
-
+const camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.1, 100);
+if (reviewMode) camera.position.set(0, 0.2, 8.4);
+else camera.position.set(3.5, 2.4, 10.5);
+const assembledCamera = new THREE.Vector3(3.5, 2.4, 10.5);
+// Mirrors the supplied exploded reference: a slightly elevated front-right product view
+// with a moderate product lens, visible right cabinet side, and front layers expanding down-left.
+const explodedCamera = new THREE.Vector3(14, 5.2, 19);
+const assembledTarget = new THREE.Vector3(0, 0, 0);
+const explodedTarget = new THREE.Vector3(0.45, 0.3, 0);
 const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 0, 0);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
 controls.enablePan = false;
-controls.enableRotate = false;
-controls.minDistance = 3.3;
-controls.maxDistance = 8;
-controls.minPolarAngle = Math.PI * 0.2;
-controls.maxPolarAngle = Math.PI * 0.68;
-controls.target.set(0, -0.12, 0);
+controls.enableRotate = true;
+controls.enableZoom = true;
+controls.minDistance = 4.8;
+controls.maxDistance = 26;
+controls.minPolarAngle = Math.PI * 0.24;
+controls.maxPolarAngle = Math.PI * 0.62;
+controls.enabled = !reviewMode;
 
 RectAreaLightUniformsLib.init();
-const useFullLighting = !['blockout', 'structural-pass', 'form-refinement'].includes(stage);
-
-const key = new THREE.RectAreaLight('#f7fbff', useFullLighting ? 7 : 3.2, 2.2, 4.5);
-key.position.set(-3.2, 3.2, 2.6);
-key.lookAt(0, 0.1, 0);
+const key = new THREE.RectAreaLight('#fff8eb', 8, 4.5, 4);
+key.position.set(-4, 5, 4);
+key.lookAt(0, 0, 0);
 scene.add(key);
-
-const fill = new THREE.RectAreaLight('#d9efff', useFullLighting ? 4.2 : 2.1, 1.4, 3.8);
-fill.position.set(3.1, 1.1, 2.1);
-fill.lookAt(0, -0.1, 0);
+const fill = new THREE.RectAreaLight('#f4f7ff', 5.5, 4.5, 3.5);
+fill.position.set(4, 2, 3);
+fill.lookAt(0, 0, 0);
 scene.add(fill);
+const frontFill = new THREE.RectAreaLight('#fffdf6', 3.2, 5, 3);
+frontFill.position.set(0, 1.2, 6);
+frontFill.lookAt(0, 0, 0.2);
+scene.add(frontFill);
+const rim = new THREE.RectAreaLight('#ffffff', 3.4, 3, 3);
+rim.position.set(1, 4, -4);
+rim.lookAt(0, 0, 0);
+const sideFill = new THREE.RectAreaLight('#edf3ff', 2.4, 2.5, 4);
+sideFill.position.set(-5, 1.5, 0);
+sideFill.lookAt(0, 0, 0);
+scene.add(rim, sideFill, new THREE.HemisphereLight('#edf3ff', '#5b554d', 1.55));
 
-const rim = new THREE.RectAreaLight('#ffffff', useFullLighting ? 8.5 : 2.5, 1.1, 4.8);
-rim.position.set(0.2, 2.5, -3.4);
-rim.lookAt(0, 0.2, 0);
-scene.add(rim);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ color: '#1f1c18', opacity: 0.16 }));
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1.72;
+floor.receiveShadow = true;
+scene.add(floor);
 
-const overhead = new THREE.RectAreaLight('#ffffff', useFullLighting ? 5.5 : 2.2, 3.6, 1.2);
-overhead.position.set(0, 4.4, 0.2);
-overhead.lookAt(0, 0, 0);
-scene.add(overhead);
-
-scene.add(new THREE.HemisphereLight('#b9d4df', '#050607', useFullLighting ? 0.85 : 1.4));
-
-const model = createClearTumblerModel({
-  stage,
-  castShadow: true,
-  liquid: liquidEnabled,
-  liquidLevel,
-});
-model.rotation.y = -0.08;
-model.scale.y = 0.93;
-model.position.y = -0.055;
+const model = createSpeakerBlockout();
+model.rotation.y = reviewMode ? 0 : 0.1;
 scene.add(model);
-model.updateMatrixWorld(true);
-const cupTiltController = createCupTiltController(canvas, model);
 
-if (reviewMode && useFullLighting && !darkReview) {
-  const checkerCanvas = document.createElement('canvas');
-  checkerCanvas.width = 128;
-  checkerCanvas.height = 128;
-  const context = checkerCanvas.getContext('2d');
-  if (context) {
-    context.fillStyle = '#f2f2f2';
-    context.fillRect(0, 0, 128, 128);
-    context.fillStyle = '#d7d7d7';
-    context.fillRect(0, 0, 64, 64);
-    context.fillRect(64, 64, 64, 64);
-  }
-  const checkerTexture = new THREE.CanvasTexture(checkerCanvas);
-  checkerTexture.colorSpace = THREE.SRGBColorSpace;
-  checkerTexture.wrapS = THREE.RepeatWrapping;
-  checkerTexture.wrapT = THREE.RepeatWrapping;
-  checkerTexture.repeat.set(24, 24);
-  const reviewBackdrop = new THREE.Mesh(
-    new THREE.PlaneGeometry(12, 12),
-    new THREE.MeshBasicMaterial({ map: checkerTexture, fog: false }),
-  );
-  reviewBackdrop.name = 'material-review-checkerboard';
-  reviewBackdrop.position.set(0, 0, -2.1);
-  scene.add(reviewBackdrop);
+const runtime = model.userData.sculptRuntime as ReturnType<typeof createSpeakerBlockout>['userData']['sculptRuntime'] | undefined;
+const partIds = [
+  'grille', 'front-frame', 'driver-baffle', 'acoustic-chamber', 'amplifier-board',
+  'top-control-deck', 'rear-io-plate', 'rear-panel', 'isolation-feet',
+] as const;
+type PartId = typeof partIds[number];
+const explodeOffsets: Record<PartId, THREE.Vector3> = {
+  // Keep the physical separation on the speaker's depth axis, matching the reference.
+  // The reference camera projects this front-to-back stack toward the lower-left.
+  'acoustic-chamber': new THREE.Vector3(1.2, 0, -0.1),
+  grille: new THREE.Vector3(-4.7, -0.35, 4.6),
+  'front-frame': new THREE.Vector3(-2.8, -0.1, 2.5),
+  'driver-baffle': new THREE.Vector3(-1.1, 0, 1.1),
+  'top-control-deck': new THREE.Vector3(-0.8, 2.5, 0),
+  'amplifier-board': new THREE.Vector3(-0.8, 1.35, -0.1),
+  'isolation-feet': new THREE.Vector3(1.2, -1.5, 0.4),
+  'rear-io-plate': new THREE.Vector3(2.3, 0.5, -1),
+  'rear-panel': new THREE.Vector3(4, 1, -1.7),
+};
+const partButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-part-id]'));
+const selectablePartNodes = new Map<THREE.Object3D, PartId>();
+if (runtime) partIds.forEach((id) => {
+  const node = runtime.nodes[id];
+  if (node) selectablePartNodes.set(node, id);
+});
+const selectionBox = new THREE.Box3Helper(new THREE.Box3(), '#b89451');
+selectionBox.visible = false;
+scene.add(selectionBox);
+let selectedPart: PartId | undefined;
+function setSelectedPart(id: PartId | undefined): void {
+  selectedPart = id;
+  selectionBox.visible = Boolean(id);
+  partButtons.forEach((button) => {
+    const selected = button.dataset.partId === id;
+    button.setAttribute('aria-pressed', String(selected));
+  });
 }
+function updateSelectionBounds(id: PartId): void {
+  const node = runtime?.nodes[id];
+  if (!node) return;
+  selectionBox.box.makeEmpty();
+  node.traverse((child: THREE.Object3D) => {
+    if (!(child instanceof THREE.Mesh)) return;
+    let ancestor = child.parent;
+    while (ancestor && ancestor !== node) {
+      if (selectablePartNodes.has(ancestor)) return;
+      ancestor = ancestor.parent;
+    }
+    selectionBox.box.expandByObject(child);
+  });
+}
+const homePositions = new Map<string, THREE.Vector3>();
+if (runtime) Object.entries(explodeOffsets).forEach(([id]) => {
+  const node = runtime.nodes[id];
+  if (node) homePositions.set(id, node.position.clone());
+});
+let exploded = new URLSearchParams(window.location.search).get('explode') === '1';
+let framingAmount = 1;
+function setExploded(next: boolean): void {
+  exploded = next;
+  framingAmount = 1;
+  explodeButton?.setAttribute('aria-pressed', String(next));
+  if (explodeButton) explodeButton.querySelector('span')!.textContent = next ? 'REASSEMBLE' : 'EXPLODE VIEW';
+  if (stageBadge) stageBadge.value = next ? 'EXPLODED · 9 COMPONENTS' : 'ASSEMBLED · 9 COMPONENTS';
+}
+setExploded(exploded);
+explodeButton?.addEventListener('click', () => setExploded(!exploded));
+partButtons.forEach((button) => button.addEventListener('click', () => {
+  const id = button.dataset.partId as PartId | undefined;
+  if (!id || !partIds.includes(id)) return;
+  setSelectedPart(id);
+}));
 
-const ground = new THREE.Mesh(
-  new THREE.CircleGeometry(1.18, 128),
-  new THREE.ShadowMaterial({ color: '#000000', transparent: true, opacity: 0.15 }),
-);
-ground.name = 'ground';
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = -1.085;
-ground.receiveShadow = true;
-ground.visible = !(reviewMode && useFullLighting && !darkReview);
-scene.add(ground);
-
-const glow = new THREE.Mesh(
-  new THREE.RingGeometry(0.38, 0.92, 128),
-  new THREE.MeshBasicMaterial({ color: '#cdeeff', transparent: true, opacity: useFullLighting ? 0.055 : 0.025, side: THREE.DoubleSide, depthWrite: false }),
-);
-glow.rotation.x = -Math.PI / 2;
-glow.position.y = -1.075;
-scene.add(glow);
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const pointerDown = new THREE.Vector2();
+function selectPartAt(clientX: number, clientY: number): void {
+  const rect = sceneCanvas.getBoundingClientRect();
+  pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+  raycaster.setFromCamera(pointer, camera);
+  for (const hit of raycaster.intersectObject(model, true)) {
+    let object: THREE.Object3D | null = hit.object;
+    while (object && object !== model) {
+      const id = selectablePartNodes.get(object);
+      if (id) {
+        setSelectedPart(id);
+        return;
+      }
+      object = object.parent;
+    }
+  }
+}
+sceneCanvas.addEventListener('pointerdown', (event) => pointerDown.set(event.clientX, event.clientY));
+sceneCanvas.addEventListener('pointerup', (event) => {
+  if (pointerDown.distanceTo(new THREE.Vector2(event.clientX, event.clientY)) > 5) return;
+  selectPartAt(event.clientX, event.clientY);
+});
+sceneCanvas.addEventListener('click', (event) => {
+  selectPartAt(event.clientX, event.clientY);
+});
 
 function resize(): void {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  renderer.setSize(width, height, false);
-  camera.aspect = width / height;
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 }
-
 window.addEventListener('resize', resize);
 
-let previousFrameTime = performance.now();
-let smoothedFps = 60;
-
-function animate(): void {
-  const currentFrameTime = performance.now();
-  const frameDuration = Math.max(1, currentFrameTime - previousFrameTime);
-  const deltaSeconds = Math.min(frameDuration / 1000, 1 / 30);
-  previousFrameTime = currentFrameTime;
-  smoothedFps += (1000 / frameDuration - smoothedFps) * 0.08;
-  cupTiltController.update(deltaSeconds);
-  updateLiquidSlosh(model, deltaSeconds);
+const positionTarget = new THREE.Vector3();
+renderer.setAnimationLoop(() => {
+  if (runtime) Object.entries(explodeOffsets).forEach(([id, offset]) => {
+    const node = runtime.nodes[id];
+    const home = homePositions.get(id);
+    if (!node || !home) return;
+    positionTarget.copy(home).addScaledVector(offset, exploded ? 1 : 0);
+    node.position.lerp(positionTarget, 0.09);
+  });
+  if (selectedPart && runtime?.nodes[selectedPart]) {
+    model.updateMatrixWorld(true);
+    updateSelectionBounds(selectedPart);
+  }
+  if (!reviewMode) model.rotation.y = THREE.MathUtils.lerp(model.rotation.y, 0.1, 0.075);
+  if (!reviewMode && framingAmount > 0.001) {
+    camera.position.lerp(exploded ? explodedCamera : assembledCamera, 0.085);
+    controls.target.lerp(exploded ? explodedTarget : assembledTarget, 0.085);
+    framingAmount *= 0.9;
+  }
   controls.update();
   renderer.render(scene, camera);
-  if (reviewMode) {
-    renderer.domElement.dataset.drawCalls = String(renderer.info.render.calls);
-    renderer.domElement.dataset.triangles = String(renderer.info.render.triangles);
-    renderer.domElement.dataset.fps = smoothedFps.toFixed(1);
-    renderer.domElement.dataset.radialSegments = String(model.userData.optimization.radialSegments);
-  }
-}
-
-window.addEventListener('beforeunload', () => cupTiltController.dispose());
-renderer.setAnimationLoop(animate);
+});
