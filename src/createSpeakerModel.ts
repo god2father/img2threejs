@@ -660,25 +660,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     roughness: 'generated://top-control/brushed-brass-roughness',
     provenance: 'Directional horizontal brushing calibrated from the supplied physical top-control reference.',
   };
-  const frontFrameLeather = cabinetLeather.clone();
-  frontFrameLeather.name = 'Physical pebbled leather front frame';
-  frontFrameLeather.map = cabinetLeatherAlbedo.clone();
-  frontFrameLeather.normalMap = cabinetLeatherNormal.clone();
-  frontFrameLeather.roughnessMap = cabinetLeatherRoughness.clone();
-  for (const texture of [frontFrameLeather.map, frontFrameLeather.normalMap, frontFrameLeather.roughnessMap]) {
-    texture?.repeat.set(3.2, 0.7);
-    if (texture) texture.needsUpdate = true;
-  }
-  frontFrameLeather.color.set('#5d5d5d');
-  frontFrameLeather.normalScale.set(0.56, 0.56);
-  frontFrameLeather.userData.pbrChannels = {
-    ...cabinetLeather.userData.pbrChannels,
-    usage: 'The same physical pebbled leather wraps the detachable padded front frame at a tube-appropriate repeat.',
-  };
-  enableTriplanarLeather(frontFrameLeather, CABINET_LEATHER_TILE_WORLD_SIZE, 'front-frame-v1');
-  frontFrameLeather.needsUpdate = true;
-  const frontFramePiping = new THREE.MeshStandardMaterial({ color: '#9d713c', metalness: 0.86, roughness: 0.36 });
-  const frontFrameGasket = new THREE.MeshStandardMaterial({ color: '#070707', metalness: 0.04, roughness: 0.7 });
+  const grilleLowerAccent = new THREE.MeshStandardMaterial({ color: '#9d713c', metalness: 0.86, roughness: 0.36 });
   const rubber = referenceMaterial('rubber', '#090a0b', [2.4, 2.4], 0, 0.86, 0.22);
   let refreshChamberMdfPbr = () => undefined;
   const chamberMdfAlbedo = materialTexture('chamber-mdf', 'albedo', [1, 1], true, 'layer04-v2', () => refreshChamberMdfPbr());
@@ -763,9 +745,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   baffleMat.envMapIntensity = 0.12;
   brass.envMapIntensity = 0.42;
   brassDark.envMapIntensity = 0.26;
-  frontFrameLeather.envMapIntensity = 0.04;
-  frontFramePiping.envMapIntensity = 0.3;
-  frontFrameGasket.envMapIntensity = 0.12;
+  grilleLowerAccent.envMapIntensity = 0.3;
   wood.envMapIntensity = 0.08;
   metalGrille.envMapIntensity = 0.16;
   const grilleEdgeMetal = referenceMaterial('matte-black', '#17130f', [3.8, 2.1], 0.28, 0.58, 0.12);
@@ -1005,8 +985,6 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   } as const;
 
   const COMPONENT_FIT = {
-    frontFrame: (CABINET.frontOpeningWidth + 0.2) / 4.42,
-    grille: (CABINET.frontOpeningWidth - 0.15) / 4.1,
     rearCover: {
       x: (CABINET.width - 0.45) / 4.04,
       y: (CABINET.height - 0.65) / 2,
@@ -1017,6 +995,13 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
       y: 0.9 / 0.66,
       z: 1.2,
     },
+  } as const;
+
+  const ASSEMBLED_DEPTH = {
+    driverBaffle: CABINET.depth / 2 - 0.27,
+    grille: CABINET.depth / 2 - 0.01,
+    rearPanel: -CABINET.depth / 2 + 0.05,
+    rearIo: -CABINET.depth / 2 + 0.01,
   } as const;
 
   function socket(id: string, parent: THREE.Object3D, position: THREE.Vector3Tuple): void {
@@ -1498,53 +1483,6 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   rearPort.add(rearPortTunnel);
   cabinet.add(rearPort);
 
-  const frameGroup = new THREE.Group();
-  // The reference has a padded, continuously convex leather welt rather than a flat
-  // annular face. A closed rounded-rectangle tube gives the frame a genuinely round
-  // cross-section while preserving the open aperture and single-piece silhouette.
-  const frameOuterWidth = 4.42;
-  const frameOuterHeight = 2.64;
-  const frameWall = 0.24;
-  const frameCenterPath = new THREE.Shape();
-  appendRoundedRectangle(
-    frameCenterPath,
-    frameOuterWidth - frameWall,
-    frameOuterHeight - frameWall,
-    0.12,
-  );
-  const frameCenterPoints = frameCenterPath.getSpacedPoints(224).slice(0, -1)
-    .map((point) => new THREE.Vector3(point.x, point.y, 0));
-  const frameCenterCurve = new THREE.CatmullRomCurve3(frameCenterPoints, true, 'centripetal');
-  const frameGeometry = new THREE.TubeGeometry(frameCenterCurve, 256, frameWall / 2, 16, true);
-  frameGeometry.scale(1, 1, 1.05);
-  frameGroup.add(new THREE.Mesh(frameGeometry, frontFrameLeather));
-
-  // A recessed black welt is visible immediately inside the brass piping in the
-  // component reference. Keeping it separate preserves the layered upholstery read.
-  const gasketOuter = new THREE.Shape();
-  appendRoundedRectangle(gasketOuter, 4, 2.22, 0.115);
-  const gasketInner = new THREE.Path();
-  appendRoundedRectangle(gasketInner, 3.9, 2.12, 0.072, true);
-  gasketOuter.holes.push(gasketInner);
-  const gasketGeometry = new THREE.ExtrudeGeometry(gasketOuter, {
-    depth: 0.018, bevelEnabled: true, bevelSegments: 3, bevelSize: 0.008, bevelThickness: 0.006, curveSegments: 20,
-  });
-  gasketGeometry.translate(0, 0, 0.076);
-  frameGroup.add(new THREE.Mesh(gasketGeometry, frontFrameGasket));
-
-  // The brass detail is a true round tube following a closed rounded-rectangle curve,
-  // giving it the cylindrical highlight and raised profile seen in the reference.
-  const pipingPath = new THREE.Shape();
-  appendRoundedRectangle(pipingPath, 4.03, 2.25, 0.13);
-  const pipingPoints = pipingPath.getSpacedPoints(160).slice(0, -1)
-    .map((point) => new THREE.Vector3(point.x, point.y, 0.104));
-  const pipingCurve = new THREE.CatmullRomCurve3(pipingPoints, true, 'centripetal');
-  const pipingGeometry = new THREE.TubeGeometry(pipingCurve, 192, 0.03, 12, true);
-  frameGroup.add(new THREE.Mesh(pipingGeometry, frontFramePiping));
-  const frontFrame = addPart('front-frame', 'Front frame with gold piping', cabinet, frameGroup, { detachable: true, explodeGroup: 'front-stack' });
-  frontFrame.position.z = outerHalfDepth + 0.16;
-  frontFrame.scale.setScalar(COMPONENT_FIT.frontFrame);
-
   const baffleGroup = new THREE.Group();
   baffleGroup.name = 'DriverBaffleAssembly';
   const BAFFLE = {
@@ -1743,30 +1681,61 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   baffleGroup.add(drivers);
 
   const baffle = addPart('driver-baffle', 'Driver baffle and speaker drivers', cabinet, baffleGroup, { detachable: true, explodeGroup: 'front-stack' });
-  baffle.position.z = outerHalfDepth + 0.16;
+  baffle.position.z = ASSEMBLED_DEPTH.driverBaffle;
 
   const grilleGroup = new THREE.Group();
   grilleGroup.name = 'Perforated metal grille structure';
-  const grilleBacking = rounded(4.1, 2.3, 0.045, 0.06, metalGrille);
-  grilleBacking.position.z = 0.23;
+  const GRILLE = {
+    width: CABINET.frontOpeningWidth - 0.04,
+    height: CABINET.frontOpeningHeight - 0.04,
+    depth: 0.055,
+    radius: CABINET.frontOpeningRadius - 0.025,
+    edgeInset: 0.035,
+  } as const;
+  grilleGroup.userData.dimensions = { ...GRILLE };
+
+  // The first service layer fills the complete cabinet aperture. The opaque backing
+  // prevents the baffle and drivers from showing through at the edges or between the
+  // visual weave, while the textured front surface carries the grille appearance.
+  const grilleOcclusionBacking = rounded(
+    GRILLE.width,
+    GRILLE.height,
+    GRILLE.depth,
+    GRILLE.radius,
+    grilleDark,
+  );
+  grilleOcclusionBacking.name = 'FullApertureOpaqueGrilleBacking';
+  grilleOcclusionBacking.position.z = -0.018;
+  grilleGroup.add(grilleOcclusionBacking);
+
+  const grilleBacking = rounded(GRILLE.width, GRILLE.height, 0.045, GRILLE.radius, metalGrille);
+  grilleBacking.position.z = 0;
   grilleGroup.add(grilleBacking);
+  const grilleEdgeX = GRILLE.width / 2 - GRILLE.edgeInset;
+  const grilleEdgeY = GRILLE.height / 2 - GRILLE.edgeInset;
   for (const [x, y, width, height] of [
-    [0, 1.12, 4.0, 0.026], [0, -1.12, 4.0, 0.026], [-1.99, 0, 0.026, 2.18], [1.99, 0, 0.026, 2.18],
+    [0, grilleEdgeY, GRILLE.width - 0.07, 0.026],
+    [0, -grilleEdgeY, GRILLE.width - 0.07, 0.026],
+    [-grilleEdgeX, 0, 0.026, GRILLE.height - 0.07],
+    [grilleEdgeX, 0, 0.026, GRILLE.height - 0.07],
   ] as const) {
     const grilleEdge = rounded(width, height, 0.028, 0.008, grilleEdgeMetal);
-    grilleEdge.position.set(x, y, 0.262);
+    grilleEdge.position.set(x, y, 0.02);
     grilleGroup.add(grilleEdge);
   }
+  const lowerAccent = rounded(GRILLE.width - 0.1, 0.035, 0.052, 0.016, grilleLowerAccent);
+  lowerAccent.name = 'LowerBrassGrilleAccent';
+  lowerAccent.position.set(0, -GRILLE.height / 2 + 0.07, 0.04);
+  grilleGroup.add(lowerAccent);
   const grille = addPart('grille', 'Perforated metal grille', cabinet, grilleGroup, { detachable: true, explodeGroup: 'front-stack' });
-  grille.position.z = outerHalfDepth + 0.16;
-  grille.scale.setScalar(COMPONENT_FIT.grille);
+  grille.position.z = ASSEMBLED_DEPTH.grille;
 
   // The reference has a warm gold script badge raised slightly above the dense weave.
   // Two alpha-cut text layers make that relief legible without adding a rectangular decal.
   const badgeShadow = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 0.4), makeBadgeMaterial('#241708', '#120b04'));
-  badgeShadow.position.set(0.018, -0.018, 0.273);
+  badgeShadow.position.set(0.018, -0.018, 0.048);
   const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 0.4), makeBadgeMaterial());
-  badge.position.z = 0.286;
+  badge.position.z = 0.058;
   grille.add(badgeShadow, badge);
 
   const topGroup = new THREE.Group();
@@ -2086,13 +2055,13 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   const rearPanelMesh = rounded(4.04, 2.0, 0.12, 0.08, vinylEdge);
   rearGroup.add(rearPanelMesh);
   const rear = addPart('rear-panel', 'Rear cover panel', cabinet, rearGroup, { detachable: true, explodeGroup: 'rear-stack' });
-  rear.position.z = -outerHalfDepth - 0.09;
+  rear.position.z = ASSEMBLED_DEPTH.rearPanel;
   rear.scale.set(COMPONENT_FIT.rearCover.x, COMPONENT_FIT.rearCover.y, COMPONENT_FIT.rearCover.z);
   const rearPanel = rounded(3.76, 1.72, 0.06, 0.05, vinyl);
-  rearPanel.position.z = -0.1;
+  rearPanel.position.z = -0.02;
   rear.add(rearPanel);
-  const handle = rounded(1.08, 0.3, 0.13, 0.11, rubber);
-  handle.position.set(0, 0.48, -0.15);
+  const handle = rounded(1.08, 0.3, 0.04, 0.08, rubber);
+  handle.position.set(0, 0.48, -0.035);
   rear.add(handle);
 
   const ioGroup = new THREE.Group();
@@ -2100,14 +2069,14 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   ioGroup.add(ioPlate);
   for (const x of [-0.78, -0.38, 0.02, 0.4]) {
     const socketRing = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.022, 8, 20), vinylEdge);
-    socketRing.position.set(x, -0.03, -0.045);
+    socketRing.position.set(x, -0.03, -0.015);
     ioGroup.add(socketRing);
   }
   const power = rounded(0.2, 0.25, 0.035, 0.02, vinylEdge);
-  power.position.set(0.9, -0.02, -0.05);
+  power.position.set(0.9, -0.02, -0.015);
   ioGroup.add(power);
   const io = addPart('rear-io-plate', 'Rear brass connection plate', cabinet, ioGroup, { detachable: true, explodeGroup: 'rear-stack' });
-  io.position.set(0, -0.38, -outerHalfDepth - 0.26);
+  io.position.set(0, -0.38, ASSEMBLED_DEPTH.rearIo);
   io.scale.set(COMPONENT_FIT.rearIo.x, COMPONENT_FIT.rearIo.y, COMPONENT_FIT.rearIo.z);
 
   const feetGroup = new THREE.Group();

@@ -75,6 +75,18 @@
       "sha256": "d9b7e535a6198a279aea92d8ba276a3795f49ad6692df4aa7cc7d325b7fffd3d"
     },
     {
+      "id": "component-driver-baffle-multiview",
+      "category": "component",
+      "componentId": "driver-baffle",
+      "label": "Driver baffle front, rear, side, top, bottom, and three-quarter views",
+      "path": "components/driver-baffle-multiview.png",
+      "sourceName": "codex-clipboard-d970e80d-48a8-45ec-ab5f-07f1988c1d7f.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2053703,
+      "sha256": "fc64febb3c1a392be5c36a87db80b89edc3135ed81bae0721975fdc20cb12c24"
+    },
+    {
       "id": "component-04",
       "category": "component",
       "componentId": "04",

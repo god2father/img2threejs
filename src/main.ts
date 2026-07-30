@@ -86,7 +86,7 @@ scene.add(model);
 
 const runtime = model.userData.sculptRuntime as ReturnType<typeof createSpeakerBlockout>['userData']['sculptRuntime'] | undefined;
 const partIds = [
-  'grille', 'front-frame', 'driver-baffle', 'acoustic-chamber', 'amplifier-board',
+  'grille', 'driver-baffle', 'acoustic-chamber', 'amplifier-board',
   'top-control-deck', 'rear-io-plate', 'rear-panel', 'isolation-feet',
 ] as const;
 type PartId = typeof partIds[number];
@@ -95,7 +95,6 @@ const explodeOffsets: Record<PartId, THREE.Vector3> = {
   // The reference camera projects this front-to-back stack toward the lower-left.
   'acoustic-chamber': new THREE.Vector3(1.2, 0, -0.2),
   grille: new THREE.Vector3(-6.2, -0.4, 4.5),
-  'front-frame': new THREE.Vector3(-4.1, -0.2, 3.1),
   'driver-baffle': new THREE.Vector3(-1.7, -0.05, 1.3),
   'top-control-deck': new THREE.Vector3(-0.8, 3.2, 0.2),
   'amplifier-board': new THREE.Vector3(-0.8, 2.6, 0.4),
@@ -147,7 +146,7 @@ function setExploded(next: boolean): void {
   framingAmount = 1;
   explodeButton?.setAttribute('aria-pressed', String(next));
   if (explodeButton) explodeButton.querySelector('span')!.textContent = next ? 'REASSEMBLE' : 'EXPLODE VIEW';
-  if (stageBadge) stageBadge.value = next ? 'EXPLODED · 9 COMPONENTS' : 'ASSEMBLED · 9 COMPONENTS';
+  if (stageBadge) stageBadge.value = next ? 'EXPLODED · 8 COMPONENTS' : 'ASSEMBLED · 8 COMPONENTS';
 }
 setExploded(exploded);
 explodeButton?.addEventListener('click', () => setExploded(!exploded));
@@ -199,7 +198,10 @@ renderer.setAnimationLoop(() => {
     const home = homePositions.get(id);
     if (!node || !home) return;
     positionTarget.copy(home).addScaledVector(offset, exploded ? 1 : 0);
-    node.position.lerp(positionTarget, 0.09);
+    node.position.lerp(positionTarget, 0.11);
+    if (node.position.distanceToSquared(positionTarget) < 0.000001) {
+      node.position.copy(positionTarget);
+    }
   });
   if (selectedPart && runtime?.nodes[selectedPart]) {
     model.updateMatrixWorld(true);

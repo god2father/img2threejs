@@ -157,14 +157,14 @@
           "realization": "unreported"
         },
         {
-          "id": "gold-front-piping",
+          "id": "lower-brass-accent",
           "kind": "linework",
-          "description": "Thin brass/gold rectangular trim seated in the front frame.",
+          "description": "Thin brass/gold accent seated along the lower edge of the recessed front grille.",
           "scale": "meso",
-          "affects": "front-frame perimeter",
+          "affects": "grille lower edge",
           "mapsTo": {
             "type": "feature",
-            "ref": "front-frame/gold-piping"
+            "ref": "grille/lower-brass-accent"
           },
           "evidenceRef": "assets/reference-speaker-front.png",
           "confidence": 0.95,
@@ -608,7 +608,7 @@
       "mustPass": true,
       "componentRefs": [
         "grille",
-        "front-frame",
+        "cabinet-shell",
         "driver-array"
       ],
       "evidenceRefs": [
@@ -892,7 +892,7 @@
       "topologyClass": "conforming-shell",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "A single watertight rounded exterior body produces all eight outer corners as one continuous surface. CSG subtraction cuts the complete front opening and inner cavity, the capsule-shaped top handle opening and the rounded rear port; named top, bottom, side, back and front-frame nodes remain logical surface anchors rather than overlapping visible meshes.",
+        "topologyIntent": "A single watertight rounded exterior body produces all eight outer corners as one continuous surface. CSG subtraction cuts the complete front opening and inner cavity, the capsule-shaped top handle opening and the rounded rear port; named top, bottom, side, back and front-lip nodes remain logical surface anchors rather than overlapping visible meshes.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.33,
@@ -1318,7 +1318,7 @@
       "topologyClass": "assembled-solid",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Container for independently pickable grille, trim and driver baffle.",
+        "topologyIntent": "Container for an inset front stack: the cabinet leather lip is foremost, followed by a narrow integrated leather rim, the recessed grille, and the driver baffle behind it.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -1353,8 +1353,8 @@
         ]
       },
       "dimensions": {
-        "width": 4.35,
-        "height": 2.55,
+        "width": 5.75,
+        "height": 3.35,
         "depth": 0.32,
         "units": "relative",
         "confidence": 0.88
@@ -1363,7 +1363,7 @@
         "position": [
           0,
           0,
-          1.04
+          1.74
         ],
         "rotation": [
           0,
@@ -1463,7 +1463,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Container for independently pickable grille, trim and driver baffle."
+        "notes": "The assembled stack shares the resized cabinet datum: the leather lip remains foremost, the grille sits slightly behind it, and the baffle is recessed behind the grille."
       },
       "evidenceRefs": [
         "front-view",
@@ -1487,7 +1487,7 @@
       "topologyClass": "assembled-solid",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Container for rear panel and brass I/O plate.",
+        "topologyIntent": "Container for the rear cover and I/O hardware, all seated on one compact installation plane against the resized cabinet.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -1532,7 +1532,7 @@
         "position": [
           0,
           0,
-          -1.04
+          -1.7
         ],
         "rotation": [
           0,
@@ -1632,7 +1632,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Container for rear panel and brass I/O plate."
+        "notes": "The rear cover, handle and I/O hardware return to one compact rear datum without stacked floating gaps."
       },
       "evidenceRefs": [
         "front-view",
@@ -1646,17 +1646,17 @@
       "fidelityTier": "reference"
     },
     {
-      "id": "front-frame",
-      "name": "Rounded padded leather front frame and gold piping",
+      "id": "cabinet-front-lip",
+      "name": "Cabinet-integrated leather front lip",
       "level": "meso",
-      "role": "trim-frame",
+      "role": "fixed-shell-surface",
       "importance": 0.82,
       "confidence": 0.88,
       "primitive": "extrude",
-      "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "This is a logical surface region of the cabinet shell, not an independently removable service layer.",
       "geometryDescriptor": {
-        "topologyIntent": "A single closed rounded-rectangle leather welt with a continuously convex padded cross-section, a true open aperture, and separate inset gold piping; the visible face must not read as a flat annular plate.",
+        "topologyIntent": "A slim leather lip formed continuously by the cabinet shell around the true front aperture; it must not create a separate middle frame in assembled or exploded views.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.12,
@@ -1666,9 +1666,9 @@
         "uvStrategy": "generated object-space coordinates",
         "normalStrategy": "smooth analytic vertex normals"
       },
-      "parent": "front-assembly",
+      "parent": "cabinet-shell",
       "attachment": {
-        "parentId": "front-assembly",
+        "parentId": "cabinet-shell",
         "parentSocket": "front-seat",
         "localStart": [
           0,
@@ -1691,9 +1691,9 @@
         ]
       },
       "dimensions": {
-        "width": 5.95,
-        "height": 3.55,
-        "depth": 0.34,
+        "width": 4.34,
+        "height": 2.58,
+        "depth": 0.12,
         "units": "relative",
         "confidence": 0.88
       },
@@ -1701,7 +1701,7 @@
         "position": [
           0,
           0,
-          0
+          0.02
         ],
         "rotation": [
           0,
@@ -1715,7 +1715,7 @@
         ]
       },
       "actionProfile": {
-        "animationRole": "detachable-assembly",
+        "animationRole": "fixed-shell-region",
         "pivot": {
           "mode": "component-center",
           "localPosition": [
@@ -1731,12 +1731,12 @@
           "confidence": 0.88
         },
         "transformChannels": {
-          "translate": true,
-          "rotate": true,
+          "translate": false,
+          "rotate": false,
           "scale": true,
           "bend": false,
           "twist": false,
-          "detach": true,
+          "detach": false,
           "visibility": true,
           "materialState": true
         },
@@ -1777,15 +1777,11 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "gold-piping",
+          "id": "front-lip-corner-radius",
           "type": "reference-detail"
         },
         {
-          "id": "frame-corner-radius",
-          "type": "reference-detail"
-        },
-        {
-          "id": "rounded-padded-cross-section",
+          "id": "integrated-shell-lip",
           "type": "bevel-highlight"
         }
       ],
@@ -1809,7 +1805,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "The padded frame uses the same physical-grain-v4 leather and object-space triplanar projection as the cabinet shell, keeping the real amplifier pebble scale continuous around the curved cross-section without UV seams. High roughness and restrained normal amplitude keep the material tactile without polished plastic highlights. Separate round brass piping and a recessed black gasket sit inside the opening."
+        "notes": "The front lip is part of the cabinet shell and uses its physical-grain-v4 leather projection. It is not a detachable middle frame; the recessed grille carries its own lower brass accent."
       },
       "evidenceRefs": [
         "front-view",
@@ -1818,9 +1814,8 @@
         "exploded-view"
       ],
       "details": [
-        "gold-piping",
-        "frame-corner-radius",
-        "rounded-padded-cross-section"
+        "front-lip-corner-radius",
+        "integrated-shell-lip"
       ],
       "fidelityTier": "reference"
     },
@@ -1835,7 +1830,7 @@
       "topologyClass": "fiber-strand",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Opaque woven cloth cover with a physically separated neutral badge.",
+        "topologyIntent": "Opaque woven cloth cover sized to fill the complete cabinet aperture behind the leather lip, with a full-area dark occlusion backing and a physically separated neutral badge.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -1870,9 +1865,9 @@
         ]
       },
       "dimensions": {
-        "width": 5.6,
-        "height": 3.14,
-        "depth": 0.1,
+        "width": 5.71,
+        "height": 3.31,
+        "depth": 0.055,
         "units": "relative",
         "confidence": 0.88
       },
@@ -1962,6 +1957,14 @@
         {
           "id": "grille-badge",
           "type": "reference-detail"
+        },
+        {
+          "id": "lower-brass-accent",
+          "type": "reference-detail"
+        },
+        {
+          "id": "full-aperture-occlusion-backing",
+          "type": "occlusion-shell"
         }
       ],
       "colorMaterialRecipe": {
@@ -1984,7 +1987,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Opaque woven cloth cover with a physically separated neutral badge."
+        "notes": "The woven cover fills the complete front aperture behind the leather lip. A same-size opaque dark backing prevents the driver baffle from appearing through the edges or visual weave; the narrow edge frame, lower brass accent and raised badge move with the grille."
       },
       "evidenceRefs": [
         "front-view",
@@ -2054,7 +2057,7 @@
         "position": [
           0,
           0,
-          0
+          -0.26
         ],
         "rotation": [
           0,
@@ -2162,7 +2165,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Matte textured composite board with four genuine perforations, coated-metal edge relief, silver corner hardware, and brass threaded inserts."
+        "notes": "Matte textured composite board recessed behind the grille, with four genuine perforations, coated-metal edge relief, silver corner hardware, and brass threaded inserts."
       },
       "evidenceRefs": [
         "front-view",
@@ -2233,7 +2236,7 @@
         "position": [
           0,
           0,
-          0
+          -1.7
         ],
         "rotation": [
           0,
@@ -2967,7 +2970,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Black rear panel with a true capsule-shaped negative handle opening and perimeter screws."
+        "notes": "Black rear panel seated close to the cabinet rear plane, with a shallow capsule-shaped handle detail and perimeter screws."
       },
       "evidenceRefs": [
         "front-view",
@@ -3037,7 +3040,7 @@
         "position": [
           0,
           -0.35,
-          -0.09
+          -0.04
         ],
         "rotation": [
           0,
@@ -3141,7 +3144,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Brass audio and power plate; exact port protocol is intentionally generic."
+        "notes": "Brass audio and power plate aligned tightly to the rear cover plane; exact port protocol is intentionally generic."
       },
       "evidenceRefs": [
         "front-view",
@@ -3495,16 +3498,16 @@
     },
     {
       "id": "front-trim",
-      "name": "Brass perimeter piping",
+      "name": "Lower grille brass accent",
       "level": "micro",
       "role": "metal-accent",
       "importance": 0.62,
       "confidence": 0.88,
-      "primitive": "tube",
+      "primitive": "box",
       "topologyClass": "surface-relief",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Rounded rectangular tube makes the gold trim a real highlight-catching profile.",
+        "topologyIntent": "A single slim rounded brass bar follows only the lower edge of the grille and moves with the grille as one service layer.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.015,
@@ -3514,9 +3517,9 @@
         "uvStrategy": "generated object-space coordinates",
         "normalStrategy": "smooth analytic vertex normals"
       },
-      "parent": "front-frame",
+      "parent": "grille",
       "attachment": {
-        "parentId": "front-frame",
+        "parentId": "grille",
         "parentSocket": "front-seat",
         "localStart": [
           0,
@@ -3539,8 +3542,8 @@
         ]
       },
       "dimensions": {
-        "width": 4.12,
-        "height": 2.22,
+        "width": 5.61,
+        "height": 0.035,
         "depth": 0.05,
         "units": "relative",
         "confidence": 0.88
@@ -3625,7 +3628,7 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "gold-piping",
+          "id": "lower-brass-accent",
           "type": "reference-detail"
         }
       ],
@@ -3649,7 +3652,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Rounded rectangular tube makes the gold trim a real highlight-catching profile."
+        "notes": "A slim rounded brass bar is attached directly to the grille bottom edge; no perimeter loop or independent middle frame remains."
       },
       "evidenceRefs": [
         "front-view",
@@ -3658,7 +3661,7 @@
         "exploded-view"
       ],
       "details": [
-        "gold-piping"
+        "lower-brass-accent"
       ],
       "fidelityTier": "reference"
     },

@@ -27,6 +27,9 @@
 | 08 | 后盖板与提手孔 | `components/08-rear-cover.png` |
 | 09 | 橡胶脚与黄铜紧固件 | `components/09-feet-hardware.png` |
 
+驱动挡板的正面、背面、左右侧、上下侧及三分之四视角补充图保存在
+`components/driver-baffle-multiview.png`，后续修改喇叭挡板厚度、磁体结构和背部安装关系时优先使用。
+
 ## 使用规则
 
 1. 修改某个组件时，以对应的单件图为第一依据。
