@@ -2370,9 +2370,9 @@
       "confidence": 0.88,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "The supplied physical-product view resolves a capsule-ended brass panel seated inside a matching deep black top well, with three primary knobs and asymmetric auxiliary controls.",
+      "topologyRationale": "The supplied physical-product views resolve a capsule-ended brass panel seated below the cabinet top. The surrounding dark area is the continuous leather shell rolling down through a rounded cavity slope plus contact shadow, not a separate black trim frame.",
       "geometryDescriptor": {
-        "topologyIntent": "A broad capsule-ended control well is cut into the continuous top shell. A beveled brass plate sits below the surrounding leather surface and carries three aligned knurled knobs, left input jack and white button, right black button and auxiliary jack, a toggle switch, and six plated mounting bores.",
+        "topologyIntent": "A broad capsule-ended cavity is cut into the continuous leather top shell. Its opening rolls inward through a smooth leather-clad slope with no independent black border mesh. A beveled champagne-brass plate sits at the cavity bottom and carries the physical left-to-right layout: AUX jack, SOURCE button and indicators, three aligned black-skirt/gold-cap knobs, a PLAY/PAUSE button, and the final POWER toggle. Two discreet end fasteners and printed scales complete the plate.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2416,7 +2416,7 @@
       "transform": {
         "position": [
           0,
-          2.055,
+          1.955,
           -0.32
         ],
         "rotation": [
@@ -2513,7 +2513,31 @@
           "type": "reference-detail"
         },
         {
-          "id": "six-plated-panel-bores",
+          "id": "brushed-brass-panel",
+          "type": "reference-detail"
+        },
+        {
+          "id": "aux-source-cluster",
+          "type": "reference-detail"
+        },
+        {
+          "id": "playback-control-cluster",
+          "type": "reference-detail"
+        },
+        {
+          "id": "power-toggle-and-labels",
+          "type": "reference-detail"
+        },
+        {
+          "id": "printed-control-legends",
+          "type": "reference-detail"
+        },
+        {
+          "id": "radial-control-scales",
+          "type": "reference-detail"
+        },
+        {
+          "id": "panel-fasteners",
           "type": "reference-detail"
         }
       ],
@@ -2533,11 +2557,11 @@
         "macroRoughness": 0.18,
         "microRoughness": 0.08,
         "bumpAmplitude": 0.04,
-        "normalPattern": "independent procedural height field",
+        "normalPattern": "independent fine horizontal brushed-brass normal field",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "The control assembly follows the physical product reference: the brass plate sits below the leather top in a deep capsule-ended well, with three main knobs and asymmetric small controls. It is not a floating rear strip."
+        "notes": "The control assembly follows both saved physical references: the pale directional-brushed brass plate sits below the leather top, while the apparent dark surround is produced by the continuous rounded leather cavity slope and its shadow rather than a separate black frame. Its exact left-to-right order is AUX, SOURCE, VOLUME, BASS, TREBLE, PLAY/PAUSE and POWER. The three main knobs have black fluted skirts, gold caps and red pointers; an alpha-cut marking layer provides the printed legends, source indicators, radial tick scales and playback icons without a rectangular decal."
       },
       "evidenceRefs": [
         "front-view",
@@ -2550,7 +2574,13 @@
         "three-knurled-control-knobs",
         "toggle-stem",
         "asymmetric-auxiliary-controls",
-        "six-plated-panel-bores"
+        "brushed-brass-panel",
+        "aux-source-cluster",
+        "playback-control-cluster",
+        "power-toggle-and-labels",
+        "printed-control-legends",
+        "radial-control-scales",
+        "panel-fasteners"
       ],
       "fidelityTier": "reference"
     },

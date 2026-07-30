@@ -1,0 +1,191 @@
+{
+  "sourceImage": "C:\\Users\\tc\\Documents\\img2threejs\\assets\\reference\\noir-s1\\components\\physical-top-control-panel-front.png",
+  "zonesDir": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones",
+  "detailInventory": {
+    "scanMethod": "grid-3x3",
+    "targetMinDetails": 6,
+    "details": [
+      {
+        "id": "zone-r0c0",
+        "kind": "capsule-edge-and-brand-legend",
+        "description": "Pale champagne brushed-brass plate begins in a broad capsule end with a thin bevel; ACTON II is printed above the left control cluster.",
+        "region": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "meso plate silhouette plus micro printed legend",
+        "affects": "top control plate outline, bevel and left brand marking",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/capsule-ended-control-well"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r0c0.png",
+        "confidence": 0.96
+      },
+      {
+        "id": "zone-r0c1",
+        "kind": "directional-brushed-metal",
+        "description": "Fine horizontal brass brushing runs continuously beneath the VOLUME, BASS and TREBLE legends without broad photographic highlights baked into the color.",
+        "region": {
+          "x": 0.3333,
+          "y": 0.0,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "micro directional surface response",
+        "affects": "albedo, roughness and normal response of the brass plate",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/brushed-brass-panel"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r0c1.png",
+        "confidence": 0.98
+      },
+      {
+        "id": "zone-r0c2",
+        "kind": "power-control-cluster",
+        "description": "The right capsule end carries a POWER legend, red indicator dot and a raised gold toggle with concentric mounting hardware.",
+        "region": {
+          "x": 0.6667,
+          "y": 0.0,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "meso control hardware with micro printed symbols",
+        "affects": "toggle geometry, plated base rings and power labeling",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/power-toggle-and-labels"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r0c2.png",
+        "confidence": 0.98
+      },
+      {
+        "id": "zone-r1c0",
+        "kind": "aux-and-source-controls",
+        "description": "Left control cluster contains a recessed AUX jack, a small brass SOURCE push button, three source status dots and BT/AUX/RCA labels.",
+        "region": {
+          "x": 0.0,
+          "y": 0.3333,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "meso hardware plus micro indicator marks",
+        "affects": "left jack, source button and source-status graphics",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/aux-source-cluster"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r1c0.png",
+        "confidence": 0.97
+      },
+      {
+        "id": "zone-r1c1",
+        "kind": "three-primary-knobs",
+        "description": "Three evenly spaced primary knobs use black fluted skirts, champagne-metal caps and narrow red position indicators.",
+        "region": {
+          "x": 0.3333,
+          "y": 0.3333,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "meso repeated control geometry",
+        "affects": "volume, bass and treble knob proportions and materials",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/three-knurled-control-knobs"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r1c1.png",
+        "confidence": 0.99
+      },
+      {
+        "id": "zone-r1c2",
+        "kind": "playback-controls",
+        "description": "A single raised brass play/pause push button sits between the treble knob and power toggle, with playback and skip symbols printed above and below.",
+        "region": {
+          "x": 0.6667,
+          "y": 0.3333,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "meso button plus micro printed icons",
+        "affects": "right push button placement, material and playback legends",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/playback-control-cluster"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r1c2.png",
+        "confidence": 0.97
+      },
+      {
+        "id": "zone-r2c0",
+        "kind": "lower-left-legends",
+        "description": "AUX and SOURCE legends sit below their matching controls while the plate bevel remains visible against the black recessed liner.",
+        "region": {
+          "x": 0.0,
+          "y": 0.6667,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "micro typography and meso contact edge",
+        "affects": "printed control legends and plate-to-liner separation",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/printed-control-legends"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r2c0.png",
+        "confidence": 0.96
+      },
+      {
+        "id": "zone-r2c1",
+        "kind": "radial-control-scales",
+        "description": "Each main knob has an asymmetric ring of fine black ticks, red accent ticks and 0/10 endpoint numbers.",
+        "region": {
+          "x": 0.3333,
+          "y": 0.6667,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "micro printed scale marks",
+        "affects": "volume, bass and treble scale graphics",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/radial-control-scales"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r2c1.png",
+        "confidence": 0.98
+      },
+      {
+        "id": "zone-r2c2",
+        "kind": "right-side-legends-and-fasteners",
+        "description": "Skip-track icons and the power 0 mark occupy the lower right, while discreet end fasteners hold the inset plate.",
+        "region": {
+          "x": 0.6667,
+          "y": 0.6667,
+          "width": 0.3333,
+          "height": 0.3333,
+          "units": "normalized"
+        },
+        "scale": "micro icons and small hardware",
+        "affects": "right-side printed legends and plate fasteners",
+        "mapsTo": {
+          "type": "component.localFeatures",
+          "ref": "top-control-deck/panel-fasteners"
+        },
+        "evidenceRef": "C:\\Users\\tc\\Documents\\img2threejs\\sculpt\\noir-layer06-zones\\zone-r2c2.png",
+        "confidence": 0.94
+      }
+    ]
+  },
+  "authoringInstruction": "Open each zone crop under zonesDir and replace every detail stub's kind, description, scale, affects, mapsTo, and confidence with what is actually observed. Add more detail entries per zone if a single zone contains multiple distinct marks; do not leave stubs unfilled or unlinked (mapsTo must reference a real component.localFeatures or material.localOverrides entry)."
+}

@@ -178,6 +178,157 @@ export function createSpeakerBlockout(): THREE.Group {
     texture.repeat.set(...repeat);
     return texture;
   }
+
+  function brushedBrassResponseMaps(): {
+    albedo: THREE.CanvasTexture;
+    normal: THREE.CanvasTexture;
+    roughness: THREE.CanvasTexture;
+  } {
+    const width = 1024;
+    const height = 256;
+    const albedoCanvas = document.createElement('canvas');
+    const normalCanvas = document.createElement('canvas');
+    const roughnessCanvas = document.createElement('canvas');
+    albedoCanvas.width = normalCanvas.width = roughnessCanvas.width = width;
+    albedoCanvas.height = normalCanvas.height = roughnessCanvas.height = height;
+    const albedoContext = albedoCanvas.getContext('2d');
+    const normalContext = normalCanvas.getContext('2d');
+    const roughnessContext = roughnessCanvas.getContext('2d');
+    if (!albedoContext || !normalContext || !roughnessContext) {
+      return {
+        albedo: new THREE.CanvasTexture(albedoCanvas),
+        normal: new THREE.CanvasTexture(normalCanvas),
+        roughness: new THREE.CanvasTexture(roughnessCanvas),
+      };
+    }
+    let seed = 971;
+    const random = () => {
+      seed = (seed * 48271) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+    const rowHeight = new Float32Array(height);
+    for (let y = 0; y < height; y += 1) {
+      rowHeight[y] =
+        Math.sin(y * 0.74) * 0.42
+        + Math.sin(y * 2.17 + 0.7) * 0.2
+        + (random() - 0.5) * 0.42;
+    }
+    const albedoPixels = albedoContext.createImageData(width, height);
+    const normalPixels = normalContext.createImageData(width, height);
+    const roughnessPixels = roughnessContext.createImageData(width, height);
+    for (let y = 0; y < height; y += 1) {
+      const previous = rowHeight[(y - 1 + height) % height];
+      const next = rowHeight[(y + 1) % height];
+      const slope = (next - previous) * 0.44;
+      const normalLength = Math.hypot(slope, 1);
+      for (let x = 0; x < width; x += 1) {
+        const index = (y * width + x) * 4;
+        const streak = rowHeight[y] * 8 + Math.sin(x * 0.025 + y * 0.12) * 1.8;
+        const fineNoise = (random() - 0.5) * 3;
+        albedoPixels.data[index] = Math.round(216 + streak * 0.72 + fineNoise);
+        albedoPixels.data[index + 1] = Math.round(185 + streak * 0.58 + fineNoise);
+        albedoPixels.data[index + 2] = Math.round(122 + streak * 0.38 + fineNoise);
+        albedoPixels.data[index + 3] = 255;
+        normalPixels.data[index] = 128;
+        normalPixels.data[index + 1] = Math.round(128 - (slope / normalLength) * 72);
+        normalPixels.data[index + 2] = Math.round(128 + (1 / normalLength) * 127);
+        normalPixels.data[index + 3] = 255;
+        const roughness = Math.max(68, Math.min(118, 90 + rowHeight[y] * 13 + fineNoise * 2));
+        roughnessPixels.data[index] = roughness;
+        roughnessPixels.data[index + 1] = roughness;
+        roughnessPixels.data[index + 2] = roughness;
+        roughnessPixels.data[index + 3] = 255;
+      }
+    }
+    albedoContext.putImageData(albedoPixels, 0, 0);
+    normalContext.putImageData(normalPixels, 0, 0);
+    roughnessContext.putImageData(roughnessPixels, 0, 0);
+    const albedo = new THREE.CanvasTexture(albedoCanvas);
+    const normal = new THREE.CanvasTexture(normalCanvas);
+    const roughness = new THREE.CanvasTexture(roughnessCanvas);
+    albedo.colorSpace = THREE.SRGBColorSpace;
+    normal.colorSpace = THREE.NoColorSpace;
+    roughness.colorSpace = THREE.NoColorSpace;
+    for (const texture of [albedo, normal, roughness]) {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.anisotropy = 8;
+    }
+    return { albedo, normal, roughness };
+  }
+
+  function controlPanelMarkingsTexture(config: {
+    width: number;
+    knobXs: readonly number[];
+    leftJackX: number;
+    leftButtonX: number;
+    rightButtonX: number;
+    toggleX: number;
+  }): THREE.CanvasTexture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+    if (!context) return new THREE.CanvasTexture(canvas);
+    const toCanvasX = (worldX: number) => ((worldX / config.width) + 0.5) * canvas.width;
+    const black = '#15130f';
+    const red = '#b32328';
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillStyle = black;
+    context.font = "700 42px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('ACTON II', toCanvasX(-1.83), 82);
+    context.fillText('VOLUME', toCanvasX(config.knobXs[0]), 72);
+    context.fillText('BASS', toCanvasX(config.knobXs[1]), 72);
+    context.fillText('TREBLE', toCanvasX(config.knobXs[2]), 72);
+    context.fillText('POWER', toCanvasX(config.toggleX), 72);
+    context.font = "700 31px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('AUX', toCanvasX(config.leftJackX), 422);
+    context.fillText('SOURCE', toCanvasX(config.leftButtonX), 422);
+    context.fillText('▶Ⅱ', toCanvasX(config.rightButtonX), 116);
+    context.fillText('I◀   ▶I', toCanvasX(config.rightButtonX), 420);
+    context.fillText('0', toCanvasX(config.toggleX), 420);
+    context.font = "700 23px 'Arial Narrow', Arial, sans-serif";
+    context.textAlign = 'left';
+    context.fillText('AUX', toCanvasX(-1.48), 205);
+    context.fillText('RCA', toCanvasX(-1.48), 252);
+    context.fillText('BT', toCanvasX(-1.48), 158);
+    for (const [labelIndex, labelY] of [158, 205, 252].entries()) {
+      context.fillStyle = labelIndex === 0 ? red : black;
+      context.beginPath();
+      context.arc(toCanvasX(-1.59), labelY, 7, 0, Math.PI * 2);
+      context.fill();
+    }
+    context.textAlign = 'center';
+    for (const knobX of config.knobXs) {
+      const centerX = toCanvasX(knobX);
+      const centerY = 256;
+      for (let tick = 0; tick < 13; tick += 1) {
+        const angle = Math.PI * (0.72 + (tick / 12) * 1.56);
+        const innerRadius = 105;
+        const outerRadius = tick % 3 === 0 ? 129 : 120;
+        context.strokeStyle = tick === 2 || tick === 10 ? red : black;
+        context.lineWidth = tick % 3 === 0 ? 7 : 5;
+        context.beginPath();
+        context.moveTo(centerX + Math.cos(angle) * innerRadius, centerY + Math.sin(angle) * innerRadius);
+        context.lineTo(centerX + Math.cos(angle) * outerRadius, centerY + Math.sin(angle) * outerRadius);
+        context.stroke();
+      }
+      context.fillStyle = black;
+      context.font = "700 24px 'Arial Narrow', Arial, sans-serif";
+      context.fillText('0', centerX - 76, 410);
+      context.fillText('10', centerX + 76, 410);
+    }
+    context.fillStyle = red;
+    context.beginPath();
+    context.arc(toCanvasX(config.toggleX), 113, 7, 0, Math.PI * 2);
+    context.fill();
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    return texture;
+  }
   function metalGrilleAlphaMap(): THREE.CanvasTexture {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -491,6 +642,24 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   silverHardware.name = 'Silver mounting hardware';
   const brass = referenceMaterial('brushed-brass', '#b89451', [2.8, 1.6], 0.9, 0.28, 0.22);
   const brassDark = referenceMaterial('brushed-brass', '#5f421d', [3.8, 2.1], 0.78, 0.41, 0.18);
+  const controlPlateMaps = brushedBrassResponseMaps();
+  const controlPlateBrass = new THREE.MeshStandardMaterial({
+    color: '#fff6df',
+    map: controlPlateMaps.albedo,
+    normalMap: controlPlateMaps.normal,
+    normalScale: new THREE.Vector2(0.11, 0.11),
+    roughnessMap: controlPlateMaps.roughness,
+    roughness: 0.46,
+    metalness: 0.88,
+    envMapIntensity: 0.5,
+  });
+  controlPlateBrass.name = 'Directional brushed brass control plate';
+  controlPlateBrass.userData.pbrChannels = {
+    albedo: 'generated://top-control/brushed-brass-albedo',
+    normal: 'generated://top-control/brushed-brass-normal',
+    roughness: 'generated://top-control/brushed-brass-roughness',
+    provenance: 'Directional horizontal brushing calibrated from the supplied physical top-control reference.',
+  };
   const frontFrameLeather = cabinetLeather.clone();
   frontFrameLeather.name = 'Physical pebbled leather front frame';
   frontFrameLeather.map = cabinetLeatherAlbedo.clone();
@@ -725,6 +894,71 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     }
   }
 
+  function createCapsuleRecessSlopeGeometry(
+    outerWidth: number,
+    outerDepth: number,
+    outerRadius: number,
+    innerWidth: number,
+    innerDepth: number,
+    innerRadius: number,
+    recessDepth: number,
+  ): THREE.BufferGeometry {
+    const ringProfiles = [
+      { inset: 0, y: 0 },
+      { inset: 0.2, y: -recessDepth * 0.08 },
+      { inset: 0.48, y: -recessDepth * 0.34 },
+      { inset: 0.76, y: -recessDepth * 0.7 },
+      { inset: 1, y: -recessDepth },
+    ] as const;
+    const pointCount = 128;
+    const rings = ringProfiles.map(({ inset, y }) => {
+      const shape = new THREE.Shape();
+      appendRoundedRectangle(
+        shape,
+        THREE.MathUtils.lerp(outerWidth, innerWidth, inset),
+        THREE.MathUtils.lerp(outerDepth, innerDepth, inset),
+        THREE.MathUtils.lerp(outerRadius, innerRadius, inset),
+      );
+      const points = shape.getSpacedPoints(pointCount);
+      if (points.length > 1 && points[0].distanceTo(points[points.length - 1]) < 0.00001) {
+        points.pop();
+      }
+      return { points, y };
+    });
+    const vertices: number[] = [];
+    const uvs: number[] = [];
+    for (let ringIndex = 0; ringIndex < rings.length; ringIndex += 1) {
+      const ring = rings[ringIndex];
+      for (let pointIndex = 0; pointIndex < ring.points.length; pointIndex += 1) {
+        const point = ring.points[pointIndex];
+        vertices.push(point.x, ring.y, point.y);
+        uvs.push(pointIndex / ring.points.length, ringIndex / (rings.length - 1));
+      }
+    }
+    const indices: number[] = [];
+    const verticesPerRing = rings[0].points.length;
+    for (let ringIndex = 0; ringIndex < rings.length - 1; ringIndex += 1) {
+      const currentOffset = ringIndex * verticesPerRing;
+      const nextOffset = (ringIndex + 1) * verticesPerRing;
+      for (let pointIndex = 0; pointIndex < verticesPerRing; pointIndex += 1) {
+        const nextPointIndex = (pointIndex + 1) % verticesPerRing;
+        const outerA = currentOffset + pointIndex;
+        const outerB = currentOffset + nextPointIndex;
+        const innerA = nextOffset + pointIndex;
+        const innerB = nextOffset + nextPointIndex;
+        indices.push(outerA, innerB, outerB, outerA, innerA, innerB);
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    geometry.computeBoundingSphere();
+    return geometry;
+  }
+
   const CABINET = {
     width: 6.4,
     height: 4.1,
@@ -756,13 +990,16 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     depth: 1.02,
     radius: 0.43,
     z: -0.32,
-    plateThickness: 0.055,
+    plateThickness: 0.035,
     recessDepth: 0.13,
+    openingWidth: 5.1,
+    openingDepth: 1.31,
+    openingRadius: 0.58,
+    slopeDepth: 0.075,
     knobXs: [-0.72, 0.08, 0.88],
     leftJackX: -1.82,
     leftButtonX: -1.42,
-    rightButtonX: 1.5,
-    rightJackX: 1.78,
+    rightButtonX: 1.48,
     toggleX: 2.04,
     shaftRadius: 0.055,
   } as const;
@@ -854,23 +1091,20 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   const topControlPocketShape = new THREE.Shape();
   appendRoundedRectangle(
     topControlPocketShape,
-    TOP_CONTROL.width + 0.18,
-    TOP_CONTROL.depth + 0.16,
-    TOP_CONTROL.radius + 0.08,
+    TOP_CONTROL.openingWidth,
+    TOP_CONTROL.openingDepth,
+    TOP_CONTROL.openingRadius,
   );
   const topControlPocketGeometry = new THREE.ExtrudeGeometry(topControlPocketShape, {
-    depth: TOP_CONTROL.recessDepth + 0.12,
-    bevelEnabled: true,
-    bevelSegments: 5,
-    bevelSize: 0.025,
-    bevelThickness: 0.025,
+    depth: TOP_CONTROL.recessDepth + 0.18,
+    bevelEnabled: false,
     curveSegments: 32,
   });
   topControlPocketGeometry.rotateX(Math.PI / 2);
   const topControlPocketBrush = new Brush(topControlPocketGeometry, cabinetLeather);
   topControlPocketBrush.position.set(
     0,
-    outerHalfHeight + 0.1,
+    outerHalfHeight + 0.04,
     TOP_CONTROL.z,
   );
   topControlPocketBrush.updateMatrixWorld(true);
@@ -890,7 +1124,6 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     TOP_CONTROL.leftJackX,
     TOP_CONTROL.leftButtonX,
     TOP_CONTROL.rightButtonX,
-    TOP_CONTROL.rightJackX,
     TOP_CONTROL.toggleX,
   ]) {
     const shaftCutter = new Brush(
@@ -911,6 +1144,20 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   continuousShellBrush.name = 'ContinuousOuterShell';
   applyWorldScaleUvs(continuousShellBrush.geometry, CABINET.leatherTileWorldSize);
   outerShell.add(continuousShellBrush);
+  const topControlSlopeGeometry = createCapsuleRecessSlopeGeometry(
+    TOP_CONTROL.openingWidth,
+    TOP_CONTROL.openingDepth,
+    TOP_CONTROL.openingRadius,
+    TOP_CONTROL.width + 0.06,
+    TOP_CONTROL.depth + 0.06,
+    TOP_CONTROL.radius + 0.03,
+    TOP_CONTROL.slopeDepth,
+  );
+  const topControlSlope = new THREE.Mesh(topControlSlopeGeometry, cabinetLeather);
+  topControlSlope.name = 'TopControlLeatherRecessSlope';
+  topControlSlope.position.set(0, outerHalfHeight + 0.002, TOP_CONTROL.z);
+  topControlSlope.userData.construction = 'continuous leather-clad sloped cavity wall; not a separate trim frame';
+  outerShell.add(topControlSlope);
 
   // Named logical surface anchors preserve the requested runtime hierarchy without
   // splitting the visible exterior back into overlapping meshes.
@@ -956,7 +1203,6 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     TOP_CONTROL.leftJackX,
     TOP_CONTROL.leftButtonX,
     TOP_CONTROL.rightButtonX,
-    TOP_CONTROL.rightJackX,
     TOP_CONTROL.toggleX,
   ]) {
     const shaftHole = new THREE.Path();
@@ -1525,27 +1771,6 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
 
   const topGroup = new THREE.Group();
   topGroup.name = 'InsetTopControlAssembly';
-  const topHousingShape = new THREE.Shape();
-  appendRoundedRectangle(
-    topHousingShape,
-    TOP_CONTROL.width + 0.14,
-    TOP_CONTROL.depth + 0.12,
-    TOP_CONTROL.radius + 0.06,
-  );
-  const topHousingGeometry = new THREE.ExtrudeGeometry(topHousingShape, {
-    depth: TOP_CONTROL.recessDepth,
-    bevelEnabled: true,
-    bevelSegments: 4,
-    bevelSize: 0.018,
-    bevelThickness: 0.018,
-    curveSegments: 32,
-  });
-  topHousingGeometry.rotateX(Math.PI / 2);
-  applyWorldScaleUvs(topHousingGeometry, CABINET.leatherTileWorldSize);
-  const topHousing = new THREE.Mesh(topHousingGeometry, cabinetLeather);
-  topHousing.name = 'TopControlRecessLiner';
-  topHousing.position.y = 0.015;
-  topGroup.add(topHousing);
   const brassPlateShape = new THREE.Shape();
   appendRoundedRectangle(
     brassPlateShape,
@@ -1562,86 +1787,120 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     curveSegments: 32,
   });
   brassPlateGeometry.rotateX(Math.PI / 2);
-  const brassPlate = new THREE.Mesh(brassPlateGeometry, brass);
+  const brassPlate = new THREE.Mesh(brassPlateGeometry, controlPlateBrass);
   brassPlate.name = 'InsetBrassControlPlate';
   brassPlate.position.y = 0.025;
   topGroup.add(brassPlate);
+  const panelMarkings = new THREE.Mesh(
+    new THREE.PlaneGeometry(TOP_CONTROL.width - 0.1, TOP_CONTROL.depth - 0.08),
+    new THREE.MeshBasicMaterial({
+      map: controlPanelMarkingsTexture(TOP_CONTROL),
+      transparent: true,
+      alphaTest: 0.08,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.DoubleSide,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+      polygonOffsetUnits: -2,
+      toneMapped: false,
+    }),
+  );
+  panelMarkings.name = 'PhysicalControlPlateLabelsAndScale';
+  panelMarkings.rotation.x = -Math.PI / 2;
+  panelMarkings.position.y = 0.052;
+  panelMarkings.renderOrder = 3;
+  topGroup.add(panelMarkings);
 
   const topPlateFasteners = new THREE.Group();
   topPlateFasteners.name = 'TopPlateFasteners';
   for (const [index, [x, z]] of [
-    [-2.28, -0.23], [-2.28, 0.23],
-    [0, -0.23], [0, 0.23],
-    [2.28, -0.23], [2.28, 0.23],
+    [-2.21, 0],
+    [2.21, 0],
   ].entries()) {
-    const bore = new THREE.Mesh(new THREE.CylinderGeometry(0.047, 0.047, 0.02, 28), electronicBlack);
-    bore.name = `TopPlateBore${index + 1}`;
-    bore.position.set(x, 0.023, z);
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.047, 0.012, 8, 28), capacitorSilver);
-    rim.name = `TopPlateBoreRim${index + 1}`;
-    rim.rotation.x = Math.PI / 2;
-    rim.position.set(x, 0.035, z);
-    topPlateFasteners.add(bore, rim);
+    const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.018, 28), silverHardware);
+    screw.name = `TopPlateScrew${index + 1}`;
+    screw.position.set(x, 0.04, z);
+    const slot = rounded(0.055, 0.008, 0.009, 0.002, electronicBlack);
+    slot.name = `TopPlateScrewSlot${index + 1}`;
+    slot.position.set(x, 0.052, z);
+    topPlateFasteners.add(screw, slot);
   }
   topGroup.add(topPlateFasteners);
 
   const controls = new THREE.Group();
   controls.name = 'AlignedTopControls';
   for (const [knobIndex, x] of TOP_CONTROL.knobXs.entries()) {
-    const blackBase = new THREE.Mesh(new THREE.CylinderGeometry(0.135, 0.135, 0.075, 40), electronicBlack);
-    blackBase.name = `ControlKnobBlackBase${knobIndex + 1}`;
-    blackBase.position.set(x, 0.056, 0);
-    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.125, 0.115, 48), brass);
-    knob.name = `BrassControlKnob${knobIndex + 1}`;
-    knob.position.set(x, 0.145, 0);
-    controls.add(blackBase, knob);
-    const indicator = rounded(0.016, 0.009, 0.085, 0.004, electronicBlack);
+    const blackSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.148, 0.11, 48), electronicBlack);
+    blackSkirt.name = `ControlKnobBlackSkirt${knobIndex + 1}`;
+    blackSkirt.position.set(x, 0.098, 0);
+    const goldCap = new THREE.Mesh(new THREE.CylinderGeometry(0.118, 0.118, 0.028, 56), brass);
+    goldCap.name = `BrassControlKnobCap${knobIndex + 1}`;
+    goldCap.position.set(x, 0.167, 0);
+    controls.add(blackSkirt, goldCap);
+    const indicator = rounded(0.014, 0.008, 0.074, 0.004, new THREE.MeshBasicMaterial({ color: '#a51f23' }));
     indicator.name = `KnobIndicator${knobIndex + 1}`;
-    indicator.position.set(x, 0.207, 0.027);
-    indicator.rotation.y = -0.28;
+    indicator.position.set(x, 0.184, 0.026);
+    indicator.rotation.y = -0.18;
     controls.add(indicator);
-    for (let ridge = 0; ridge < 18; ridge += 1) {
-      const angle = (ridge / 18) * Math.PI * 2;
-      const knurl = rounded(0.013, 0.052, 0.012, 0.003, brassDark);
+    for (let ridge = 0; ridge < 24; ridge += 1) {
+      const angle = (ridge / 24) * Math.PI * 2;
+      const knurl = rounded(0.012, 0.074, 0.014, 0.003, vinylEdge);
       knurl.name = `Knob${knobIndex + 1}Knurl${ridge + 1}`;
-      knurl.position.set(x + Math.cos(angle) * 0.128, 0.145, Math.sin(angle) * 0.128);
+      knurl.position.set(x + Math.cos(angle) * 0.147, 0.096, Math.sin(angle) * 0.147);
       knurl.rotation.y = -angle;
       controls.add(knurl);
     }
   }
-  const leftInputJack = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.014, 10, 30), brassDark);
+  const leftInputJack = new THREE.Mesh(new THREE.TorusGeometry(0.067, 0.017, 12, 36), brassDark);
   leftInputJack.name = 'LeftInputJack';
   leftInputJack.rotation.x = Math.PI / 2;
   leftInputJack.position.set(TOP_CONTROL.leftJackX, 0.042, 0);
-  const leftInputBore = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.025, 28), electronicBlack);
+  const leftInputBore = new THREE.Mesh(new THREE.CylinderGeometry(0.041, 0.041, 0.027, 32), electronicBlack);
   leftInputBore.name = 'LeftInputJackBore';
   leftInputBore.position.set(TOP_CONTROL.leftJackX, 0.046, 0);
-  const leftPushButton = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 32), connectorWhite);
-  leftPushButton.name = 'LeftWhitePushButton';
-  leftPushButton.position.set(TOP_CONTROL.leftButtonX, 0.055, 0);
-  const rightPushButton = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.045, 32), electronicBlack);
-  rightPushButton.name = 'RightBlackPushButton';
-  rightPushButton.position.set(TOP_CONTROL.rightButtonX, 0.058, 0);
-  const rightJackBezel = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.014, 10, 30), capacitorSilver);
-  rightJackBezel.name = 'RightAuxiliaryJack';
-  rightJackBezel.rotation.x = Math.PI / 2;
-  rightJackBezel.position.set(TOP_CONTROL.rightJackX, 0.045, 0);
-  const rightJackBore = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.025, 28), electronicBlack);
-  rightJackBore.name = 'RightAuxiliaryJackBore';
-  rightJackBore.position.set(TOP_CONTROL.rightJackX, 0.048, 0);
-  controls.add(leftInputJack, leftInputBore, leftPushButton, rightPushButton, rightJackBezel, rightJackBore);
-  const toggleBezel = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.018, 10, 32), brassDark);
-  toggleBezel.name = 'ToggleBezel';
-  toggleBezel.rotation.x = Math.PI / 2;
-  toggleBezel.position.set(TOP_CONTROL.toggleX, 0.035, 0);
-  const toggle = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.22, 24), brass);
+  const sourceButtonBase = new THREE.Mesh(new THREE.CylinderGeometry(0.078, 0.078, 0.027, 36), electronicBlack);
+  sourceButtonBase.name = 'SourceButtonBlackBase';
+  sourceButtonBase.position.set(TOP_CONTROL.leftButtonX, 0.045, 0);
+  const sourceButton = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.07, 0.038, 36), brass);
+  sourceButton.name = 'SourceButtonBrassCap';
+  sourceButton.position.set(TOP_CONTROL.leftButtonX, 0.073, 0);
+  const playButtonBase = new THREE.Mesh(new THREE.CylinderGeometry(0.086, 0.086, 0.028, 36), electronicBlack);
+  playButtonBase.name = 'PlayPauseButtonBlackBase';
+  playButtonBase.position.set(TOP_CONTROL.rightButtonX, 0.046, 0);
+  const playButton = new THREE.Mesh(new THREE.CylinderGeometry(0.073, 0.078, 0.042, 36), brass);
+  playButton.name = 'PlayPauseButtonBrassCap';
+  playButton.position.set(TOP_CONTROL.rightButtonX, 0.077, 0);
+  controls.add(
+    leftInputJack,
+    leftInputBore,
+    sourceButtonBase,
+    sourceButton,
+    playButtonBase,
+    playButton,
+  );
+  const toggleBase = new THREE.Mesh(new THREE.CylinderGeometry(0.092, 0.092, 0.028, 40), brassDark);
+  toggleBase.name = 'PowerToggleBase';
+  toggleBase.position.set(TOP_CONTROL.toggleX, 0.045, 0);
+  const toggleBezelOuter = new THREE.Mesh(new THREE.TorusGeometry(0.073, 0.016, 12, 40), brass);
+  toggleBezelOuter.name = 'PowerToggleOuterBezel';
+  toggleBezelOuter.rotation.x = Math.PI / 2;
+  toggleBezelOuter.position.set(TOP_CONTROL.toggleX, 0.063, 0);
+  const toggleBezelInner = new THREE.Mesh(new THREE.TorusGeometry(0.047, 0.012, 10, 36), brassDark);
+  toggleBezelInner.name = 'PowerToggleInnerBezel';
+  toggleBezelInner.rotation.x = Math.PI / 2;
+  toggleBezelInner.position.set(TOP_CONTROL.toggleX, 0.071, 0);
+  const toggle = new THREE.Mesh(new THREE.CylinderGeometry(0.027, 0.035, 0.2, 28), brass);
   toggle.name = 'ToggleStem';
-  toggle.position.set(TOP_CONTROL.toggleX, 0.145, 0);
+  toggle.position.set(TOP_CONTROL.toggleX, 0.16, 0);
   toggle.rotation.z = -0.12;
-  controls.add(toggleBezel, toggle);
+  const toggleTip = new THREE.Mesh(new THREE.SphereGeometry(0.039, 24, 16), brass);
+  toggleTip.name = 'PowerToggleRoundedTip';
+  toggleTip.position.set(TOP_CONTROL.toggleX - 0.013, 0.26, 0);
+  controls.add(toggleBase, toggleBezelOuter, toggleBezelInner, toggle, toggleTip);
   topGroup.add(controls);
   const top = addPart('top-control-deck', 'Top brass control deck', cabinet, topGroup, { detachable: true });
-  top.position.set(0, outerHalfHeight + 0.005, TOP_CONTROL.z);
+  top.position.set(0, outerHalfHeight - 0.095, TOP_CONTROL.z);
 
   const boardGroup = new THREE.Group();
   boardGroup.name = 'InternalAmplifierPCBAssembly';
