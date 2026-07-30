@@ -317,8 +317,36 @@ export function createSpeakerBlockout(): THREE.Group {
     provenance: 'Reference-guided real Tolex macro material, de-lit and made mathematically seamless.',
   };
   refreshCabinetLeatherPbr = () => { cabinetLeather.needsUpdate = true; };
-  const baffleMat = referenceMaterial('driver-composite', '#141516', [1.5, 1.5], 0.12, 0.4, 0.36);
-  const grilleDark = referenceMaterial('driver-composite', '#191714', [2.2, 2.2], 0.08, 0.78, 0.32);
+  const driverCompositeAlbedo = proceduralAlbedo('driver-composite', '#202122', [3.4, 2.15]);
+  const driverCompositeNormal = proceduralScalar('driver-composite', 'normal', [3.4, 2.15]);
+  const driverCompositeRoughness = proceduralScalar('driver-composite', 'roughness', [3.4, 2.15]);
+  const baffleMat = new THREE.MeshStandardMaterial({
+    color: '#a8a9aa',
+    map: driverCompositeAlbedo,
+    normalMap: driverCompositeNormal,
+    normalScale: new THREE.Vector2(0.18, 0.18),
+    roughnessMap: driverCompositeRoughness,
+    roughness: 0.92,
+    metalness: 0.04,
+  });
+  baffleMat.name = 'Textured matte baffle coating';
+  baffleMat.userData.pbrChannels = {
+    albedo: 'generated://driver-composite/albedo',
+    normal: 'generated://driver-composite/normal',
+    roughness: 'generated://driver-composite/roughness',
+    provenance: 'Seamless fine-grain composite coating without baked lighting or repeated photographic features.',
+  };
+  const grilleDark = baffleMat.clone();
+  grilleDark.name = 'Black paper cone material';
+  grilleDark.color.set('#18191a');
+  grilleDark.normalScale.set(0.2, 0.2);
+  grilleDark.roughness = 0.92;
+  const driverFrameMetal = new THREE.MeshStandardMaterial({ color: '#111315', metalness: 0.42, roughness: 0.5 });
+  driverFrameMetal.name = 'Black coated driver frame';
+  const dustCapMaterial = new THREE.MeshStandardMaterial({ color: '#161718', metalness: 0.02, roughness: 0.78 });
+  dustCapMaterial.name = 'Pressed paper dust cap';
+  const silverHardware = new THREE.MeshStandardMaterial({ color: '#c6c1b7', metalness: 0.9, roughness: 0.28 });
+  silverHardware.name = 'Silver mounting hardware';
   const brass = referenceMaterial('brushed-brass', '#b89451', [2.8, 1.6], 0.9, 0.28, 0.22);
   const brassDark = referenceMaterial('brushed-brass', '#5f421d', [3.8, 2.1], 0.78, 0.41, 0.18);
   let refreshFrontFramePbr = () => undefined;
@@ -558,7 +586,6 @@ export function createSpeakerBlockout(): THREE.Group {
 
   const COMPONENT_FIT = {
     frontFrame: (CABINET.frontOpeningWidth + 0.2) / 4.42,
-    driverBaffle: (CABINET.frontOpeningWidth - 0.18) / 4.08,
     grille: (CABINET.frontOpeningWidth - 0.15) / 4.1,
     topDeck: {
       x: (CABINET.width * 0.82) / 3.82,
@@ -981,44 +1008,204 @@ export function createSpeakerBlockout(): THREE.Group {
   frontFrame.scale.setScalar(COMPONENT_FIT.frontFrame);
 
   const baffleGroup = new THREE.Group();
-  const baffleFace = rounded(4.08, 2.32, 0.09, 0.06, baffleMat);
-  baffleFace.position.z = -0.16;
-  baffleGroup.add(baffleFace);
-  const baffle = addPart('driver-baffle', 'Driver baffle and speaker drivers', cabinet, baffleGroup, { detachable: true, explodeGroup: 'front-stack' });
-  baffle.position.z = outerHalfDepth + 0.16;
-  baffle.scale.setScalar(COMPONENT_FIT.driverBaffle);
+  baffleGroup.name = 'DriverBaffleAssembly';
+  const BAFFLE = {
+    width: CABINET.frontOpeningWidth - 0.18,
+    height: CABINET.frontOpeningHeight - 0.16,
+    depth: 0.18,
+    radius: 0.16,
+    cornerHoleX: (CABINET.frontOpeningWidth - 0.18) / 2 - 0.28,
+    cornerHoleY: (CABINET.frontOpeningHeight - 0.16) / 2 - 0.25,
+    cornerHoleRadius: 0.105,
+    wooferRadius: 1.4,
+    tweeterRadius: 0.67,
+    tweeterX: 1.91,
+    tweeterY: 0.76,
+  } as const;
+  baffleGroup.userData.dimensions = { ...BAFFLE };
 
-  const drivers = new THREE.Group();
-  drivers.name = 'Three-driver array';
-  const driverSpecs = [
-    ['woofer', 0, 0.72, 0.53],
-    ['tweeter-left', -1.36, 0.32, 0.17],
-    ['tweeter-right', 1.36, 0.32, 0.17],
-  ] as const;
-  for (const [id, x, radius, dustCap] of driverSpecs) {
-    const driver = new THREE.Group();
-    driver.name = id;
-    const surround = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.82, radius * 0.125, 12, 40), rubber);
-    surround.position.set(x, 0, 0.115);
-    const cone = cylinder(radius * 0.72, radius * 0.83, 0.075, grilleDark);
-    cone.position.set(x, 0, 0.125);
-    const cap = cylinder(dustCap, dustCap, 0.09, baffleMat);
-    cap.position.set(x, 0, 0.19);
-    const innerRing = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.56, radius * 0.026, 8, 36), brassDark);
-    innerRing.position.set(x, 0, 0.183);
-    const capRing = new THREE.Mesh(new THREE.TorusGeometry(dustCap * 1.08, dustCap * 0.03, 8, 28), grilleDark);
-    capRing.position.set(x, 0, 0.238);
-    driver.add(surround, cone, cap, innerRing, capRing);
+  // The baffle is a real extruded board with four through holes rather than a
+  // rounded slab with decorative dots. It is authored at final cabinet scale.
+  const baffleShape = new THREE.Shape();
+  appendRoundedRectangle(baffleShape, BAFFLE.width, BAFFLE.height, BAFFLE.radius);
+  const cornerMountPositions: THREE.Vector2Tuple[] = [
+    [-BAFFLE.cornerHoleX, BAFFLE.cornerHoleY],
+    [BAFFLE.cornerHoleX, BAFFLE.cornerHoleY],
+    [-BAFFLE.cornerHoleX, -BAFFLE.cornerHoleY],
+    [BAFFLE.cornerHoleX, -BAFFLE.cornerHoleY],
+  ];
+  for (const [x, y] of cornerMountPositions) {
+    const hole = new THREE.Path();
+    hole.absarc(x, y, BAFFLE.cornerHoleRadius, 0, Math.PI * 2, true);
+    baffleShape.holes.push(hole);
+  }
+  const baffleGeometry = new THREE.ExtrudeGeometry(baffleShape, {
+    depth: BAFFLE.depth,
+    bevelEnabled: true,
+    bevelSegments: 4,
+    bevelSize: 0.022,
+    bevelThickness: 0.018,
+    curveSegments: 36,
+  });
+  baffleGeometry.translate(0, 0, -BAFFLE.depth - 0.02);
+  const baffleBoard = new THREE.Mesh(baffleGeometry, [baffleMat, driverFrameMetal]);
+  baffleBoard.name = 'Rounded composite baffle with through holes';
+  baffleGroup.add(baffleBoard);
+
+  const perimeterShape = new THREE.Shape();
+  appendRoundedRectangle(perimeterShape, BAFFLE.width - 0.16, BAFFLE.height - 0.16, 0.125);
+  const perimeterOpening = new THREE.Path();
+  appendRoundedRectangle(perimeterOpening, BAFFLE.width - 0.34, BAFFLE.height - 0.34, 0.075, true);
+  perimeterShape.holes.push(perimeterOpening);
+  const perimeterGeometry = new THREE.ExtrudeGeometry(perimeterShape, {
+    depth: 0.04,
+    bevelEnabled: true,
+    bevelSegments: 3,
+    bevelSize: 0.012,
+    bevelThickness: 0.009,
+    curveSegments: 28,
+  });
+  perimeterGeometry.translate(0, 0, -0.015);
+  const perimeterRim = new THREE.Mesh(perimeterGeometry, driverFrameMetal);
+  perimeterRim.name = 'Raised recessed perimeter rim';
+  baffleGroup.add(perimeterRim);
+
+  const mountingHardware = new THREE.Group();
+  mountingHardware.name = 'BaffleMountingHardware';
+  for (const [index, [x, y]] of cornerMountPositions.entries()) {
+    const washer = new THREE.Mesh(new THREE.TorusGeometry(0.082, 0.018, 10, 32), driverFrameMetal);
+    washer.name = `CornerMountWasher${index + 1}`;
+    washer.position.set(x, y, 0.035);
+    const screw = cylinder(0.052, 0.048, 0.026, silverHardware);
+    screw.name = `CornerMountScrew${index + 1}`;
+    screw.position.set(x, y, 0.042);
+    const slot = rounded(0.064, 0.013, 0.01, 0.005, driverFrameMetal);
+    slot.name = `CornerMountScrewSlot${index + 1}`;
+    slot.position.set(x, y, 0.058);
+    slot.rotation.z = index % 2 ? -0.45 : 0.45;
+    mountingHardware.add(washer, screw, slot);
+  }
+  const insertPositions: THREE.Vector2Tuple[] = [
+    [-1.18, 1.22], [1.18, 1.22], [-1.18, -1.22], [1.18, -1.22],
+  ];
+  for (const [index, [x, y]] of insertPositions.entries()) {
+    const insert = new THREE.Mesh(new THREE.TorusGeometry(0.047, 0.016, 10, 28), brassDark);
+    insert.name = `BrassThreadedInsert${index + 1}`;
+    insert.position.set(x, y, 0.034);
+    const bore = cylinder(0.026, 0.026, 0.018, driverFrameMetal);
+    bore.name = `ThreadedInsertBore${index + 1}`;
+    bore.position.set(x, y, 0.036);
+    mountingHardware.add(insert, bore);
+  }
+  baffleGroup.add(mountingHardware);
+
+  function makeDriverCone(
+    outerRadius: number,
+    innerRadius: number,
+    depth: number,
+    material: THREE.Material,
+  ): THREE.Mesh {
+    const cone = new THREE.Mesh(
+      new THREE.CylinderGeometry(innerRadius, outerRadius, depth, 72, 1, true),
+      material,
+    );
+    cone.rotation.x = Math.PI / 2;
+    return cone;
+  }
+
+  function makeWoofer(): THREE.Group {
+    const woofer = new THREE.Group();
+    woofer.name = 'WooferAssembly';
+
+    const mountingFlange = new THREE.Mesh(new THREE.RingGeometry(1.12, BAFFLE.wooferRadius, 96), driverFrameMetal);
+    mountingFlange.name = 'WooferMountingFlange';
+    mountingFlange.position.z = 0.045;
+    const frameLip = new THREE.Mesh(new THREE.TorusGeometry(1.16, 0.055, 16, 96), driverFrameMetal);
+    frameLip.name = 'WooferFrameLip';
+    frameLip.position.z = 0.07;
+    const surround = new THREE.Mesh(new THREE.TorusGeometry(0.99, 0.155, 22, 96), rubber);
+    surround.name = 'WooferRubberSurround';
+    surround.position.z = 0.105;
+    const cone = makeDriverCone(0.88, 0.43, 0.145, grilleDark);
+    cone.name = 'WooferRibbedPaperCone';
+    cone.position.z = 0.15;
+    woofer.add(mountingFlange, frameLip, surround, cone);
+
+    for (let index = 0; index < 7; index += 1) {
+      const radius = 0.53 + index * 0.057;
+      const ridge = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.012, 8, 72), dustCapMaterial);
+      ridge.name = `WooferConeRidge${index + 1}`;
+      ridge.position.z = 0.218 - (radius - 0.43) * 0.16;
+      woofer.add(ridge);
+    }
+
+    const dustCap = new THREE.Mesh(
+      new THREE.SphereGeometry(0.45, 72, 28, 0, Math.PI * 2, 0, Math.PI / 2),
+      dustCapMaterial,
+    );
+    dustCap.name = 'WooferDomedDustCap';
+    dustCap.rotation.x = Math.PI / 2;
+    dustCap.scale.y = 0.22;
+    dustCap.position.z = 0.205;
+    woofer.add(dustCap);
+
+    for (let index = 0; index < 8; index += 1) {
+      const angle = (index / 8) * Math.PI * 2 + Math.PI / 8;
+      const screw = cylinder(0.039, 0.035, 0.025, brassDark);
+      screw.name = `WooferMountingScrew${index + 1}`;
+      screw.position.set(Math.cos(angle) * 1.29, Math.sin(angle) * 1.29, 0.072);
+      woofer.add(screw);
+    }
+    woofer.position.y = -0.06;
+    return woofer;
+  }
+
+  function makeTweeter(name: string, x: number): THREE.Group {
+    const tweeter = new THREE.Group();
+    tweeter.name = name;
+    const flange = new THREE.Mesh(new THREE.RingGeometry(0.51, BAFFLE.tweeterRadius, 72), driverFrameMetal);
+    flange.name = `${name}MountingFlange`;
+    flange.position.z = 0.05;
+    const frameLip = new THREE.Mesh(new THREE.TorusGeometry(0.51, 0.042, 14, 72), driverFrameMetal);
+    frameLip.name = `${name}FrameLip`;
+    frameLip.position.z = 0.072;
+    const surround = new THREE.Mesh(new THREE.TorusGeometry(0.405, 0.075, 18, 72), rubber);
+    surround.name = `${name}RubberSurround`;
+    surround.position.z = 0.105;
+    const cone = makeDriverCone(0.35, 0.17, 0.09, grilleDark);
+    cone.name = `${name}PaperCone`;
+    cone.position.z = 0.145;
+    const dome = new THREE.Mesh(
+      new THREE.SphereGeometry(0.185, 48, 20, 0, Math.PI * 2, 0, Math.PI / 2),
+      dustCapMaterial,
+    );
+    dome.name = `${name}DomedCap`;
+    dome.rotation.x = Math.PI / 2;
+    dome.scale.y = 0.34;
+    dome.position.z = 0.17;
+    tweeter.add(flange, frameLip, surround, cone, dome);
     for (let index = 0; index < 4; index += 1) {
       const angle = (index / 4) * Math.PI * 2 + Math.PI / 4;
-      const screw = cylinder(0.045, 0.045, 0.045, brassDark);
-      screw.position.set(x + Math.cos(angle) * radius * 1.04, Math.sin(angle) * radius * 1.04, 0.15);
-      driver.add(screw);
+      const screw = cylinder(0.038, 0.034, 0.025, brassDark);
+      screw.name = `${name}MountingScrew${index + 1}`;
+      screw.position.set(Math.cos(angle) * 0.585, Math.sin(angle) * 0.585, 0.075);
+      tweeter.add(screw);
     }
-    drivers.add(driver);
+    tweeter.position.set(x, BAFFLE.tweeterY, 0);
+    return tweeter;
   }
-  drivers.position.z = -0.1;
+
+  const drivers = new THREE.Group();
+  drivers.name = 'ThreeDriverArray';
+  drivers.add(
+    makeWoofer(),
+    makeTweeter('LeftTweeterAssembly', -BAFFLE.tweeterX),
+    makeTweeter('RightTweeterAssembly', BAFFLE.tweeterX),
+  );
   baffleGroup.add(drivers);
+
+  const baffle = addPart('driver-baffle', 'Driver baffle and speaker drivers', cabinet, baffleGroup, { detachable: true, explodeGroup: 'front-stack' });
+  baffle.position.z = outerHalfDepth + 0.16;
 
   const grilleGroup = new THREE.Group();
   grilleGroup.name = 'Perforated metal grille structure';

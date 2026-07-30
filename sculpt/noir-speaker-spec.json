@@ -1990,15 +1990,15 @@
       "role": "driver-mount",
       "importance": 0.82,
       "confidence": 0.88,
-      "primitive": "box",
-      "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "primitive": "extrude",
+      "topologyClass": "perforated-assembled-solid",
+      "topologyRationale": "A beveled rounded-rectangle board is extruded at final scale with four true corner mounting holes and a separate raised perimeter rim.",
       "geometryDescriptor": {
-        "topologyIntent": "Rigid black baffle carrying the woofer and twin tweeters.",
+        "topologyIntent": "Rigid textured composite baffle with true through holes, recessed perimeter relief, threaded inserts, and attached driver hardware.",
         "edgeTreatment": {
           "type": "rounded",
-          "bevelRadius": 0.08,
-          "segments": 8
+          "bevelRadius": 0.022,
+          "segments": 36
         },
         "deformationStack": [],
         "uvStrategy": "generated object-space coordinates",
@@ -2115,14 +2115,22 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "driver-mount-holes",
+          "id": "four-corner-through-holes",
+          "type": "reference-detail"
+        },
+        {
+          "id": "raised-perimeter-rim",
+          "type": "reference-detail"
+        },
+        {
+          "id": "brass-threaded-inserts",
           "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
         "dominantAlbedo": "rgba(18, 20, 22, 1.0)",
         "secondaryAlbedo": "rgba(52, 54, 58, 1.0)",
-        "materialClass": "metal",
+        "materialClass": "compressed-composite",
         "materialClassConfidence": 0.88,
         "evidenceRefs": [
           "front-view",
@@ -2132,14 +2140,14 @@
         ]
       },
       "surfaceDetail": {
-        "macroRoughness": 0.18,
-        "microRoughness": 0.08,
-        "bumpAmplitude": 0.04,
-        "normalPattern": "independent procedural height field",
+        "macroRoughness": 0.86,
+        "microRoughness": 0.22,
+        "bumpAmplitude": 0.015,
+        "normalPattern": "reference-guided composite PBR normal map",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Rigid black baffle carrying the woofer and twin tweeters."
+        "notes": "Matte textured composite board with four genuine perforations, coated-metal edge relief, silver corner hardware, and brass threaded inserts."
       },
       "evidenceRefs": [
         "front-view",
@@ -2148,7 +2156,9 @@
         "exploded-view"
       ],
       "details": [
-        "driver-mount-holes"
+        "four-corner-through-holes",
+        "raised-perimeter-rim",
+        "brass-threaded-inserts"
       ],
       "fidelityTier": "reference"
     },
@@ -2161,9 +2171,9 @@
       "confidence": 0.88,
       "primitive": "lathe",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "Each transducer is a nested assembly of mounting flange, frame lip, rubber surround, open frustum cone, domed cap, and independent mounting screws.",
       "geometryDescriptor": {
-        "topologyIntent": "Central woofer and symmetric left/right tweeters with geometric retaining rings and cone relief.",
+        "topologyIntent": "Large central ribbed paper-cone woofer and two elevated symmetric tweeters with physically layered frames, surrounds, cones, domes, and fasteners.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2198,9 +2208,9 @@
         ]
       },
       "dimensions": {
-        "width": 3.65,
-        "height": 1.62,
-        "depth": 0.32,
+        "width": 5.16,
+        "height": 2.8,
+        "depth": 0.35,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2290,12 +2300,20 @@
         {
           "id": "twin-tweeter-domes",
           "type": "reference-detail"
+        },
+        {
+          "id": "woofer-ribbed-paper-cone",
+          "type": "reference-detail"
+        },
+        {
+          "id": "independent-mounting-fasteners",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
         "dominantAlbedo": "rgba(16, 18, 22, 1.0)",
         "secondaryAlbedo": "rgba(41, 45, 49, 1.0)",
-        "materialClass": "plastic",
+        "materialClass": "mixed rubber paper and coated metal",
         "materialClassConfidence": 0.88,
         "evidenceRefs": [
           "front-view",
@@ -2305,14 +2323,14 @@
         ]
       },
       "surfaceDetail": {
-        "macroRoughness": 0.18,
-        "microRoughness": 0.08,
-        "bumpAmplitude": 0.04,
-        "normalPattern": "independent procedural height field",
+        "macroRoughness": 0.78,
+        "microRoughness": 0.18,
+        "bumpAmplitude": 0.012,
+        "normalPattern": "paper fibre and composite PBR response",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Central woofer and symmetric left/right tweeters with geometric retaining rings and cone relief."
+        "notes": "Central woofer uses a true open frustum cone, seven concentric ribs, compressed dome, thick rubber surround, coated frame and eight fasteners; each tweeter has the same layered construction with four brass fasteners."
       },
       "evidenceRefs": [
         "front-view",
@@ -2322,7 +2340,9 @@
       ],
       "details": [
         "concentric-driver-rings",
-        "twin-tweeter-domes"
+        "twin-tweeter-domes",
+        "woofer-ribbed-paper-cone",
+        "independent-mounting-fasteners"
       ],
       "fidelityTier": "reference"
     },
