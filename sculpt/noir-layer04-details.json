@@ -17,15 +17,15 @@
         "confidence": 0.96
       },
       {
-        "id": "top-handle-slot",
-        "kind": "hole",
-        "description": "Wide capsule-shaped recessed carry-handle slot centered on the cabinet top.",
-        "region": {"x": 0.36, "y": 0.12, "width": 0.3, "height": 0.18, "units": "normalized"},
+        "id": "inset-top-control-well",
+        "kind": "recess",
+        "description": "The supplied physical product view resolves the top feature as a broad capsule-ended recessed control well rather than a carry-handle slot.",
+        "region": {"x": 0.24, "y": 0.1, "width": 0.52, "height": 0.23, "units": "normalized"},
         "scale": "meso",
         "affects": "cabinet top",
-        "mapsTo": {"type": "component", "ref": "cabinet-shell/top-handle-slot"},
-        "evidenceRef": "sculpt/noir-layer04-zones/zone-r0c1.png",
-        "confidence": 0.94
+        "mapsTo": {"type": "component", "ref": "cabinet-shell/inset-top-control-well"},
+        "evidenceRef": "assets/reference/noir-s1/components/physical-top-layout.png",
+        "confidence": 0.98
       },
       {
         "id": "continuous-mdf-front-lip",

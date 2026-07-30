@@ -220,7 +220,7 @@
           "affects": "control-deck",
           "mapsTo": {
             "type": "feature",
-            "ref": "top-control-deck/top-control-recess"
+            "ref": "top-control-deck/capsule-ended-control-well"
           },
           "evidenceRef": "assets/reference-speaker-views.png",
           "confidence": 0.9,
@@ -290,7 +290,7 @@
           "affects": "electronics module",
           "mapsTo": {
             "type": "feature",
-            "ref": "amplifier-board/pcb-components"
+            "ref": "amplifier-board/black-solder-mask-board"
           },
           "evidenceRef": "assets/reference-speaker-exploded.png",
           "confidence": 0.83,
@@ -899,7 +899,7 @@
           "segments": 28
         },
         "deformationStack": [],
-        "uvStrategy": "dominant-axis world-scale projection with a common 0.64-unit leather tile size",
+        "uvStrategy": "object-space triplanar PBR projection with smooth normal-weighted blending and a common 4-unit leather tile size",
         "normalStrategy": "smooth analytic vertex normals"
       },
       "parent": null,
@@ -1050,7 +1050,7 @@
           "type": "reference-detail"
         },
         {
-          "id": "top-handle-slot",
+          "id": "inset-top-control-well",
           "type": "reference-detail"
         }
       ],
@@ -1074,7 +1074,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "The #04 cabinet binds the reference-guided cabinet-tolex-real albedo, normal and roughness maps directly. The source is de-lit, brightness-clamped and edge-periodic with zero opposite-edge delta, preventing baked white streaks and tile seams. The visible exterior is one continuous CSG mesh with common world-scale UV density, high roughness and low environment response."
+        "notes": "The cabinet binds independent physical-grain-v4 albedo, normal and roughness maps derived from the supplied close-up of the real amplifier leather. The dense irregular pebble cells and fine dark crease network are de-lit, brightness-clamped and edge-periodic with zero opposite-edge delta. Object-space triplanar sampling blends all three projection axes across the rounded CSG shell, eliminating the dominant-axis UV strips previously visible at corner vertices. The material keeps 0.98 roughness and low environment response."
       },
       "evidenceRefs": [
         "front-view",
@@ -1084,7 +1084,7 @@
       ],
       "details": [
         "rounded-vinyl-shell",
-        "top-handle-slot"
+        "inset-top-control-well"
       ],
       "fidelityTier": "reference"
     },
@@ -1809,7 +1809,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Near-black warm matte leather wraps a closed padded frame. The lychee grain uses a stronger normal response, enlarged texture scale, and less compressed diffuse modulation so it remains legible at the default exploded-view distance, while the high roughness keeps the convex cross-section free of polished highlights. Separate round brass piping and a recessed black gasket sit inside the opening."
+        "notes": "The padded frame uses the same physical-grain-v4 leather and object-space triplanar projection as the cabinet shell, keeping the real amplifier pebble scale continuous around the curved cross-section without UV seams. High roughness and restrained normal amplitude keep the material tactile without polished plastic highlights. Separate round brass piping and a recessed black gasket sit inside the opening."
       },
       "evidenceRefs": [
         "front-view",
@@ -2370,9 +2370,9 @@
       "confidence": 0.88,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "The supplied physical-product view resolves a capsule-ended brass panel seated inside a matching deep black top well, with three primary knobs and asymmetric auxiliary controls.",
       "geometryDescriptor": {
-        "topologyIntent": "Brass plate is inset into a black top recess; four knobs and one toggle are individual geometry.",
+        "topologyIntent": "A broad capsule-ended control well is cut into the continuous top shell. A beveled brass plate sits below the surrounding leather surface and carries three aligned knurled knobs, left input jack and white button, right black button and auxiliary jack, a toggle switch, and six plated mounting bores.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2407,17 +2407,17 @@
         ]
       },
       "dimensions": {
-        "width": 5.25,
+        "width": 4.78,
         "height": 0.25,
-        "depth": 1.47,
+        "depth": 1.02,
         "units": "relative",
         "confidence": 0.88
       },
       "transform": {
         "position": [
           0,
-          2.13,
-          0
+          2.055,
+          -0.32
         ],
         "rotation": [
           0,
@@ -2493,15 +2493,27 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "top-control-recess",
+          "id": "top-recess-and-knobs",
           "type": "reference-detail"
         },
         {
-          "id": "knurled-knobs",
+          "id": "capsule-ended-control-well",
+          "type": "reference-detail"
+        },
+        {
+          "id": "three-knurled-control-knobs",
           "type": "reference-detail"
         },
         {
           "id": "toggle-stem",
+          "type": "reference-detail"
+        },
+        {
+          "id": "asymmetric-auxiliary-controls",
+          "type": "reference-detail"
+        },
+        {
+          "id": "six-plated-panel-bores",
           "type": "reference-detail"
         }
       ],
@@ -2525,7 +2537,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Brass plate is inset into a black top recess; four knobs and one toggle are individual geometry."
+        "notes": "The control assembly follows the physical product reference: the brass plate sits below the leather top in a deep capsule-ended well, with three main knobs and asymmetric small controls. It is not a floating rear strip."
       },
       "evidenceRefs": [
         "front-view",
@@ -2534,9 +2546,11 @@
         "exploded-view"
       ],
       "details": [
-        "top-control-recess",
-        "knurled-knobs",
-        "toggle-stem"
+        "capsule-ended-control-well",
+        "three-knurled-control-knobs",
+        "toggle-stem",
+        "asymmetric-auxiliary-controls",
+        "six-plated-panel-bores"
       ],
       "fidelityTier": "reference"
     },
@@ -2549,9 +2563,9 @@
       "confidence": 0.88,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "The component reference shows a long black solder-mask board with four plated mounting holes, two dominant filter capacitors, varied secondary capacitors, relay blocks, a finned regulator, connectors, IC packages with pins, copper traces and a dense SMD field.",
       "geometryDescriptor": {
-        "topologyIntent": "Service board below the top controls; detailed component placement is inferred from the exploded reference.",
+        "topologyIntent": "Final-scale 5.12 by 1.16 PCB mounted inside the upper chamber. Component heights and keep-out regions preserve internal-top clearance, while three potentiometer axes and the toggle axis share the exact X/Z positions used by the recessed physical-product control panel.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2568,12 +2582,12 @@
         "localStart": [
           0,
           0.85,
-          -0.25
+          -0.32
         ],
         "localEnd": [
           0,
           1.32,
-          -0.25
+          -0.32
         ],
         "contactType": "overlap",
         "overlap": 0.04,
@@ -2586,9 +2600,9 @@
         ]
       },
       "dimensions": {
-        "width": 4.49,
-        "height": 0.35,
-        "depth": 1.2,
+        "width": 5.12,
+        "height": 0.62,
+        "depth": 1.16,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2596,7 +2610,7 @@
         "position": [
           0,
           0.78,
-          -0.25
+          -0.32
         ],
         "rotation": [
           0,
@@ -2672,18 +2686,58 @@
       "seams": [],
       "localFeatures": [
         {
-          "id": "pcb-components",
+          "id": "amplifier-pcb",
           "type": "reference-detail"
         },
         {
-          "id": "capacitor-bank",
+          "id": "black-solder-mask-board",
+          "type": "reference-detail"
+        },
+        {
+          "id": "gold-plated-mounting-holes",
+          "type": "reference-detail"
+        },
+        {
+          "id": "dual-filter-capacitors",
+          "type": "reference-detail"
+        },
+        {
+          "id": "secondary-capacitor-field",
+          "type": "reference-detail"
+        },
+        {
+          "id": "finned-voltage-regulator",
+          "type": "reference-detail"
+        },
+        {
+          "id": "relay-and-power-blocks",
+          "type": "reference-detail"
+        },
+        {
+          "id": "integrated-circuits-and-pins",
+          "type": "reference-detail"
+        },
+        {
+          "id": "surface-mount-component-field",
+          "type": "reference-detail"
+        },
+        {
+          "id": "board-connectors",
+          "type": "reference-detail"
+        },
+        {
+          "id": "visible-copper-traces",
+          "type": "reference-detail"
+        },
+        {
+          "id": "top-control-axis-alignment",
           "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
-        "dominantAlbedo": "rgba(23, 50, 41, 1.0)",
+        "dominantAlbedo": "rgba(17, 20, 22, 1.0)",
         "secondaryAlbedo": "rgba(155, 138, 67, 1.0)",
-        "materialClass": "plastic",
+        "materialClass": "mixed FR-4, solder mask, metal and electronic polymers",
         "materialClassConfidence": 0.88,
         "evidenceRefs": [
           "front-view",
@@ -2693,14 +2747,14 @@
         ]
       },
       "surfaceDetail": {
-        "macroRoughness": 0.18,
-        "microRoughness": 0.08,
-        "bumpAmplitude": 0.04,
-        "normalPattern": "independent procedural height field",
+        "macroRoughness": 0.72,
+        "microRoughness": 0.12,
+        "bumpAmplitude": 0.008,
+        "normalPattern": "seamless solder-mask micro normal with independent metallic component response",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Service board below the top controls; detailed component placement is inferred from the exploded reference."
+        "notes": "Black solder-mask PCB with independently modeled high-volume capacitors, secondary capacitor field, relays, finned regulator, IC pins, service connectors, copper traces and forty-plus SMD packages. The PCB and recessed top controls share a centralized configuration object for positional alignment."
       },
       "evidenceRefs": [
         "front-view",
@@ -2709,8 +2763,17 @@
         "exploded-view"
       ],
       "details": [
-        "pcb-components",
-        "capacitor-bank"
+        "black-solder-mask-board",
+        "gold-plated-mounting-holes",
+        "dual-filter-capacitors",
+        "secondary-capacitor-field",
+        "finned-voltage-regulator",
+        "relay-and-power-blocks",
+        "integrated-circuits-and-pins",
+        "surface-mount-component-field",
+        "board-connectors",
+        "visible-copper-traces",
+        "top-control-axis-alignment"
       ],
       "fidelityTier": "reference"
     },

@@ -295,27 +295,169 @@ export function createSpeakerBlockout(): THREE.Group {
     };
     return material;
   }
+
+  function enableTriplanarLeather(
+    material: THREE.MeshStandardMaterial,
+    tileWorldSize: number,
+    cacheKey: string,
+  ): void {
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.triplanarScale = { value: 1 / tileWorldSize };
+      shader.uniforms.triplanarSharpness = { value: 4 };
+
+      const triplanarVaryings = `
+varying vec3 vTriplanarPosition;
+varying vec3 vTriplanarNormal;
+varying vec3 vTriplanarAxisX;
+varying vec3 vTriplanarAxisY;
+varying vec3 vTriplanarAxisZ;
+`;
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', `#include <common>\n${triplanarVaryings}`)
+        .replace(
+          '#include <normal_vertex>',
+          `#include <normal_vertex>
+vTriplanarNormal = normalize( objectNormal );
+vTriplanarAxisX = normalize( normalMatrix * vec3( 1.0, 0.0, 0.0 ) );
+vTriplanarAxisY = normalize( normalMatrix * vec3( 0.0, 1.0, 0.0 ) );
+vTriplanarAxisZ = normalize( normalMatrix * vec3( 0.0, 0.0, 1.0 ) );`,
+        )
+        .replace(
+          '#include <project_vertex>',
+          `#include <project_vertex>
+vTriplanarPosition = transformed;`,
+        );
+
+      const triplanarFragmentHelpers = `
+${triplanarVaryings}
+uniform float triplanarScale;
+uniform float triplanarSharpness;
+
+vec3 triplanarWeights() {
+  vec3 weights = pow( max( abs( normalize( vTriplanarNormal ) ), vec3( 0.0001 ) ), vec3( triplanarSharpness ) );
+  return weights / max( weights.x + weights.y + weights.z, 0.0001 );
+}
+
+void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
+  vec3 position = vTriplanarPosition * triplanarScale;
+  uvX = vec2( -position.z, position.y );
+  uvY = vec2( position.x, -position.z );
+  uvZ = vec2( position.x, position.y );
+}
+`;
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', `#include <common>\n${triplanarFragmentHelpers}`)
+        .replace(
+          '#include <map_fragment>',
+          `#ifdef USE_MAP
+  vec2 triplanarUvX;
+  vec2 triplanarUvY;
+  vec2 triplanarUvZ;
+  triplanarUvs( triplanarUvX, triplanarUvY, triplanarUvZ );
+  vec3 triplanarBlend = triplanarWeights();
+  vec4 sampledDiffuseColor =
+      texture2D( map, triplanarUvX ) * triplanarBlend.x
+    + texture2D( map, triplanarUvY ) * triplanarBlend.y
+    + texture2D( map, triplanarUvZ ) * triplanarBlend.z;
+  diffuseColor *= sampledDiffuseColor;
+#endif`,
+        )
+        .replace(
+          '#include <roughnessmap_fragment>',
+          `float roughnessFactor = roughness;
+#ifdef USE_ROUGHNESSMAP
+  vec2 triplanarRoughnessUvX;
+  vec2 triplanarRoughnessUvY;
+  vec2 triplanarRoughnessUvZ;
+  triplanarUvs( triplanarRoughnessUvX, triplanarRoughnessUvY, triplanarRoughnessUvZ );
+  vec3 triplanarRoughnessBlend = triplanarWeights();
+  float triplanarRoughness =
+      texture2D( roughnessMap, triplanarRoughnessUvX ).g * triplanarRoughnessBlend.x
+    + texture2D( roughnessMap, triplanarRoughnessUvY ).g * triplanarRoughnessBlend.y
+    + texture2D( roughnessMap, triplanarRoughnessUvZ ).g * triplanarRoughnessBlend.z;
+  roughnessFactor *= triplanarRoughness;
+#endif`,
+        )
+        .replace(
+          '#include <normal_fragment_maps>',
+          `#ifdef USE_NORMALMAP_TANGENTSPACE
+  vec2 triplanarNormalUvX;
+  vec2 triplanarNormalUvY;
+  vec2 triplanarNormalUvZ;
+  triplanarUvs( triplanarNormalUvX, triplanarNormalUvY, triplanarNormalUvZ );
+  vec3 triplanarNormalBlend = triplanarWeights();
+  vec3 surfaceNormal = normalize( vTriplanarNormal );
+  vec3 sampledNormalX = texture2D( normalMap, triplanarNormalUvX ).xyz * 2.0 - 1.0;
+  vec3 sampledNormalY = texture2D( normalMap, triplanarNormalUvY ).xyz * 2.0 - 1.0;
+  vec3 sampledNormalZ = texture2D( normalMap, triplanarNormalUvZ ).xyz * 2.0 - 1.0;
+  sampledNormalX.xy *= normalScale;
+  sampledNormalY.xy *= normalScale;
+  sampledNormalZ.xy *= normalScale;
+  float normalSignX = surfaceNormal.x < 0.0 ? -1.0 : 1.0;
+  float normalSignY = surfaceNormal.y < 0.0 ? -1.0 : 1.0;
+  float normalSignZ = surfaceNormal.z < 0.0 ? -1.0 : 1.0;
+  vec3 objectNormalX = vec3(
+    normalSignX * sampledNormalX.z,
+    sampledNormalX.y,
+    -normalSignX * sampledNormalX.x
+  );
+  vec3 objectNormalY = vec3(
+    sampledNormalY.x,
+    normalSignY * sampledNormalY.z,
+    -normalSignY * sampledNormalY.y
+  );
+  vec3 objectNormalZ = vec3(
+    normalSignZ * sampledNormalZ.x,
+    sampledNormalZ.y,
+    normalSignZ * sampledNormalZ.z
+  );
+  vec3 triplanarObjectNormal = normalize(
+      objectNormalX * triplanarNormalBlend.x
+    + objectNormalY * triplanarNormalBlend.y
+    + objectNormalZ * triplanarNormalBlend.z
+  );
+  normal = normalize(
+      vTriplanarAxisX * triplanarObjectNormal.x
+    + vTriplanarAxisY * triplanarObjectNormal.y
+    + vTriplanarAxisZ * triplanarObjectNormal.z
+  );
+#endif`,
+        );
+    };
+    material.customProgramCacheKey = () => `triplanar-leather-${cacheKey}`;
+    material.userData.mapping = {
+      mode: 'object-space triplanar blend',
+      tileWorldSize,
+      blendSharpness: 4,
+      purpose: 'continuous leather grain across rounded corners without dominant-axis UV seams',
+    };
+    material.needsUpdate = true;
+  }
+
+  const CABINET_LEATHER_TILE_WORLD_SIZE = 4;
   const vinyl = referenceMaterial('vinyl-leather', '#090a0a', [2.2, 1.4], 0.03, 0.72, 0.3);
   const vinylEdge = referenceMaterial('matte-black', '#050606', [2.4, 1.8], 0.06, 0.64, 0.2);
   let refreshCabinetLeatherPbr = () => undefined;
-  const cabinetLeatherAlbedo = materialTexture('cabinet-tolex-real', 'albedo', [1, 1], true, 'tolex-v3', () => refreshCabinetLeatherPbr());
-  const cabinetLeatherNormal = materialTexture('cabinet-tolex-real', 'normal', [1, 1], false, 'tolex-v3', () => refreshCabinetLeatherPbr());
-  const cabinetLeatherRoughness = materialTexture('cabinet-tolex-real', 'roughness', [1, 1], false, 'tolex-v3', () => refreshCabinetLeatherPbr());
+  const cabinetLeatherAlbedo = materialTexture('cabinet-tolex-real', 'albedo', [1, 1], true, 'physical-grain-v4', () => refreshCabinetLeatherPbr());
+  const cabinetLeatherNormal = materialTexture('cabinet-tolex-real', 'normal', [1, 1], false, 'physical-grain-v4', () => refreshCabinetLeatherPbr());
+  const cabinetLeatherRoughness = materialTexture('cabinet-tolex-real', 'roughness', [1, 1], false, 'physical-grain-v4', () => refreshCabinetLeatherPbr());
   const cabinetLeather = new THREE.MeshStandardMaterial({
-    color: '#c0c0c0',
+    color: '#5d5d5d',
     map: cabinetLeatherAlbedo,
     normalMap: cabinetLeatherNormal,
-    normalScale: new THREE.Vector2(1, 1),
+    normalScale: new THREE.Vector2(0.56, 0.56),
     roughnessMap: cabinetLeatherRoughness,
-    roughness: 1,
+    roughness: 0.98,
     metalness: 0,
+    envMapIntensity: 0.06,
   });
   cabinetLeather.userData.pbrChannels = {
-    albedo: '/materials/cabinet-tolex-real/cabinet-tolex-real_albedo.png?v=tolex-v3',
-    normal: '/materials/cabinet-tolex-real/cabinet-tolex-real_normal.png?v=tolex-v3',
-    roughness: '/materials/cabinet-tolex-real/cabinet-tolex-real_roughness.png?v=tolex-v3',
-    provenance: 'Reference-guided real Tolex macro material, de-lit and made mathematically seamless.',
+    albedo: '/materials/cabinet-tolex-real/cabinet-tolex-real_albedo.png?v=physical-grain-v4',
+    normal: '/materials/cabinet-tolex-real/cabinet-tolex-real_normal.png?v=physical-grain-v4',
+    roughness: '/materials/cabinet-tolex-real/cabinet-tolex-real_roughness.png?v=physical-grain-v4',
+    provenance: 'Generated from the supplied physical amplifier close-up: dense irregular pebble cells, de-lit, contrast-clamped and mathematically seamless.',
   };
+  enableTriplanarLeather(cabinetLeather, CABINET_LEATHER_TILE_WORLD_SIZE, 'cabinet-v1');
   refreshCabinetLeatherPbr = () => { cabinetLeather.needsUpdate = true; };
   const driverCompositeAlbedo = proceduralAlbedo('driver-composite', '#202122', [3.4, 2.15]);
   const driverCompositeNormal = proceduralScalar('driver-composite', 'normal', [3.4, 2.15]);
@@ -349,22 +491,23 @@ export function createSpeakerBlockout(): THREE.Group {
   silverHardware.name = 'Silver mounting hardware';
   const brass = referenceMaterial('brushed-brass', '#b89451', [2.8, 1.6], 0.9, 0.28, 0.22);
   const brassDark = referenceMaterial('brushed-brass', '#5f421d', [3.8, 2.1], 0.78, 0.41, 0.18);
-  let refreshFrontFramePbr = () => undefined;
-  const frontFrameAlbedo = materialTexture('front-frame-leather', 'albedo', [6.5, 0.9], true, 'lychee-v10', () => refreshFrontFramePbr());
-  const frontFrameNormal = materialTexture('front-frame-leather', 'normal', [6.5, 0.9], false, 'lychee-v10', () => refreshFrontFramePbr());
-  const frontFrameRoughness = materialTexture('front-frame-leather', 'roughness', [6.5, 0.9], false, 'lychee-v10', () => refreshFrontFramePbr());
-  const frontFrameLeather = new THREE.MeshStandardMaterial({
-    color: '#b5aea6', map: frontFrameAlbedo, normalMap: frontFrameNormal, normalScale: new THREE.Vector2(0.6, 0.6),
-    roughnessMap: frontFrameRoughness, roughness: 1, metalness: 0,
-  });
+  const frontFrameLeather = cabinetLeather.clone();
+  frontFrameLeather.name = 'Physical pebbled leather front frame';
+  frontFrameLeather.map = cabinetLeatherAlbedo.clone();
+  frontFrameLeather.normalMap = cabinetLeatherNormal.clone();
+  frontFrameLeather.roughnessMap = cabinetLeatherRoughness.clone();
+  for (const texture of [frontFrameLeather.map, frontFrameLeather.normalMap, frontFrameLeather.roughnessMap]) {
+    texture?.repeat.set(3.2, 0.7);
+    if (texture) texture.needsUpdate = true;
+  }
+  frontFrameLeather.color.set('#5d5d5d');
+  frontFrameLeather.normalScale.set(0.56, 0.56);
   frontFrameLeather.userData.pbrChannels = {
-    albedo: '/materials/front-frame-leather/front-frame-leather_albedo.png?v=lychee-v10',
-    normal: '/materials/front-frame-leather/front-frame-leather_normal.png?v=lychee-v10',
-    roughness: '/materials/front-frame-leather/front-frame-leather_roughness.png?v=lychee-v10',
-    provenance: 'Generated bitmap PBR set, constrained by the approved #02 front-frame reference; not an original photographed leather scan.',
+    ...cabinetLeather.userData.pbrChannels,
+    usage: 'The same physical pebbled leather wraps the detachable padded front frame at a tube-appropriate repeat.',
   };
+  enableTriplanarLeather(frontFrameLeather, CABINET_LEATHER_TILE_WORLD_SIZE, 'front-frame-v1');
   frontFrameLeather.needsUpdate = true;
-  refreshFrontFramePbr = () => { frontFrameLeather.needsUpdate = true; };
   const frontFramePiping = new THREE.MeshStandardMaterial({ color: '#9d713c', metalness: 0.86, roughness: 0.36 });
   const frontFrameGasket = new THREE.MeshStandardMaterial({ color: '#070707', metalness: 0.04, roughness: 0.7 });
   const rubber = referenceMaterial('rubber', '#090a0b', [2.4, 2.4], 0, 0.86, 0.22);
@@ -399,7 +542,30 @@ export function createSpeakerBlockout(): THREE.Group {
     ...wood.userData.pbrChannels,
     usage: 'Darker, stronger compressed-fibre response on visible board cross-sections.',
   };
-  const pcb = referenceMaterial('pcb', '#244831', [2.4, 2.4], 0.28, 0.48, 0.24);
+  const pcbAlbedo = proceduralAlbedo('pcb', '#111416', [3.2, 1.2]);
+  const pcbNormal = proceduralScalar('driver-composite', 'normal', [3.2, 1.2]);
+  const pcbRoughness = proceduralScalar('driver-composite', 'roughness', [3.2, 1.2]);
+  const pcb = new THREE.MeshStandardMaterial({
+    color: '#a2a5a4',
+    map: pcbAlbedo,
+    normalMap: pcbNormal,
+    normalScale: new THREE.Vector2(0.08, 0.08),
+    roughnessMap: pcbRoughness,
+    roughness: 0.72,
+    metalness: 0.08,
+  });
+  pcb.name = 'Black solder-mask PCB';
+  pcb.userData.pbrChannels = {
+    albedo: 'generated://pcb/albedo',
+    normal: 'generated://pcb/normal',
+    roughness: 'generated://pcb/roughness',
+    provenance: 'Seamless black solder-mask response matching the internal PCB reference.',
+  };
+  const electronicBlack = new THREE.MeshStandardMaterial({ color: '#111315', metalness: 0.08, roughness: 0.62 });
+  const electronicGrey = new THREE.MeshStandardMaterial({ color: '#34373a', metalness: 0.18, roughness: 0.5 });
+  const connectorWhite = new THREE.MeshStandardMaterial({ color: '#ddd9ca', metalness: 0.02, roughness: 0.62 });
+  const capacitorSilver = new THREE.MeshStandardMaterial({ color: '#aaa9a3', metalness: 0.82, roughness: 0.32 });
+  const copperPad = new THREE.MeshStandardMaterial({ color: '#bd8440', metalness: 0.82, roughness: 0.38 });
   const { normal: grilleNormalTexture, roughness: grilleRoughnessTexture } = wovenMetalResponseMaps();
   const metalGrille = new THREE.MeshStandardMaterial({
     // Reference #01 reads as a dense near-opaque black/copper metal weave at product
@@ -579,23 +745,31 @@ export function createSpeakerBlockout(): THREE.Group {
     rearPortRadius: 0.09,
     rearPortX: 1.25,
     rearPortY: 0.1,
-    leatherTileWorldSize: 1.05,
+    leatherTileWorldSize: CABINET_LEATHER_TILE_WORLD_SIZE,
     mdfTileWorldSize: 0.82,
     footRadius: 0.12,
     footHeight: 0.12,
   } as const;
 
+  const TOP_CONTROL = {
+    width: 4.78,
+    depth: 1.02,
+    radius: 0.43,
+    z: -0.32,
+    plateThickness: 0.055,
+    recessDepth: 0.13,
+    knobXs: [-0.72, 0.08, 0.88],
+    leftJackX: -1.82,
+    leftButtonX: -1.42,
+    rightButtonX: 1.5,
+    rightJackX: 1.78,
+    toggleX: 2.04,
+    shaftRadius: 0.055,
+  } as const;
+
   const COMPONENT_FIT = {
     frontFrame: (CABINET.frontOpeningWidth + 0.2) / 4.42,
     grille: (CABINET.frontOpeningWidth - 0.15) / 4.1,
-    topDeck: {
-      x: (CABINET.width * 0.82) / 3.82,
-      z: (CABINET.depth * 0.42) / 1.02,
-    },
-    amplifier: {
-      x: (CABINET.frontOpeningWidth * 0.78) / 3.26,
-      z: 1.2 / 0.86,
-    },
     rearCover: {
       x: (CABINET.width - 0.45) / 4.04,
       y: (CABINET.height - 0.65) / 2,
@@ -632,7 +806,7 @@ export function createSpeakerBlockout(): THREE.Group {
   outerShell.userData.construction = 'single continuous rounded CSG shell';
 
   // One watertight rounded body produces all eight exterior corners. The interior,
-  // front opening, handle slot and rear port are cut from this same surface, avoiding
+  // front opening, inset control well and rear port are cut from this same surface, avoiding
   // the height steps and soft-strip seams caused by overlapping independent panels.
   const outerBodyBrush = new Brush(
     new RoundedBoxGeometry(
@@ -660,21 +834,6 @@ export function createSpeakerBlockout(): THREE.Group {
   cavityBrush.position.z = CABINET.shellThickness;
   cavityBrush.updateMatrixWorld(true);
 
-  const handleCutterShape = new THREE.Shape();
-  appendCapsule(handleCutterShape, CABINET.handleWidth, CABINET.handleHeight);
-  const handleCutterGeometry = new THREE.ExtrudeGeometry(handleCutterShape, {
-    depth: CABINET.shellThickness + CABINET.mdfThickness + 0.28,
-    bevelEnabled: true,
-    bevelSegments: 5,
-    bevelSize: 0.025,
-    bevelThickness: 0.025,
-    curveSegments: 32,
-  });
-  handleCutterGeometry.rotateX(Math.PI / 2);
-  const handleCutterBrush = new Brush(handleCutterGeometry, cabinetLeather);
-  handleCutterBrush.position.set(0, outerHalfHeight + 0.18, CABINET.handleZ);
-  handleCutterBrush.updateMatrixWorld(true);
-
   const rearPortCutterBrush = new Brush(
     new RoundedBoxGeometry(
       CABINET.rearPortWidth,
@@ -692,16 +851,63 @@ export function createSpeakerBlockout(): THREE.Group {
   );
   rearPortCutterBrush.updateMatrixWorld(true);
 
+  const topControlPocketShape = new THREE.Shape();
+  appendRoundedRectangle(
+    topControlPocketShape,
+    TOP_CONTROL.width + 0.18,
+    TOP_CONTROL.depth + 0.16,
+    TOP_CONTROL.radius + 0.08,
+  );
+  const topControlPocketGeometry = new THREE.ExtrudeGeometry(topControlPocketShape, {
+    depth: TOP_CONTROL.recessDepth + 0.12,
+    bevelEnabled: true,
+    bevelSegments: 5,
+    bevelSize: 0.025,
+    bevelThickness: 0.025,
+    curveSegments: 32,
+  });
+  topControlPocketGeometry.rotateX(Math.PI / 2);
+  const topControlPocketBrush = new Brush(topControlPocketGeometry, cabinetLeather);
+  topControlPocketBrush.position.set(
+    0,
+    outerHalfHeight + 0.1,
+    TOP_CONTROL.z,
+  );
+  topControlPocketBrush.updateMatrixWorld(true);
+
   const shellEvaluator = new Evaluator();
   shellEvaluator.useGroups = false;
   let continuousShellBrush = shellEvaluator.evaluate(outerBodyBrush, cavityBrush, SUBTRACTION);
   continuousShellBrush.material = cabinetLeather;
   continuousShellBrush.updateMatrixWorld(true);
-  continuousShellBrush = shellEvaluator.evaluate(continuousShellBrush, handleCutterBrush, SUBTRACTION);
-  continuousShellBrush.material = cabinetLeather;
-  continuousShellBrush.updateMatrixWorld(true);
   continuousShellBrush = shellEvaluator.evaluate(continuousShellBrush, rearPortCutterBrush, SUBTRACTION);
   continuousShellBrush.material = cabinetLeather;
+  continuousShellBrush.updateMatrixWorld(true);
+  continuousShellBrush = shellEvaluator.evaluate(continuousShellBrush, topControlPocketBrush, SUBTRACTION);
+  continuousShellBrush.material = cabinetLeather;
+  for (const shaftX of [
+    ...TOP_CONTROL.knobXs,
+    TOP_CONTROL.leftJackX,
+    TOP_CONTROL.leftButtonX,
+    TOP_CONTROL.rightButtonX,
+    TOP_CONTROL.rightJackX,
+    TOP_CONTROL.toggleX,
+  ]) {
+    const shaftCutter = new Brush(
+      new THREE.CylinderGeometry(
+        shaftX === TOP_CONTROL.toggleX ? TOP_CONTROL.shaftRadius * 0.72 : TOP_CONTROL.shaftRadius,
+        shaftX === TOP_CONTROL.toggleX ? TOP_CONTROL.shaftRadius * 0.72 : TOP_CONTROL.shaftRadius,
+        CABINET.shellThickness + CABINET.mdfThickness + 0.4,
+        32,
+      ),
+      cabinetLeather,
+    );
+    shaftCutter.position.set(shaftX, outerHalfHeight - 0.08, TOP_CONTROL.z);
+    shaftCutter.updateMatrixWorld(true);
+    continuousShellBrush.updateMatrixWorld(true);
+    continuousShellBrush = shellEvaluator.evaluate(continuousShellBrush, shaftCutter, SUBTRACTION);
+    continuousShellBrush.material = cabinetLeather;
+  }
   continuousShellBrush.name = 'ContinuousOuterShell';
   applyWorldScaleUvs(continuousShellBrush.geometry, CABINET.leatherTileWorldSize);
   outerShell.add(continuousShellBrush);
@@ -745,9 +951,25 @@ export function createSpeakerBlockout(): THREE.Group {
 
   const innerTopShape = new THREE.Shape();
   appendRoundedRectangle(innerTopShape, CABINET.frontOpeningWidth, innerBoardDepth, 0.06);
-  const innerTopHandleHole = new THREE.Path();
-  appendCapsule(innerTopHandleHole, CABINET.handleWidth, CABINET.handleHeight, 0, CABINET.handleZ, true);
-  innerTopShape.holes.push(innerTopHandleHole);
+  for (const shaftX of [
+    ...TOP_CONTROL.knobXs,
+    TOP_CONTROL.leftJackX,
+    TOP_CONTROL.leftButtonX,
+    TOP_CONTROL.rightButtonX,
+    TOP_CONTROL.rightJackX,
+    TOP_CONTROL.toggleX,
+  ]) {
+    const shaftHole = new THREE.Path();
+    shaftHole.absarc(
+      shaftX,
+      TOP_CONTROL.z,
+      shaftX === TOP_CONTROL.toggleX ? TOP_CONTROL.shaftRadius * 0.72 : TOP_CONTROL.shaftRadius,
+      0,
+      Math.PI * 2,
+      true,
+    );
+    innerTopShape.holes.push(shaftHole);
+  }
   const innerTopGeometry = new THREE.ExtrudeGeometry(innerTopShape, {
     depth: CABINET.mdfThickness,
     bevelEnabled: true,
@@ -957,25 +1179,8 @@ export function createSpeakerBlockout(): THREE.Group {
 
   const handleRecess = new THREE.Group();
   handleRecess.name = 'HandleRecess';
-  const handleEdgeShape = new THREE.Shape();
-  appendCapsule(handleEdgeShape, CABINET.handleWidth + 0.1, CABINET.handleHeight + 0.1);
-  const handleEdgeOpening = new THREE.Path();
-  appendCapsule(handleEdgeOpening, CABINET.handleWidth, CABINET.handleHeight, 0, 0, true);
-  handleEdgeShape.holes.push(handleEdgeOpening);
-  const handleEdgeGeometry = new THREE.ExtrudeGeometry(handleEdgeShape, {
-    depth: 0.03,
-    bevelEnabled: true,
-    bevelSegments: 4,
-    bevelSize: 0.012,
-    bevelThickness: 0.01,
-    curveSegments: 28,
-  });
-  handleEdgeGeometry.rotateX(Math.PI / 2);
-  handleEdgeGeometry.translate(0, outerHalfHeight + 0.025, CABINET.handleZ);
-  applyWorldScaleUvs(handleEdgeGeometry, CABINET.leatherTileWorldSize);
-  const handleEdge = new THREE.Mesh(handleEdgeGeometry, cabinetLeather);
-  handleEdge.name = 'HandleRecessEdge';
-  handleRecess.add(handleEdge);
+  handleRecess.userData.supersededBy = 'InsetTopControlAssembly';
+  handleRecess.userData.referenceDecision = 'The supplied physical-product top view replaces the earlier visible carry-slot interpretation.';
   cabinet.add(handleRecess);
 
   const rearPort = new THREE.Group();
@@ -1319,53 +1524,304 @@ export function createSpeakerBlockout(): THREE.Group {
   grille.add(badgeShadow, badge);
 
   const topGroup = new THREE.Group();
-  const topHousing = rounded(3.82, 0.1, 1.02, 0.06, vinylEdge);
-  topHousing.position.y = -0.025;
+  topGroup.name = 'InsetTopControlAssembly';
+  const topHousingShape = new THREE.Shape();
+  appendRoundedRectangle(
+    topHousingShape,
+    TOP_CONTROL.width + 0.14,
+    TOP_CONTROL.depth + 0.12,
+    TOP_CONTROL.radius + 0.06,
+  );
+  const topHousingGeometry = new THREE.ExtrudeGeometry(topHousingShape, {
+    depth: TOP_CONTROL.recessDepth,
+    bevelEnabled: true,
+    bevelSegments: 4,
+    bevelSize: 0.018,
+    bevelThickness: 0.018,
+    curveSegments: 32,
+  });
+  topHousingGeometry.rotateX(Math.PI / 2);
+  applyWorldScaleUvs(topHousingGeometry, CABINET.leatherTileWorldSize);
+  const topHousing = new THREE.Mesh(topHousingGeometry, cabinetLeather);
+  topHousing.name = 'TopControlRecessLiner';
+  topHousing.position.y = 0.015;
   topGroup.add(topHousing);
-  const controlRecess = rounded(3.58, 0.035, 0.78, 0.03, vinylEdge);
-  controlRecess.position.y = 0.035;
-  topGroup.add(controlRecess);
-  const brassPlate = rounded(3.34, 0.035, 0.64, 0.025, brass);
-  brassPlate.position.y = 0.067;
+  const brassPlateShape = new THREE.Shape();
+  appendRoundedRectangle(
+    brassPlateShape,
+    TOP_CONTROL.width,
+    TOP_CONTROL.depth,
+    TOP_CONTROL.radius,
+  );
+  const brassPlateGeometry = new THREE.ExtrudeGeometry(brassPlateShape, {
+    depth: TOP_CONTROL.plateThickness,
+    bevelEnabled: true,
+    bevelSegments: 4,
+    bevelSize: 0.014,
+    bevelThickness: 0.014,
+    curveSegments: 32,
+  });
+  brassPlateGeometry.rotateX(Math.PI / 2);
+  const brassPlate = new THREE.Mesh(brassPlateGeometry, brass);
+  brassPlate.name = 'InsetBrassControlPlate';
+  brassPlate.position.y = 0.025;
   topGroup.add(brassPlate);
-  for (const x of [-1.04, -0.35, 0.35, 1.04]) {
-    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.1, 32), brass);
-    knob.position.set(x, 0.12, 0);
-    topGroup.add(knob);
-    const indicator = rounded(0.015, 0.055, 0.024, 0.005, brassDark);
-    indicator.position.set(x, 0.185, 0.08);
-    topGroup.add(indicator);
-    for (let ridge = 0; ridge < 12; ridge += 1) {
-      const angle = (ridge / 12) * Math.PI * 2;
-      const knurl = rounded(0.014, 0.055, 0.01, 0.003, brassDark);
-      knurl.position.set(x + Math.cos(angle) * 0.115, 0.12, Math.sin(angle) * 0.115);
+
+  const topPlateFasteners = new THREE.Group();
+  topPlateFasteners.name = 'TopPlateFasteners';
+  for (const [index, [x, z]] of [
+    [-2.28, -0.23], [-2.28, 0.23],
+    [0, -0.23], [0, 0.23],
+    [2.28, -0.23], [2.28, 0.23],
+  ].entries()) {
+    const bore = new THREE.Mesh(new THREE.CylinderGeometry(0.047, 0.047, 0.02, 28), electronicBlack);
+    bore.name = `TopPlateBore${index + 1}`;
+    bore.position.set(x, 0.023, z);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.047, 0.012, 8, 28), capacitorSilver);
+    rim.name = `TopPlateBoreRim${index + 1}`;
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(x, 0.035, z);
+    topPlateFasteners.add(bore, rim);
+  }
+  topGroup.add(topPlateFasteners);
+
+  const controls = new THREE.Group();
+  controls.name = 'AlignedTopControls';
+  for (const [knobIndex, x] of TOP_CONTROL.knobXs.entries()) {
+    const blackBase = new THREE.Mesh(new THREE.CylinderGeometry(0.135, 0.135, 0.075, 40), electronicBlack);
+    blackBase.name = `ControlKnobBlackBase${knobIndex + 1}`;
+    blackBase.position.set(x, 0.056, 0);
+    const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.125, 0.125, 0.115, 48), brass);
+    knob.name = `BrassControlKnob${knobIndex + 1}`;
+    knob.position.set(x, 0.145, 0);
+    controls.add(blackBase, knob);
+    const indicator = rounded(0.016, 0.009, 0.085, 0.004, electronicBlack);
+    indicator.name = `KnobIndicator${knobIndex + 1}`;
+    indicator.position.set(x, 0.207, 0.027);
+    indicator.rotation.y = -0.28;
+    controls.add(indicator);
+    for (let ridge = 0; ridge < 18; ridge += 1) {
+      const angle = (ridge / 18) * Math.PI * 2;
+      const knurl = rounded(0.013, 0.052, 0.012, 0.003, brassDark);
+      knurl.name = `Knob${knobIndex + 1}Knurl${ridge + 1}`;
+      knurl.position.set(x + Math.cos(angle) * 0.128, 0.145, Math.sin(angle) * 0.128);
       knurl.rotation.y = -angle;
-      topGroup.add(knurl);
+      controls.add(knurl);
     }
   }
-  const toggle = new THREE.Mesh(new THREE.CylinderGeometry(0.021, 0.021, 0.17, 20), brass);
-  toggle.position.set(1.52, 0.12, 0.12);
-  topGroup.add(toggle);
+  const leftInputJack = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.014, 10, 30), brassDark);
+  leftInputJack.name = 'LeftInputJack';
+  leftInputJack.rotation.x = Math.PI / 2;
+  leftInputJack.position.set(TOP_CONTROL.leftJackX, 0.042, 0);
+  const leftInputBore = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.025, 28), electronicBlack);
+  leftInputBore.name = 'LeftInputJackBore';
+  leftInputBore.position.set(TOP_CONTROL.leftJackX, 0.046, 0);
+  const leftPushButton = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 32), connectorWhite);
+  leftPushButton.name = 'LeftWhitePushButton';
+  leftPushButton.position.set(TOP_CONTROL.leftButtonX, 0.055, 0);
+  const rightPushButton = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.045, 32), electronicBlack);
+  rightPushButton.name = 'RightBlackPushButton';
+  rightPushButton.position.set(TOP_CONTROL.rightButtonX, 0.058, 0);
+  const rightJackBezel = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.014, 10, 30), capacitorSilver);
+  rightJackBezel.name = 'RightAuxiliaryJack';
+  rightJackBezel.rotation.x = Math.PI / 2;
+  rightJackBezel.position.set(TOP_CONTROL.rightJackX, 0.045, 0);
+  const rightJackBore = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.025, 28), electronicBlack);
+  rightJackBore.name = 'RightAuxiliaryJackBore';
+  rightJackBore.position.set(TOP_CONTROL.rightJackX, 0.048, 0);
+  controls.add(leftInputJack, leftInputBore, leftPushButton, rightPushButton, rightJackBezel, rightJackBore);
+  const toggleBezel = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.018, 10, 32), brassDark);
+  toggleBezel.name = 'ToggleBezel';
+  toggleBezel.rotation.x = Math.PI / 2;
+  toggleBezel.position.set(TOP_CONTROL.toggleX, 0.035, 0);
+  const toggle = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.22, 24), brass);
+  toggle.name = 'ToggleStem';
+  toggle.position.set(TOP_CONTROL.toggleX, 0.145, 0);
+  toggle.rotation.z = -0.12;
+  controls.add(toggleBezel, toggle);
+  topGroup.add(controls);
   const top = addPart('top-control-deck', 'Top brass control deck', cabinet, topGroup, { detachable: true });
-  top.position.y = outerHalfHeight + 0.08;
-  top.scale.set(COMPONENT_FIT.topDeck.x, 1, COMPONENT_FIT.topDeck.z);
+  top.position.set(0, outerHalfHeight + 0.005, TOP_CONTROL.z);
 
   const boardGroup = new THREE.Group();
-  const board = rounded(3.26, 0.08, 0.86, 0.035, pcb);
+  boardGroup.name = 'InternalAmplifierPCBAssembly';
+  const BOARD = { width: 5.12, depth: 1.16, thickness: 0.08 } as const;
+  const board = rounded(BOARD.width, BOARD.thickness, BOARD.depth, 0.055, pcb);
+  board.name = 'BlackAmplifierPCB';
   boardGroup.add(board);
-  for (const [x, z, radius, height] of [[-0.98, -0.14, 0.1, 0.22], [-0.68, -0.14, 0.1, 0.22], [0.58, 0.08, 0.13, 0.26], [0.92, 0.08, 0.13, 0.26]] as const) {
-    const capacitor = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, height, 20), baffleMat);
-    capacitor.position.set(x, height / 2 + 0.035, z);
-    boardGroup.add(capacitor);
+
+  const traceVertices: number[] = [];
+  for (let index = 0; index < 26; index += 1) {
+    const x1 = -2.3 + (index % 13) * 0.36;
+    const z1 = -0.46 + Math.floor(index / 13) * 0.18;
+    const x2 = x1 + 0.18 + (index % 3) * 0.07;
+    const z2 = z1 + ((index % 4) - 1.5) * 0.045;
+    traceVertices.push(x1, 0.046, z1, x2, 0.046, z1, x2, 0.046, z1, x2, 0.046, z2);
   }
-  for (const [x, z] of [[-0.22, -0.18], [0.12, -0.18], [-0.2, 0.2], [0.14, 0.2]] as const) {
-    const chip = rounded(0.2, 0.05, 0.15, 0.012, vinylEdge);
-    chip.position.set(x, 0.065, z);
+  const traceGeometry = new THREE.BufferGeometry();
+  traceGeometry.setAttribute('position', new THREE.Float32BufferAttribute(traceVertices, 3));
+  const traces = new THREE.LineSegments(traceGeometry, new THREE.LineBasicMaterial({ color: '#9c703a' }));
+  traces.name = 'PCBVisibleCopperTraces';
+  boardGroup.add(traces);
+
+  const pcbMountPositions: THREE.Vector2Tuple[] = [
+    [-2.34, -0.43], [-2.34, 0.43], [2.34, -0.43], [2.34, 0.43],
+  ];
+  for (const [index, [x, z]] of pcbMountPositions.entries()) {
+    const mountRing = new THREE.Mesh(new THREE.TorusGeometry(0.067, 0.016, 10, 30), copperPad);
+    mountRing.name = `PCBMountingRing${index + 1}`;
+    mountRing.rotation.x = Math.PI / 2;
+    mountRing.position.set(x, 0.052, z);
+    const mountBore = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.025, 28), electronicBlack);
+    mountBore.name = `PCBMountingBore${index + 1}`;
+    mountBore.position.set(x, 0.055, z);
+    boardGroup.add(mountRing, mountBore);
+  }
+
+  function addCapacitor(
+    name: string,
+    x: number,
+    z: number,
+    radius: number,
+    height: number,
+    silver: boolean,
+  ): void {
+    const body = new THREE.Mesh(
+      new THREE.CylinderGeometry(radius, radius * 1.02, height, 40),
+      silver ? capacitorSilver : electronicGrey,
+    );
+    body.name = `${name}Body`;
+    body.position.set(x, BOARD.thickness / 2 + height / 2, z);
+    const base = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.84, radius * 0.15, 10, 36), electronicBlack);
+    base.name = `${name}RubberBase`;
+    base.rotation.x = Math.PI / 2;
+    base.position.set(x, BOARD.thickness / 2 + 0.025, z);
+    const topCap = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.92, radius * 0.92, 0.014, 40), electronicGrey);
+    topCap.name = `${name}Top`;
+    topCap.position.set(x, BOARD.thickness / 2 + height + 0.007, z);
+    boardGroup.add(body, base, topCap);
+    if (radius > 0.18) {
+      for (let score = 0; score < 4; score += 1) {
+        const scoreLine = rounded(radius * 1.25, 0.008, 0.012, 0.003, electronicBlack);
+        scoreLine.name = `${name}SafetyScore${score + 1}`;
+        scoreLine.position.set(x, BOARD.thickness / 2 + height + 0.017, z);
+        scoreLine.rotation.y = (score / 4) * Math.PI;
+        boardGroup.add(scoreLine);
+      }
+    }
+  }
+  addCapacitor('MainFilterCapacitor01', 1.28, -0.06, 0.23, 0.54, true);
+  addCapacitor('MainFilterCapacitor02', 1.83, -0.06, 0.23, 0.54, true);
+  addCapacitor('SecondaryCapacitor01', 0.58, 0.16, 0.125, 0.34, true);
+  addCapacitor('SecondaryCapacitor02', -1.4, -0.15, 0.115, 0.31, false);
+  addCapacitor('SecondaryCapacitor03', -1.02, 0.13, 0.105, 0.28, false);
+  addCapacitor('SecondaryCapacitor04', -0.62, -0.16, 0.115, 0.32, false);
+
+  const relaySpecs = [
+    ['InputRelay', -2.06, -0.1, 0.3, 0.32, 0.28],
+    ['PowerRelay', 0.82, -0.28, 0.38, 0.34, 0.34],
+    ['OutputRelay01', 2.22, -0.2, 0.32, 0.31, 0.3],
+    ['OutputRelay02', 2.22, 0.22, 0.28, 0.28, 0.27],
+  ] as const;
+  for (const [name, x, z, width, height, depth] of relaySpecs) {
+    const relay = rounded(width, height, depth, 0.025, electronicBlack);
+    relay.name = name;
+    relay.position.set(x, BOARD.thickness / 2 + height / 2, z);
+    boardGroup.add(relay);
+  }
+
+  const heatsink = new THREE.Group();
+  heatsink.name = 'FinnedVoltageRegulatorHeatsink';
+  for (let fin = 0; fin < 5; fin += 1) {
+    const finMesh = rounded(0.035, 0.43, 0.24, 0.008, electronicGrey);
+    finMesh.name = `HeatsinkFin${fin + 1}`;
+    finMesh.position.set(-1.84 + fin * 0.055, BOARD.thickness / 2 + 0.215, 0.28);
+    heatsink.add(finMesh);
+  }
+  boardGroup.add(heatsink);
+
+  const chipSpecs = [
+    ['MainAmplifierIC', 0.05, -0.08, 0.48, 0.06, 0.28],
+    ['ControllerIC', -0.38, 0.25, 0.34, 0.055, 0.2],
+    ['PowerDriverIC', 0.46, -0.3, 0.3, 0.06, 0.2],
+    ['InputProcessorIC', -0.8, -0.3, 0.28, 0.055, 0.18],
+  ] as const;
+  for (const [name, x, z, width, height, depth] of chipSpecs) {
+    const chip = rounded(width, height, depth, 0.012, electronicBlack);
+    chip.name = name;
+    chip.position.set(x, BOARD.thickness / 2 + height / 2, z);
     boardGroup.add(chip);
+    for (const side of [-1, 1]) {
+      for (let pin = 0; pin < 6; pin += 1) {
+        const chipPin = rounded(0.025, 0.015, 0.022, 0.004, capacitorSilver);
+        chipPin.name = `${name}Pin${side === -1 ? 'L' : 'R'}${pin + 1}`;
+        chipPin.position.set(
+          x + side * (width / 2 + 0.014),
+          BOARD.thickness / 2 + 0.012,
+          z - depth * 0.38 + pin * (depth * 0.76 / 5),
+        );
+        boardGroup.add(chipPin);
+      }
+    }
   }
+
+  function addConnector(name: string, x: number, z: number, pins: number): void {
+    const housing = rounded(0.22 + pins * 0.055, 0.24, 0.24, 0.025, connectorWhite);
+    housing.name = `${name}Housing`;
+    housing.position.set(x, BOARD.thickness / 2 + 0.12, z);
+    boardGroup.add(housing);
+    for (let pin = 0; pin < pins; pin += 1) {
+      const contact = rounded(0.025, 0.16, 0.025, 0.004, copperPad);
+      contact.name = `${name}Contact${pin + 1}`;
+      contact.position.set(
+        x - ((pins - 1) * 0.055) / 2 + pin * 0.055,
+        BOARD.thickness / 2 + 0.12,
+        z - 0.125,
+      );
+      boardGroup.add(contact);
+    }
+  }
+  addConnector('LeftPowerConnector', -2.2, 0.3, 4);
+  addConnector('RightSignalConnector', 2.22, 0.31, 4);
+
+  const smdGroup = new THREE.Group();
+  smdGroup.name = 'SurfaceMountComponentField';
+  for (let index = 0; index < 42; index += 1) {
+    const x = -2.05 + (index % 14) * 0.29;
+    const z = -0.45 + Math.floor(index / 14) * 0.18;
+    if ((x > 0.95 && x < 2.1) || (x < -1.6 && z > 0.15)) continue;
+    const component = rounded(
+      index % 3 === 0 ? 0.075 : 0.052,
+      0.025,
+      0.036,
+      0.006,
+      index % 4 === 0 ? copperPad : electronicGrey,
+    );
+    component.name = `SMDComponent${index + 1}`;
+    component.position.set(x, BOARD.thickness / 2 + 0.018, z);
+    smdGroup.add(component);
+  }
+  boardGroup.add(smdGroup);
+
+  const controlAlignment = new THREE.Group();
+  controlAlignment.name = 'TopControlAlignmentAnchors';
+  for (const [index, x] of TOP_CONTROL.knobXs.entries()) {
+    const potentiometer = rounded(0.24, 0.12, 0.22, 0.02, electronicBlack);
+    potentiometer.name = `ControlPotentiometer${index + 1}`;
+    potentiometer.position.set(x, BOARD.thickness / 2 + 0.06, 0.34);
+    const shaftAnchor = new THREE.Object3D();
+    shaftAnchor.name = `ControlShaftAxis${index + 1}`;
+    shaftAnchor.position.set(x, BOARD.thickness / 2 + 0.12, 0);
+    controlAlignment.add(potentiometer, shaftAnchor);
+  }
+  const toggleAnchor = new THREE.Object3D();
+  toggleAnchor.name = 'ToggleShaftAxis';
+  toggleAnchor.position.set(TOP_CONTROL.toggleX, BOARD.thickness / 2 + 0.1, 0);
+  controlAlignment.add(toggleAnchor);
+  boardGroup.add(controlAlignment);
+
   const amplifier = addPart('amplifier-board', 'Amplifier circuit board', cabinet, boardGroup, { detachable: true, explodeGroup: 'internal-system' });
-  amplifier.position.set(0, 0.78, -0.25);
-  amplifier.scale.set(COMPONENT_FIT.amplifier.x, 1, COMPONENT_FIT.amplifier.z);
+  amplifier.position.set(0, 0.78, TOP_CONTROL.z);
 
   const rearGroup = new THREE.Group();
   const rearPanelMesh = rounded(4.04, 2.0, 0.12, 0.08, vinylEdge);
