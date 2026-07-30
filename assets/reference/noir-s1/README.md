@@ -30,6 +30,10 @@
 驱动挡板的正面、背面、左右侧、上下侧及三分之四视角补充图保存在
 `components/driver-baffle-multiview.png`，后续修改喇叭挡板厚度、磁体结构和背部安装关系时优先使用。
 
+后部结构的补充分层图保存在 `components/rear-cover-layer.png` 和
+`components/rear-metal-io-panel.png`。装配顺序以这两张图为准：皮革后盖先贴合箱体，
+黄铜金属接口面板位于最外侧，并作为最后拆出的后部层级。
+
 ## 使用规则
 
 1. 修改某个组件时，以对应的单件图为第一依据。

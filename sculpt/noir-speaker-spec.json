@@ -890,7 +890,7 @@
       "confidence": 0.94,
       "primitive": "box",
       "topologyClass": "conforming-shell",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "One watertight rounded shell with true CSG openings preserves the cabinet silhouette and avoids overlapping slab seams at the eight outer corners.",
       "geometryDescriptor": {
         "topologyIntent": "A single watertight rounded exterior body produces all eight outer corners as one continuous surface. CSG subtraction cuts the complete front opening and inner cavity, the capsule-shaped top handle opening and the rounded rear port; named top, bottom, side, back and front-lip nodes remain logical surface anchors rather than overlapping visible meshes.",
         "edgeTreatment": {
@@ -1485,9 +1485,9 @@
       "confidence": 0.88,
       "primitive": "box",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "The supplied rear-layer references establish two sequential detachable solids: the leather rear cover mounts against the cabinet first, and the brushed-metal interface panel is the final outermost layer.",
       "geometryDescriptor": {
-        "topologyIntent": "Container for the rear cover and I/O hardware, all seated on one compact installation plane against the resized cabinet.",
+        "topologyIntent": "Ordered rear stack with a full leather cover nearest the cabinet and a wide brushed-brass interface panel mounted outside it as the last removable layer.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -1522,9 +1522,9 @@
         ]
       },
       "dimensions": {
-        "width": 4,
-        "height": 1.7,
-        "depth": 0.18,
+        "width": 5.95,
+        "height": 3.45,
+        "depth": 0.23,
         "units": "relative",
         "confidence": 0.88
       },
@@ -1532,7 +1532,7 @@
         "position": [
           0,
           0,
-          -1.7
+          -1.66
         ],
         "rotation": [
           0,
@@ -1632,7 +1632,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "The rear cover, handle and I/O hardware return to one compact rear datum without stacked floating gaps."
+        "notes": "The rear-layer references correct the previous ordering: the leather cover seats at the cabinet rear datum, while the brushed-brass connection panel sits outside it and explodes farther as the last rear layer."
       },
       "evidenceRefs": [
         "front-view",
@@ -2842,16 +2842,16 @@
     },
     {
       "id": "rear-panel",
-      "name": "Rear panel with handle",
+      "name": "Leather rear cover with handle and power opening",
       "level": "meso",
       "role": "back-cover",
       "importance": 0.82,
       "confidence": 0.88,
       "primitive": "extrude",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "The saved rear-cover-layer reference resolves one extruded leather panel with a true capsule handle opening, a true chamfered power opening and ten through mounting bores.",
       "geometryDescriptor": {
-        "topologyIntent": "Black rear panel with a true capsule-shaped negative handle opening and perimeter screws.",
+        "topologyIntent": "Full-size black leather rear cover with a true capsule handle opening, a chamfered power-inlet opening, raised opening lips and ten genuine perimeter mounting bores.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2888,7 +2888,7 @@
       "dimensions": {
         "width": 5.95,
         "height": 3.45,
-        "depth": 0.16,
+        "depth": 0.14,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2963,9 +2963,9 @@
           "debrisMaterial": "rubber"
         }
       },
-      "material": "matte-black",
+      "material": "vinyl-leather",
       "materialLayers": [
-        "matte-black"
+        "vinyl-leather"
       ],
       "deformations": [],
       "joints": [],
@@ -2978,12 +2978,24 @@
         {
           "id": "rear-perimeter-screws",
           "type": "reference-detail"
+        },
+        {
+          "id": "power-inlet-through-opening",
+          "type": "reference-detail"
+        },
+        {
+          "id": "ten-perimeter-mounting-bores",
+          "type": "reference-detail"
+        },
+        {
+          "id": "raised-handle-and-power-lips",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
         "dominantAlbedo": "rgba(18, 20, 22, 1.0)",
         "secondaryAlbedo": "rgba(52, 54, 58, 1.0)",
-        "materialClass": "metal",
+        "materialClass": "leather",
         "materialClassConfidence": 0.88,
         "evidenceRefs": [
           "front-view",
@@ -3000,7 +3012,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Black rear panel seated close to the cabinet rear plane, with a shallow capsule-shaped handle detail and perimeter screws."
+        "notes": "The saved rear-cover-layer image governs this part: a full leather-covered panel seats directly against the cabinet, with a true capsule handle aperture, a true chamfered power opening, raised black lips and ten through mounting bores."
       },
       "evidenceRefs": [
         "front-view",
@@ -3010,22 +3022,25 @@
       ],
       "details": [
         "handle-cutout",
-        "rear-perimeter-screws"
+        "rear-perimeter-screws",
+        "power-inlet-through-opening",
+        "ten-perimeter-mounting-bores",
+        "raised-handle-and-power-lips"
       ],
       "fidelityTier": "reference"
     },
     {
       "id": "rear-io-plate",
-      "name": "Rear brass I/O plate",
+      "name": "Outermost brushed-brass rear interface panel",
       "level": "meso",
       "role": "connection-interface",
       "importance": 0.82,
       "confidence": 0.88,
-      "primitive": "box",
-      "topologyClass": "assembled-solid",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "primitive": "extrude",
+      "topologyClass": "perforated-assembled-solid",
+      "topologyRationale": "The saved rear-metal-io-panel reference resolves a wide brushed-brass plate with genuine connector and fastener openings; it is the final outermost rear layer.",
       "geometryDescriptor": {
-        "topologyIntent": "Brass audio and power plate; exact port protocol is intentionally generic.",
+        "topologyIntent": "Wide rounded brushed-brass panel with six fastener bores, a toggle, knurled audio socket, red and black binding posts, auxiliary jack and framed IEC power inlet.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -3041,13 +3056,13 @@
         "parentSocket": "rear-seat",
         "localStart": [
           0,
-          -0.35,
-          0.06
+          -0.55,
+          -0.14
         ],
         "localEnd": [
           0,
-          -0.35,
-          -0.04
+          -0.55,
+          -0.23
         ],
         "contactType": "overlap",
         "overlap": 0.04,
@@ -3060,17 +3075,17 @@
         ]
       },
       "dimensions": {
-        "width": 3.45,
-        "height": 0.9,
-        "depth": 0.1,
+        "width": 5.35,
+        "height": 1.72,
+        "depth": 0.08,
         "units": "relative",
         "confidence": 0.88
       },
       "transform": {
         "position": [
           0,
-          -0.35,
-          -0.04
+          -0.55,
+          -0.15
         ],
         "rotation": [
           0,
@@ -3152,6 +3167,22 @@
         {
           "id": "power-inlet",
           "type": "reference-detail"
+        },
+        {
+          "id": "rear-toggle-switch",
+          "type": "reference-detail"
+        },
+        {
+          "id": "red-black-binding-posts",
+          "type": "reference-detail"
+        },
+        {
+          "id": "six-panel-fasteners",
+          "type": "reference-detail"
+        },
+        {
+          "id": "plus-minus-markings",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
@@ -3174,7 +3205,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Brass audio and power plate aligned tightly to the rear cover plane; exact port protocol is intentionally generic."
+        "notes": "The saved rear-metal-io-panel image governs this final outer layer: directional brushed brass, six mounting points, left toggle and knurled socket, red and black binding posts with polarity marks, auxiliary jack, and a framed IEC inlet."
       },
       "evidenceRefs": [
         "front-view",
@@ -3184,7 +3215,11 @@
       ],
       "details": [
         "io-jacks",
-        "power-inlet"
+        "power-inlet",
+        "rear-toggle-switch",
+        "red-black-binding-posts",
+        "six-panel-fasteners",
+        "plus-minus-markings"
       ],
       "fidelityTier": "reference"
     },

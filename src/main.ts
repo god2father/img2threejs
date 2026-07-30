@@ -87,7 +87,7 @@ scene.add(model);
 const runtime = model.userData.sculptRuntime as ReturnType<typeof createSpeakerBlockout>['userData']['sculptRuntime'] | undefined;
 const partIds = [
   'grille', 'driver-baffle', 'acoustic-chamber', 'amplifier-board',
-  'top-control-deck', 'rear-io-plate', 'rear-panel', 'isolation-feet',
+  'top-control-deck', 'rear-panel', 'rear-io-plate', 'isolation-feet',
 ] as const;
 type PartId = typeof partIds[number];
 const explodeOffsets: Record<PartId, THREE.Vector3> = {
@@ -99,8 +99,8 @@ const explodeOffsets: Record<PartId, THREE.Vector3> = {
   'top-control-deck': new THREE.Vector3(-0.8, 3.2, 0.2),
   'amplifier-board': new THREE.Vector3(-0.8, 2.6, 0.4),
   'isolation-feet': new THREE.Vector3(1.8, -1.4, 1.4),
-  'rear-io-plate': new THREE.Vector3(2.5, 0.6, -1.5),
-  'rear-panel': new THREE.Vector3(4.5, 1.1, -2.5),
+  'rear-panel': new THREE.Vector3(2.6, 0.55, -1.35),
+  'rear-io-plate': new THREE.Vector3(4.7, 1.05, -2.7),
 };
 const partButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-part-id]'));
 const selectablePartNodes = new Map<THREE.Object3D, PartId>();

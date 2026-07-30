@@ -87,6 +87,30 @@
       "sha256": "fc64febb3c1a392be5c36a87db80b89edc3135ed81bae0721975fdc20cb12c24"
     },
     {
+      "id": "component-rear-metal-io-panel",
+      "category": "component",
+      "componentId": "rear-io-plate",
+      "label": "Outermost brushed-metal rear interface panel",
+      "path": "components/rear-metal-io-panel.png",
+      "sourceName": "codex-clipboard-b14f945c-880c-47fc-a318-b5cecfcc8c7d.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2200724,
+      "sha256": "8b670eb0aa2483e6195feaca90d2fd7a154eeb4332ac075e6a931b6cd2c9207d"
+    },
+    {
+      "id": "component-rear-cover-layer",
+      "category": "component",
+      "componentId": "rear-panel",
+      "label": "Leather rear cover with handle and power openings",
+      "path": "components/rear-cover-layer.png",
+      "sourceName": "codex-clipboard-2dc80518-d417-4ae0-870a-35055a408acf.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2495262,
+      "sha256": "1fcc3a5246577e197982bdd7e2e9b96e08fb1f04aad1caa36d2e20d6dd93305e"
+    },
+    {
       "id": "component-04",
       "category": "component",
       "componentId": "04",
