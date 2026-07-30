@@ -780,14 +780,14 @@
   "coordinateFrame": {
     "front": "positive Z faces the front reference",
     "up": "positive Y",
-    "scaleReference": "cabinet width = 4.8 scene units"
+    "scaleReference": "cabinet width = 6.4 scene units"
   },
   "silhouette": {
     "boundingShape": "wide rounded rectangular cabinet with a shallow depth and four low isolation feet",
     "aspectRatios": [
-      "width:height = 1.60",
-      "depth:width = 0.43",
-      "grille width:cabinet width = 0.88"
+      "width:height = 1.56",
+      "depth:width = 0.55",
+      "front opening width:cabinet width = 0.898"
     ],
     "symmetry": "bilateral around the vertical centreline except rear I/O",
     "dominantCurves": [
@@ -892,22 +892,22 @@
       "topologyClass": "conforming-shell",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Open-front MDF enclosure assembled from back, side, top, and bottom panels so the exploded view reveals a real chamber.",
+        "topologyIntent": "A single watertight rounded exterior body produces all eight outer corners as one continuous surface. CSG subtraction cuts the complete front opening and inner cavity, the capsule-shaped top handle opening and the rounded rear port; named top, bottom, side, back and front-frame nodes remain logical surface anchors rather than overlapping visible meshes.",
         "edgeTreatment": {
           "type": "rounded",
-          "bevelRadius": 0.08,
-          "segments": 8
+          "bevelRadius": 0.33,
+          "segments": 28
         },
         "deformationStack": [],
-        "uvStrategy": "generated object-space coordinates",
+        "uvStrategy": "dominant-axis world-scale projection with a common 0.64-unit leather tile size",
         "normalStrategy": "smooth analytic vertex normals"
       },
       "parent": null,
       "attachment": null,
       "dimensions": {
-        "width": 4.8,
-        "height": 3,
-        "depth": 2.05,
+        "width": 6.4,
+        "height": 4.1,
+        "depth": 3.5,
         "units": "relative",
         "confidence": 0.94
       },
@@ -960,7 +960,7 @@
             "localPosition": [
               0,
               0,
-              0.94
+              1.87
             ],
             "localRotation": [
               0,
@@ -974,7 +974,7 @@
             "localPosition": [
               0,
               0,
-              -0.94
+              -1.78
             ],
             "localRotation": [
               0,
@@ -987,7 +987,7 @@
             "id": "top-seat",
             "localPosition": [
               0,
-              1.6,
+              2.23,
               0
             ],
             "localRotation": [
@@ -1001,7 +1001,7 @@
             "id": "base-seat",
             "localPosition": [
               0,
-              -1.6,
+              -2.17,
               0
             ],
             "localRotation": [
@@ -1050,14 +1050,14 @@
           "type": "reference-detail"
         },
         {
-          "id": "cabinet-seam",
+          "id": "top-handle-slot",
           "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
         "dominantAlbedo": "rgba(18, 19, 21, 1.0)",
         "secondaryAlbedo": "rgba(41, 39, 38, 1.0)",
-        "materialClass": "skin",
+        "materialClass": "leather",
         "materialClassConfidence": 0.94,
         "evidenceRefs": [
           "front-view",
@@ -1067,14 +1067,14 @@
         ]
       },
       "surfaceDetail": {
-        "macroRoughness": 0.18,
-        "microRoughness": 0.08,
-        "bumpAmplitude": 0.04,
+        "macroRoughness": 0.9,
+        "microRoughness": 0.06,
+        "bumpAmplitude": 0.06,
         "normalPattern": "independent procedural height field",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Open-front MDF enclosure assembled from back, side, top, and bottom panels so the exploded view reveals a real chamber."
+        "notes": "The #04 cabinet binds the reference-guided cabinet-tolex-real albedo, normal and roughness maps directly. The source is de-lit, brightness-clamped and edge-periodic with zero opposite-edge delta, preventing baked white streaks and tile seams. The visible exterior is one continuous CSG mesh with common world-scale UV density, high roughness and low environment response."
       },
       "evidenceRefs": [
         "front-view",
@@ -1084,29 +1084,29 @@
       ],
       "details": [
         "rounded-vinyl-shell",
-        "cabinet-seam"
+        "top-handle-slot"
       ],
       "fidelityTier": "reference"
     },
     {
       "id": "acoustic-chamber",
-      "name": "MDF acoustic chamber",
+      "name": "Deep MDF acoustic chamber and bracing",
       "level": "macro",
       "role": "internal-volume",
       "importance": 1,
-      "confidence": 0.78,
+      "confidence": 0.92,
       "primitive": "box",
       "topologyClass": "conforming-shell",
-      "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
+      "topologyRationale": "The component reference exposes a thick MDF front cut edge, five independently thick cavity boards, a true rounded rectangular rear port and six asymmetric braces that remain physically connected to the walls, floor or rear board.",
       "geometryDescriptor": {
-        "topologyIntent": "Warm MDF inner surfaces, horizontal shelf and rear port aperture; thickness is an inferred low-confidence interior detail.",
+        "topologyIntent": "Continuous exposed MDF front ring feeding into independently thick top, bottom, left, right and rear boards. The rear opening is cut through both MDF and outer shell. Bracing consists of a wall-connected left horizontal brace, offset full-height centre post with foot, two separated floor rails, a thin front floor cross-brace and a short rear-right vertical cleat.",
         "edgeTreatment": {
           "type": "rounded",
-          "bevelRadius": 0.08,
-          "segments": 8
+          "bevelRadius": 0.025,
+          "segments": 6
         },
         "deformationStack": [],
-        "uvStrategy": "generated object-space coordinates",
+        "uvStrategy": "dominant-axis world-scale projection with a common 0.82-unit MDF tile size",
         "normalStrategy": "smooth analytic vertex normals"
       },
       "parent": "cabinet-shell",
@@ -1116,12 +1116,12 @@
         "localStart": [
           0,
           0,
-          0.76
+          1.32
         ],
         "localEnd": [
           0,
           0,
-          0.92
+          1.5
         ],
         "contactType": "overlap",
         "overlap": 0.04,
@@ -1134,9 +1134,9 @@
         ]
       },
       "dimensions": {
-        "width": 4.08,
-        "height": 2.3,
-        "depth": 1.65,
+        "width": 5.75,
+        "height": 3.35,
+        "depth": 3,
         "units": "relative",
         "confidence": 0.78
       },
@@ -1226,6 +1226,30 @@
         {
           "id": "rear-port-aperture",
           "type": "reference-detail"
+        },
+        {
+          "id": "mdf-front-lip",
+          "type": "reference-detail"
+        },
+        {
+          "id": "mdf-wall-system",
+          "type": "reference-detail"
+        },
+        {
+          "id": "offset-vertical-brace",
+          "type": "reference-detail"
+        },
+        {
+          "id": "left-cross-brace",
+          "type": "reference-detail"
+        },
+        {
+          "id": "floor-mounting-rails",
+          "type": "reference-detail"
+        },
+        {
+          "id": "right-rear-cleat",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
@@ -1241,14 +1265,14 @@
         ]
       },
       "surfaceDetail": {
-        "macroRoughness": 0.18,
-        "microRoughness": 0.08,
+        "macroRoughness": 0.82,
+        "microRoughness": 0.1,
         "bumpAmplitude": 0.04,
         "normalPattern": "independent procedural height field",
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Warm MDF inner surfaces, horizontal shelf and rear port aperture; thickness is an inferred low-confidence interior detail."
+        "notes": "Warm, high-roughness compressed-fibre MDF binds generated chamber-mdf albedo, normal and roughness maps directly. One world-scale projection keeps particle size consistent across faces and cut edges; no natural grain or plank stripes are introduced."
       },
       "evidenceRefs": [
         "front-view",
@@ -1258,7 +1282,13 @@
       ],
       "details": [
         "mdf-shelf",
-        "rear-port-aperture"
+        "rear-port-aperture",
+        "mdf-front-lip",
+        "mdf-wall-system",
+        "offset-vertical-brace",
+        "left-cross-brace",
+        "floor-mounting-rails",
+        "right-rear-cleat"
       ],
       "fidelityTier": "reference"
     },
@@ -1602,7 +1632,7 @@
     },
     {
       "id": "front-frame",
-      "name": "Front frame and gold piping",
+      "name": "Rounded padded leather front frame and gold piping",
       "level": "meso",
       "role": "trim-frame",
       "importance": 0.82,
@@ -1611,11 +1641,11 @@
       "topologyClass": "assembled-solid",
       "topologyRationale": "Chosen from the observed part silhouette and the separation required by the exploded reference.",
       "geometryDescriptor": {
-        "topologyIntent": "Black structural front frame with separate thin gold piping geometry.",
+        "topologyIntent": "A single closed rounded-rectangle leather welt with a continuously convex padded cross-section, a true open aperture, and separate inset gold piping; the visible face must not read as a flat annular plate.",
         "edgeTreatment": {
           "type": "rounded",
-          "bevelRadius": 0.08,
-          "segments": 8
+          "bevelRadius": 0.12,
+          "segments": 16
         },
         "deformationStack": [],
         "uvStrategy": "generated object-space coordinates",
@@ -1646,9 +1676,9 @@
         ]
       },
       "dimensions": {
-        "width": 4.28,
-        "height": 2.48,
-        "depth": 0.12,
+        "width": 5.95,
+        "height": 3.55,
+        "depth": 0.34,
         "units": "relative",
         "confidence": 0.88
       },
@@ -1723,9 +1753,9 @@
           "debrisMaterial": "rubber"
         }
       },
-      "material": "matte-black",
+      "material": "vinyl-leather",
       "materialLayers": [
-        "matte-black"
+        "vinyl-leather"
       ],
       "deformations": [],
       "joints": [],
@@ -1738,12 +1768,16 @@
         {
           "id": "frame-corner-radius",
           "type": "reference-detail"
+        },
+        {
+          "id": "rounded-padded-cross-section",
+          "type": "bevel-highlight"
         }
       ],
       "colorMaterialRecipe": {
         "dominantAlbedo": "rgba(18, 20, 22, 1.0)",
         "secondaryAlbedo": "rgba(52, 54, 58, 1.0)",
-        "materialClass": "metal",
+        "materialClass": "leather",
         "materialClassConfidence": 0.88,
         "evidenceRefs": [
           "front-view",
@@ -1760,7 +1794,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Black structural front frame with separate thin gold piping geometry."
+        "notes": "Near-black warm matte leather wraps a closed padded frame. The lychee grain uses a stronger normal response, enlarged texture scale, and less compressed diffuse modulation so it remains legible at the default exploded-view distance, while the high roughness keeps the convex cross-section free of polished highlights. Separate round brass piping and a recessed black gasket sit inside the opening."
       },
       "evidenceRefs": [
         "front-view",
@@ -1770,7 +1804,8 @@
       ],
       "details": [
         "gold-piping",
-        "frame-corner-radius"
+        "frame-corner-radius",
+        "rounded-padded-cross-section"
       ],
       "fidelityTier": "reference"
     },
@@ -1820,9 +1855,9 @@
         ]
       },
       "dimensions": {
-        "width": 4.12,
-        "height": 2.27,
-        "depth": 0.07,
+        "width": 5.6,
+        "height": 3.14,
+        "depth": 0.1,
         "units": "relative",
         "confidence": 0.88
       },
@@ -1994,9 +2029,9 @@
         ]
       },
       "dimensions": {
-        "width": 4.08,
-        "height": 2.34,
-        "depth": 0.13,
+        "width": 5.57,
+        "height": 3.19,
+        "depth": 0.18,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2337,16 +2372,16 @@
         ]
       },
       "dimensions": {
-        "width": 2.95,
-        "height": 0.12,
-        "depth": 0.88,
+        "width": 5.25,
+        "height": 0.25,
+        "depth": 1.47,
         "units": "relative",
         "confidence": 0.88
       },
       "transform": {
         "position": [
           0,
-          1.63,
+          2.13,
           0
         ],
         "rotation": [
@@ -2516,16 +2551,16 @@
         ]
       },
       "dimensions": {
-        "width": 3.35,
-        "height": 0.16,
-        "depth": 0.94,
+        "width": 4.49,
+        "height": 0.35,
+        "depth": 1.2,
         "units": "relative",
         "confidence": 0.88
       },
       "transform": {
         "position": [
           0,
-          0.72,
+          0.78,
           -0.25
         ],
         "rotation": [
@@ -2690,9 +2725,9 @@
         ]
       },
       "dimensions": {
-        "width": 3.98,
-        "height": 1.65,
-        "depth": 0.11,
+        "width": 5.95,
+        "height": 3.45,
+        "depth": 0.16,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2864,9 +2899,9 @@
         ]
       },
       "dimensions": {
-        "width": 2.52,
-        "height": 0.62,
-        "depth": 0.08,
+        "width": 3.45,
+        "height": 0.9,
+        "depth": 0.1,
         "units": "relative",
         "confidence": 0.88
       },
@@ -3038,16 +3073,16 @@
         ]
       },
       "dimensions": {
-        "width": 3.8,
-        "height": 0.25,
-        "depth": 1.25,
+        "width": 5.74,
+        "height": 0.15,
+        "depth": 2.82,
         "units": "relative",
         "confidence": 0.88
       },
       "transform": {
         "position": [
           0,
-          -1.73,
+          -2.13,
           0
         ],
         "rotation": [

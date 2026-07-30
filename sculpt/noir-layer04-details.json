@@ -1,0 +1,109 @@
+{
+  "sourceImage": "assets/reference/noir-s1/components/04-mdf-acoustic-chamber.png",
+  "zonesDir": "sculpt/noir-layer04-zones",
+  "detailInventory": {
+    "scanMethod": "grid-3x3",
+    "targetMinDetails": 8,
+    "details": [
+      {
+        "id": "continuous-rounded-shell",
+        "kind": "bevel",
+        "description": "Continuous black leather-wrapped shell with broad rounded outer corners and no four-piece front seams.",
+        "region": {"x": 0.16, "y": 0.12, "width": 0.68, "height": 0.72, "units": "normalized"},
+        "scale": "macro",
+        "affects": "cabinet outer silhouette",
+        "mapsTo": {"type": "component", "ref": "cabinet-shell/rounded-vinyl-shell"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c1.png",
+        "confidence": 0.96
+      },
+      {
+        "id": "top-handle-slot",
+        "kind": "hole",
+        "description": "Wide capsule-shaped recessed carry-handle slot centered on the cabinet top.",
+        "region": {"x": 0.36, "y": 0.12, "width": 0.3, "height": 0.18, "units": "normalized"},
+        "scale": "meso",
+        "affects": "cabinet top",
+        "mapsTo": {"type": "component", "ref": "cabinet-shell/top-handle-slot"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r0c1.png",
+        "confidence": 0.94
+      },
+      {
+        "id": "continuous-mdf-front-lip",
+        "kind": "raised-ridge",
+        "description": "Continuous warm MDF frame immediately inside the black front shell, with visible cut-edge thickness.",
+        "region": {"x": 0.2, "y": 0.24, "width": 0.62, "height": 0.56, "units": "normalized"},
+        "scale": "meso",
+        "affects": "chamber front opening",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/mdf-front-lip"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c1.png",
+        "confidence": 0.96
+      },
+      {
+        "id": "deep-cavity-wall-system",
+        "kind": "panel-line",
+        "description": "Four separate deep MDF boards form the top, bottom and side walls around a recessed rear board.",
+        "region": {"x": 0.22, "y": 0.26, "width": 0.58, "height": 0.5, "units": "normalized"},
+        "scale": "macro",
+        "affects": "acoustic chamber volume",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/mdf-wall-system"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c1.png",
+        "confidence": 0.95
+      },
+      {
+        "id": "offset-vertical-divider",
+        "kind": "raised-ridge",
+        "description": "Tall MDF divider stands left of center and runs nearly from the chamber floor to the top wall.",
+        "region": {"x": 0.36, "y": 0.28, "width": 0.12, "height": 0.43, "units": "normalized"},
+        "scale": "meso",
+        "affects": "internal bracing",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/offset-vertical-brace"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c1.png",
+        "confidence": 0.92
+      },
+      {
+        "id": "left-horizontal-brace",
+        "kind": "raised-ridge",
+        "description": "Short horizontal MDF brace bridges the left cavity wall to the offset divider.",
+        "region": {"x": 0.22, "y": 0.4, "width": 0.2, "height": 0.12, "units": "normalized"},
+        "scale": "meso",
+        "affects": "internal bracing",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/left-cross-brace"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c0.png",
+        "confidence": 0.9
+      },
+      {
+        "id": "floor-mounting-rails",
+        "kind": "repeated-rail",
+        "description": "Two narrow front-to-back MDF mounting rails sit on the chamber floor with asymmetric spacing.",
+        "region": {"x": 0.34, "y": 0.63, "width": 0.38, "height": 0.15, "units": "normalized"},
+        "scale": "meso",
+        "affects": "chamber floor",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/floor-mounting-rails"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r2c1.png",
+        "confidence": 0.88
+      },
+      {
+        "id": "rear-port-opening",
+        "kind": "hole",
+        "description": "Rounded rectangular port opening is recessed into the right half of the rear MDF board.",
+        "region": {"x": 0.52, "y": 0.38, "width": 0.2, "height": 0.18, "units": "normalized"},
+        "scale": "meso",
+        "affects": "rear chamber board",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/rear-port-aperture"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c2.png",
+        "confidence": 0.94
+      },
+      {
+        "id": "right-rear-cleat",
+        "kind": "raised-ridge",
+        "description": "Short vertical MDF cleat is attached near the rear of the right interior wall.",
+        "region": {"x": 0.71, "y": 0.38, "width": 0.08, "height": 0.28, "units": "normalized"},
+        "scale": "detail",
+        "affects": "right cavity wall",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/right-rear-cleat"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c2.png",
+        "confidence": 0.84
+      }
+    ]
+  }
+}

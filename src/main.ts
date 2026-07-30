@@ -33,13 +33,13 @@ pmrem.dispose();
 
 const camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.1, 100);
 if (reviewMode) camera.position.set(0, 0.2, 8.4);
-else camera.position.set(3.5, 2.4, 10.5);
-const assembledCamera = new THREE.Vector3(3.5, 2.4, 10.5);
+else camera.position.set(5.8, 3.8, 17.2);
+const assembledCamera = new THREE.Vector3(5.8, 3.8, 17.2);
 // Mirrors the supplied exploded reference: a slightly elevated front-right product view
 // with a moderate product lens, visible right cabinet side, and front layers expanding down-left.
-const explodedCamera = new THREE.Vector3(14, 5.2, 19);
-const assembledTarget = new THREE.Vector3(0, 0, 0);
-const explodedTarget = new THREE.Vector3(0.45, 0.3, 0);
+const explodedCamera = new THREE.Vector3(23, 9, 34);
+const assembledTarget = new THREE.Vector3(0, 0.2, 0);
+const explodedTarget = new THREE.Vector3(1, 0.45, 0);
 const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0, 0);
 controls.enableDamping = true;
@@ -47,8 +47,8 @@ controls.dampingFactor = 0.06;
 controls.enablePan = false;
 controls.enableRotate = true;
 controls.enableZoom = true;
-controls.minDistance = 4.8;
-controls.maxDistance = 26;
+controls.minDistance = 6;
+controls.maxDistance = 55;
 controls.minPolarAngle = Math.PI * 0.24;
 controls.maxPolarAngle = Math.PI * 0.62;
 controls.enabled = !reviewMode;
@@ -76,7 +76,7 @@ scene.add(rim, sideFill, new THREE.HemisphereLight('#edf3ff', '#5b554d', 1.55));
 
 const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ color: '#1f1c18', opacity: 0.16 }));
 floor.rotation.x = -Math.PI / 2;
-floor.position.y = -1.72;
+floor.position.y = -2.2;
 floor.receiveShadow = true;
 scene.add(floor);
 
@@ -93,15 +93,15 @@ type PartId = typeof partIds[number];
 const explodeOffsets: Record<PartId, THREE.Vector3> = {
   // Keep the physical separation on the speaker's depth axis, matching the reference.
   // The reference camera projects this front-to-back stack toward the lower-left.
-  'acoustic-chamber': new THREE.Vector3(1.2, 0, -0.1),
-  grille: new THREE.Vector3(-4.7, -0.35, 4.6),
-  'front-frame': new THREE.Vector3(-2.8, -0.1, 2.5),
-  'driver-baffle': new THREE.Vector3(-1.1, 0, 1.1),
-  'top-control-deck': new THREE.Vector3(-0.8, 2.5, 0),
-  'amplifier-board': new THREE.Vector3(-0.8, 1.35, -0.1),
-  'isolation-feet': new THREE.Vector3(1.2, -1.5, 0.4),
-  'rear-io-plate': new THREE.Vector3(2.3, 0.5, -1),
-  'rear-panel': new THREE.Vector3(4, 1, -1.7),
+  'acoustic-chamber': new THREE.Vector3(1.2, 0, -0.2),
+  grille: new THREE.Vector3(-6.2, -0.4, 4.5),
+  'front-frame': new THREE.Vector3(-4.1, -0.2, 3.1),
+  'driver-baffle': new THREE.Vector3(-1.7, -0.05, 1.3),
+  'top-control-deck': new THREE.Vector3(-0.8, 3.2, 0.2),
+  'amplifier-board': new THREE.Vector3(-0.8, 2.6, 0.4),
+  'isolation-feet': new THREE.Vector3(1.8, -1.4, 1.4),
+  'rear-io-plate': new THREE.Vector3(2.5, 0.6, -1.5),
+  'rear-panel': new THREE.Vector3(4.5, 1.1, -2.5),
 };
 const partButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-part-id]'));
 const selectablePartNodes = new Map<THREE.Object3D, PartId>();

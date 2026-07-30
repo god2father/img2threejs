@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "project": "NOIR S1",
+  "receivedAt": "2026-07-30",
+  "imagePolicy": "Original PNG bytes copied without resizing, cropping, or recompression.",
+  "videoStatus": "pending",
+  "files": [
+    {
+      "id": "overview-front-side-rear",
+      "category": "overview",
+      "label": "Front, side, and rear assembled views",
+      "path": "overview/overview-front-side-rear.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_05.png",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1524859,
+      "sha256": "843f9247aed27724ab284a5111364ae77091a8eac6cc7226fff2b5aadce578f9"
+    },
+    {
+      "id": "overview-multi-angle-sheet",
+      "category": "overview",
+      "label": "Twelve-view assembled reference sheet",
+      "path": "overview/overview-multi-angle-sheet.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_10.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2004508,
+      "sha256": "fb4ab2b71cd318c75c85a54155da819a497e20ed541639131a6efbd2b25b8b72"
+    },
+    {
+      "id": "exploded-labeled-components",
+      "category": "exploded",
+      "label": "Labeled exploded component view",
+      "path": "exploded/exploded-labeled-components.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_12.png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1999689,
+      "sha256": "fecb585e8ae3472d4e2c72a3bb1e77fc7f5b1192916afbcf0fe66a1dc29d89cf"
+    },
+    {
+      "id": "component-01",
+      "category": "component",
+      "componentId": "01",
+      "label": "Grille cloth and script logo",
+      "path": "components/01-grille-cloth-logo.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_20 (1).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 2124694,
+      "sha256": "f91370e41c3456eb9c054e623535610f0b271025db99971faf7e425587d02e5c"
+    },
+    {
+      "id": "component-02",
+      "category": "component",
+      "componentId": "02",
+      "label": "Front frame and gold piping",
+      "path": "components/02-front-frame-gold-piping.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_20 (2).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1017637,
+      "sha256": "2ec6761c4958437c44b085b29544885f8cc1e9fcb0172835835fd7d254dc0db1"
+    },
+    {
+      "id": "component-03",
+      "category": "component",
+      "componentId": "03",
+      "label": "Driver baffle assembly",
+      "path": "components/03-driver-baffle-assembly.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_21 (3).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1504094,
+      "sha256": "d9b7e535a6198a279aea92d8ba276a3795f49ad6692df4aa7cc7d325b7fffd3d"
+    },
+    {
+      "id": "component-04",
+      "category": "component",
+      "componentId": "04",
+      "label": "MDF acoustic chamber",
+      "path": "components/04-mdf-acoustic-chamber.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_21 (4).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1633534,
+      "sha256": "4cfe060f9dca04b03a0d9f15ea7ebfed0c042cf6aabadeb5dc6d10fe31c676d3"
+    },
+    {
+      "id": "component-05",
+      "category": "component",
+      "componentId": "05",
+      "label": "Internal PCB and electronics",
+      "path": "components/05-internal-pcb.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_22 (6).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1120351,
+      "sha256": "c0a625908dae1672beb059c63509685371fd86b8c01d759405c04b04cd7dab94"
+    },
+    {
+      "id": "component-06",
+      "category": "component",
+      "componentId": "06",
+      "label": "Top brass control panel",
+      "path": "components/06-top-control-panel.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_22 (5).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1156455,
+      "sha256": "8a360aa79db47fdc2939fb75fa370adbfce9fe7c470a4e8ca458c19116f80ba9"
+    },
+    {
+      "id": "component-07",
+      "category": "component",
+      "componentId": "07",
+      "label": "Rear brass I/O plate",
+      "path": "components/07-rear-brass-io.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_23 (7).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1317158,
+      "sha256": "a220401f390f0a0814719faf71302b7082613c42803fd49c0b6325a815c77892"
+    },
+    {
+      "id": "component-08",
+      "category": "component",
+      "componentId": "08",
+      "label": "Rear cover and handle opening",
+      "path": "components/08-rear-cover.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_23 (8).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1789396,
+      "sha256": "98f29c43a542ed01250626ae29d83b87cc1acdacfa659b7280d81143b7821d7d"
+    },
+    {
+      "id": "component-09",
+      "category": "component",
+      "componentId": "09",
+      "label": "Feet and brass hardware",
+      "path": "components/09-feet-hardware.png",
+      "sourceName": "ChatGPT Image 2026年7月30日 10_23_24 (9).png",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 1567793,
+      "sha256": "9967783c6002ea2c241ac9cb79067d8ffed6b757a84dbc4e9016db8a55563caf"
+    }
+  ]
+}
