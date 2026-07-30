@@ -614,7 +614,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   const driverCompositeNormal = proceduralScalar('driver-composite', 'normal', [3.4, 2.15]);
   const driverCompositeRoughness = proceduralScalar('driver-composite', 'roughness', [3.4, 2.15]);
   const baffleMat = new THREE.MeshStandardMaterial({
-    color: '#a8a9aa',
+    color: '#7a7b7c',
     map: driverCompositeAlbedo,
     normalMap: driverCompositeNormal,
     normalScale: new THREE.Vector2(0.18, 0.18),
@@ -636,6 +636,12 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   grilleDark.roughness = 0.92;
   const driverFrameMetal = new THREE.MeshStandardMaterial({ color: '#111315', metalness: 0.42, roughness: 0.5 });
   driverFrameMetal.name = 'Black coated driver frame';
+  const driverBasketMetal = new THREE.MeshStandardMaterial({ color: '#17191b', metalness: 0.5, roughness: 0.54 });
+  driverBasketMetal.name = 'Stamped black driver basket';
+  const driverMagnetSteel = new THREE.MeshStandardMaterial({ color: '#292c2f', metalness: 0.66, roughness: 0.46 });
+  driverMagnetSteel.name = 'Dark ferrite magnet and steel plate';
+  const driverTerminal = new THREE.MeshStandardMaterial({ color: '#24201b', metalness: 0.08, roughness: 0.72 });
+  driverTerminal.name = 'Driver terminal insulator';
   const dustCapMaterial = new THREE.MeshStandardMaterial({ color: '#161718', metalness: 0.02, roughness: 0.78 });
   dustCapMaterial.name = 'Pressed paper dust cap';
   const silverHardware = new THREE.MeshStandardMaterial({ color: '#c6c1b7', metalness: 0.9, roughness: 0.28 });
@@ -998,7 +1004,10 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   } as const;
 
   const ASSEMBLED_DEPTH = {
-    driverBaffle: CABINET.depth / 2 - 0.27,
+    // The highest woofer point projects about 0.31 units in front of the baffle.
+    // Seating the baffle 0.41 behind the cabinet face leaves roughly 0.07 units
+    // of air between that point and the rear surface of the grille.
+    driverBaffle: CABINET.depth / 2 - 0.41,
     grille: CABINET.depth / 2 - 0.01,
     rearPanel: -CABINET.depth / 2 + 0.05,
     rearIo: -CABINET.depth / 2 + 0.01,
@@ -1497,6 +1506,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     tweeterRadius: 0.67,
     tweeterX: 1.91,
     tweeterY: 0.76,
+    totalAssemblyDepth: 1.14,
   } as const;
   baffleGroup.userData.dimensions = { ...BAFFLE };
 
@@ -1546,20 +1556,41 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   perimeterRim.name = 'Raised recessed perimeter rim';
   baffleGroup.add(perimeterRim);
 
+  const rearPerimeterGeometry = perimeterGeometry.clone();
+  rearPerimeterGeometry.translate(0, 0, -BAFFLE.depth - 0.035);
+  const rearPerimeterRim = new THREE.Mesh(rearPerimeterGeometry, driverBasketMetal);
+  rearPerimeterRim.name = 'RearBafflePerimeterStiffeningRim';
+  baffleGroup.add(rearPerimeterRim);
+
+  for (const [name, x, y, width, height] of [
+    ['RearTopStiffeningRail', 0, BAFFLE.height / 2 - 0.19, BAFFLE.width - 0.55, 0.065],
+    ['RearBottomStiffeningRail', 0, -BAFFLE.height / 2 + 0.19, BAFFLE.width - 0.55, 0.065],
+    ['RearLeftStiffeningRail', -BAFFLE.width / 2 + 0.19, 0, 0.065, BAFFLE.height - 0.5],
+    ['RearRightStiffeningRail', BAFFLE.width / 2 - 0.19, 0, 0.065, BAFFLE.height - 0.5],
+  ] as const) {
+    const rail = rounded(width, height, 0.055, 0.025, driverBasketMetal);
+    rail.name = name;
+    rail.position.set(x, y, -BAFFLE.depth - 0.045);
+    baffleGroup.add(rail);
+  }
+
   const mountingHardware = new THREE.Group();
   mountingHardware.name = 'BaffleMountingHardware';
   for (const [index, [x, y]] of cornerMountPositions.entries()) {
-    const washer = new THREE.Mesh(new THREE.TorusGeometry(0.082, 0.018, 10, 32), driverFrameMetal);
+    const washer = new THREE.Mesh(new THREE.TorusGeometry(0.082, 0.018, 10, 32), silverHardware);
     washer.name = `CornerMountWasher${index + 1}`;
     washer.position.set(x, y, 0.035);
-    const screw = cylinder(0.052, 0.048, 0.026, silverHardware);
-    screw.name = `CornerMountScrew${index + 1}`;
-    screw.position.set(x, y, 0.042);
+    const bore = cylinder(0.052, 0.048, 0.026, driverFrameMetal);
+    bore.name = `CornerMountDarkBore${index + 1}`;
+    bore.position.set(x, y, 0.042);
     const slot = rounded(0.064, 0.013, 0.01, 0.005, driverFrameMetal);
-    slot.name = `CornerMountScrewSlot${index + 1}`;
+    slot.name = `CornerMountBoreSlot${index + 1}`;
     slot.position.set(x, y, 0.058);
     slot.rotation.z = index % 2 ? -0.45 : 0.45;
-    mountingHardware.add(washer, screw, slot);
+    const rearWasher = new THREE.Mesh(new THREE.TorusGeometry(0.082, 0.018, 10, 32), driverFrameMetal);
+    rearWasher.name = `RearCornerMountWasher${index + 1}`;
+    rearWasher.position.set(x, y, -BAFFLE.depth - 0.045);
+    mountingHardware.add(washer, bore, slot, rearWasher);
   }
   const insertPositions: THREE.Vector2Tuple[] = [
     [-1.18, 1.22], [1.18, 1.22], [-1.18, -1.22], [1.18, -1.22],
@@ -1587,6 +1618,27 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     );
     cone.rotation.x = Math.PI / 2;
     return cone;
+  }
+
+  function makeDriverTerminalPair(name: string, scale = 1): THREE.Group {
+    const terminals = new THREE.Group();
+    terminals.name = name;
+    const block = rounded(0.34 * scale, 0.13 * scale, 0.09 * scale, 0.025 * scale, driverTerminal);
+    block.name = `${name}InsulatorBlock`;
+    terminals.add(block);
+    for (const [index, x] of [-0.09 * scale, 0.09 * scale].entries()) {
+      const tab = rounded(0.055 * scale, 0.12 * scale, 0.025 * scale, 0.01 * scale, brassDark);
+      tab.name = `${name}BrassTab${index + 1}`;
+      tab.position.set(x, -0.015 * scale, -0.052 * scale);
+      const eyelet = new THREE.Mesh(
+        new THREE.TorusGeometry(0.018 * scale, 0.006 * scale, 8, 20),
+        brass,
+      );
+      eyelet.name = `${name}Eyelet${index + 1}`;
+      eyelet.position.set(x, -0.015 * scale, -0.07 * scale);
+      terminals.add(tab, eyelet);
+    }
+    return terminals;
   }
 
   function makeWoofer(): THREE.Group {
@@ -1632,6 +1684,61 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
       screw.position.set(Math.cos(angle) * 1.29, Math.sin(angle) * 1.29, 0.072);
       woofer.add(screw);
     }
+
+    const rearBasketRing = new THREE.Mesh(
+      new THREE.TorusGeometry(1.17, 0.065, 12, 96),
+      driverBasketMetal,
+    );
+    rearBasketRing.name = 'WooferRearBasketRing';
+    rearBasketRing.position.z = -BAFFLE.depth - 0.065;
+    woofer.add(rearBasketRing);
+
+    for (let index = 0; index < 8; index += 1) {
+      const angle = (index / 8) * Math.PI * 2 + Math.PI / 8;
+      const spoke = rounded(0.67, 0.11, 0.085, 0.025, driverBasketMetal);
+      spoke.name = `WooferBasketSpoke${index + 1}`;
+      spoke.position.set(Math.cos(angle) * 0.88, Math.sin(angle) * 0.88, -0.34);
+      spoke.rotation.z = angle;
+      woofer.add(spoke);
+
+      const rearBolt = cylinder(0.032, 0.029, 0.025, driverFrameMetal);
+      rearBolt.name = `WooferRearBasketBolt${index + 1}`;
+      rearBolt.position.set(
+        Math.cos(angle) * 1.14,
+        Math.sin(angle) * 1.14,
+        -BAFFLE.depth - 0.09,
+      );
+      woofer.add(rearBolt);
+    }
+
+    const motorShoulder = cylinder(0.76, 0.84, 0.14, driverBasketMetal);
+    motorShoulder.name = 'WooferMotorShoulder';
+    motorShoulder.position.z = -0.38;
+    const magnet = cylinder(0.68, 0.68, 0.28, driverMagnetSteel);
+    magnet.name = 'WooferFerriteMagnet';
+    magnet.position.z = -0.57;
+    const rearPolePlate = cylinder(0.74, 0.72, 0.11, driverFrameMetal);
+    rearPolePlate.name = 'WooferRearPolePlate';
+    rearPolePlate.position.z = -0.765;
+    const rearCap = cylinder(0.61, 0.63, 0.09, driverMagnetSteel);
+    rearCap.name = 'WooferRearMotorCap';
+    rearCap.position.z = -0.865;
+    const rearVent = new THREE.Mesh(
+      new THREE.TorusGeometry(0.18, 0.028, 10, 40),
+      driverFrameMetal,
+    );
+    rearVent.name = 'WooferRearVentRing';
+    rearVent.position.z = -0.915;
+    const ventWell = cylinder(0.15, 0.15, 0.018, dustCapMaterial);
+    ventWell.name = 'WooferRearVentWell';
+    ventWell.position.z = -0.92;
+    woofer.add(motorShoulder, magnet, rearPolePlate, rearCap, rearVent, ventWell);
+
+    const wooferTerminals = makeDriverTerminalPair('WooferTerminalPair', 0.9);
+    wooferTerminals.position.set(0.98, -0.43, -0.45);
+    wooferTerminals.rotation.z = -0.35;
+    woofer.add(wooferTerminals);
+
     woofer.position.y = -0.06;
     return woofer;
   }
@@ -1667,6 +1774,37 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
       screw.position.set(Math.cos(angle) * 0.585, Math.sin(angle) * 0.585, 0.075);
       tweeter.add(screw);
     }
+
+    const rearBasketRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.49, 0.045, 10, 64),
+      driverBasketMetal,
+    );
+    rearBasketRing.name = `${name}RearBasketRing`;
+    rearBasketRing.position.z = -BAFFLE.depth - 0.055;
+    tweeter.add(rearBasketRing);
+    for (let index = 0; index < 4; index += 1) {
+      const angle = (index / 4) * Math.PI * 2 + Math.PI / 4;
+      const spoke = rounded(0.3, 0.075, 0.065, 0.02, driverBasketMetal);
+      spoke.name = `${name}RearSpoke${index + 1}`;
+      spoke.position.set(Math.cos(angle) * 0.35, Math.sin(angle) * 0.35, -0.285);
+      spoke.rotation.z = angle;
+      tweeter.add(spoke);
+    }
+    const rearCup = cylinder(0.4, 0.47, 0.18, driverBasketMetal);
+    rearCup.name = `${name}RearCup`;
+    rearCup.position.z = -0.31;
+    const magnet = cylinder(0.34, 0.36, 0.19, driverMagnetSteel);
+    magnet.name = `${name}FerriteMagnet`;
+    magnet.position.z = -0.48;
+    const rearPlate = cylinder(0.38, 0.37, 0.08, driverFrameMetal);
+    rearPlate.name = `${name}RearPolePlate`;
+    rearPlate.position.z = -0.615;
+    tweeter.add(rearCup, magnet, rearPlate);
+
+    const terminals = makeDriverTerminalPair(`${name}TerminalPair`, 0.72);
+    terminals.position.set(0, -0.54, -0.39);
+    tweeter.add(terminals);
+
     tweeter.position.set(x, BAFFLE.tweeterY, 0);
     return tweeter;
   }

@@ -2010,9 +2010,9 @@
       "confidence": 0.88,
       "primitive": "extrude",
       "topologyClass": "perforated-assembled-solid",
-      "topologyRationale": "A beveled rounded-rectangle board is extruded at final scale with four true corner mounting holes and a separate raised perimeter rim.",
+      "topologyRationale": "A beveled rounded-rectangle board is extruded at final scale with four true corner mounting holes, front and rear perimeter relief, and rear stiffening rails resolved from the saved driver-baffle multiview.",
       "geometryDescriptor": {
-        "topologyIntent": "Rigid textured composite baffle with true through holes, recessed perimeter relief, threaded inserts, and attached driver hardware.",
+        "topologyIntent": "Rigid textured composite baffle with true through holes, front and rear perimeter relief, rear stiffening rails, threaded inserts, and complete front-to-back driver hardware.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.022,
@@ -2057,7 +2057,7 @@
         "position": [
           0,
           0,
-          -0.26
+          -0.4
         ],
         "rotation": [
           0,
@@ -2143,6 +2143,14 @@
         {
           "id": "brass-threaded-inserts",
           "type": "reference-detail"
+        },
+        {
+          "id": "rear-perimeter-stiffening-rim",
+          "type": "reference-detail"
+        },
+        {
+          "id": "rear-stiffening-rails",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
@@ -2165,7 +2173,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Matte textured composite board recessed behind the grille, with four genuine perforations, coated-metal edge relief, silver corner hardware, and brass threaded inserts."
+        "notes": "Matte textured composite board recessed behind the grille, with four genuine perforations, silver-rimmed dark corner bores, coated-metal relief on both faces, brass threaded inserts, and rear stiffening rails matching components/driver-baffle-multiview.png. The baffle datum is 0.40 behind the grille datum, leaving about 0.07 clearance between the highest woofer point and the grille back surface."
       },
       "evidenceRefs": [
         "front-view",
@@ -2176,7 +2184,9 @@
       "details": [
         "four-corner-through-holes",
         "raised-perimeter-rim",
-        "brass-threaded-inserts"
+        "brass-threaded-inserts",
+        "rear-perimeter-stiffening-rim",
+        "rear-stiffening-rails"
       ],
       "fidelityTier": "reference"
     },
@@ -2189,9 +2199,9 @@
       "confidence": 0.88,
       "primitive": "lathe",
       "topologyClass": "assembled-solid",
-      "topologyRationale": "Each transducer is a nested assembly of mounting flange, frame lip, rubber surround, open frustum cone, domed cap, and independent mounting screws.",
+      "topologyRationale": "Each transducer is a full front-to-back assembly: mounting flange, surround, cone and dome on the front; stamped basket spokes, ferrite magnet, pole plates and terminal tabs on the rear.",
       "geometryDescriptor": {
-        "topologyIntent": "Large central ribbed paper-cone woofer and two elevated symmetric tweeters with physically layered frames, surrounds, cones, domes, and fasteners.",
+        "topologyIntent": "Large central ribbed paper-cone woofer and two elevated symmetric tweeters with physically layered front diaphragms plus visible rear baskets, motor stacks, vent details and electrical terminal pairs.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.08,
@@ -2208,7 +2218,7 @@
         "localStart": [
           0,
           0,
-          0.06
+          -0.92
         ],
         "localEnd": [
           0,
@@ -2228,7 +2238,7 @@
       "dimensions": {
         "width": 5.16,
         "height": 2.8,
-        "depth": 0.35,
+        "depth": 1.14,
         "units": "relative",
         "confidence": 0.88
       },
@@ -2236,7 +2246,7 @@
         "position": [
           0,
           0,
-          -1.7
+          0
         ],
         "rotation": [
           0,
@@ -2326,6 +2336,22 @@
         {
           "id": "independent-mounting-fasteners",
           "type": "reference-detail"
+        },
+        {
+          "id": "woofer-rear-basket-spokes",
+          "type": "reference-detail"
+        },
+        {
+          "id": "woofer-ferrite-motor-stack",
+          "type": "reference-detail"
+        },
+        {
+          "id": "tweeter-rear-magnet-cups",
+          "type": "reference-detail"
+        },
+        {
+          "id": "driver-terminal-pairs",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
@@ -2348,7 +2374,7 @@
         "displacementPattern": "none",
         "occlusionPattern": "cavity/contact AO",
         "edgeWearPattern": "subtle edge darkening",
-        "notes": "Central woofer uses a true open frustum cone, seven concentric ribs, compressed dome, thick rubber surround, coated frame and eight fasteners; each tweeter has the same layered construction with four brass fasteners."
+        "notes": "The saved driver-baffle multiview governs both faces. The central woofer has a ribbed open frustum cone, compressed dome, thick surround and eight fasteners on the front, plus an eight-spoke basket, ferrite magnet, pole plates, vent and terminals on the rear. Each tweeter includes its own rear cup, four-spoke basket, magnet, pole plate and paired brass tabs."
       },
       "evidenceRefs": [
         "front-view",
@@ -2360,7 +2386,11 @@
         "concentric-driver-rings",
         "twin-tweeter-domes",
         "woofer-ribbed-paper-cone",
-        "independent-mounting-fasteners"
+        "independent-mounting-fasteners",
+        "woofer-rear-basket-spokes",
+        "woofer-ferrite-motor-stack",
+        "tweeter-rear-magnet-cups",
+        "driver-terminal-pairs"
       ],
       "fidelityTier": "reference"
     },
