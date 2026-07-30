@@ -108,30 +108,19 @@ if (runtime) partIds.forEach((id) => {
   const node = runtime.nodes[id];
   if (node) selectablePartNodes.set(node, id);
 });
-const selectionBox = new THREE.Box3Helper(new THREE.Box3(), '#b89451');
-selectionBox.visible = false;
-scene.add(selectionBox);
-let selectedPart: PartId | undefined;
+let powerOn = false;
+function isPowerToggle(object: THREE.Object3D): boolean {
+  let current: THREE.Object3D | null = object;
+  while (current && current !== model) {
+    if (current === runtime?.powerToggle.node) return true;
+    current = current.parent;
+  }
+  return false;
+}
 function setSelectedPart(id: PartId | undefined): void {
-  selectedPart = id;
-  selectionBox.visible = Boolean(id);
   partButtons.forEach((button) => {
     const selected = button.dataset.partId === id;
     button.setAttribute('aria-pressed', String(selected));
-  });
-}
-function updateSelectionBounds(id: PartId): void {
-  const node = runtime?.nodes[id];
-  if (!node) return;
-  selectionBox.box.makeEmpty();
-  node.traverse((child: THREE.Object3D) => {
-    if (!(child instanceof THREE.Mesh)) return;
-    let ancestor = child.parent;
-    while (ancestor && ancestor !== node) {
-      if (selectablePartNodes.has(ancestor)) return;
-      ancestor = ancestor.parent;
-    }
-    selectionBox.box.expandByObject(child);
   });
 }
 const homePositions = new Map<string, THREE.Vector3>();
@@ -164,6 +153,11 @@ function selectPartAt(clientX: number, clientY: number): void {
   pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
   raycaster.setFromCamera(pointer, camera);
   for (const hit of raycaster.intersectObject(model, true)) {
+    if (isPowerToggle(hit.object)) {
+      powerOn = !powerOn;
+      runtime?.powerToggle.setPowered(powerOn);
+      return;
+    }
     let object: THREE.Object3D | null = hit.object;
     while (object && object !== model) {
       const id = selectablePartNodes.get(object);
@@ -203,10 +197,6 @@ renderer.setAnimationLoop(() => {
       node.position.copy(positionTarget);
     }
   });
-  if (selectedPart && runtime?.nodes[selectedPart]) {
-    model.updateMatrixWorld(true);
-    updateSelectionBounds(selectedPart);
-  }
   if (!reviewMode) model.rotation.y = THREE.MathUtils.lerp(model.rotation.y, 0.1, 0.075);
   if (!reviewMode && framingAmount > 0.001) {
     camera.position.lerp(exploded ? explodedCamera : assembledCamera, 0.085);

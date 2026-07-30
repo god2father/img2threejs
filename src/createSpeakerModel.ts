@@ -8,6 +8,10 @@ export type SpeakerRuntime = {
   sockets: Record<string, THREE.Object3D>;
   colliders: Record<string, THREE.Box3>;
   destructionGroups: Record<string, THREE.Object3D[]>;
+  powerToggle: {
+    node: THREE.Object3D;
+    setPowered: (powered: boolean) => void;
+  };
 };
 
 type PartOptions = { detachable?: boolean; explodeGroup?: string };
@@ -2033,14 +2037,35 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   toggleBezelInner.name = 'PowerToggleInnerBezel';
   toggleBezelInner.rotation.x = Math.PI / 2;
   toggleBezelInner.position.set(TOP_CONTROL.toggleX, 0.071, 0);
-  const toggle = new THREE.Mesh(new THREE.CylinderGeometry(0.027, 0.035, 0.2, 28), brass);
-  toggle.name = 'ToggleStem';
-  toggle.position.set(TOP_CONTROL.toggleX, 0.16, 0);
-  toggle.rotation.z = -0.12;
-  const toggleTip = new THREE.Mesh(new THREE.SphereGeometry(0.039, 24, 16), brass);
-  toggleTip.name = 'PowerToggleRoundedTip';
-  toggleTip.position.set(TOP_CONTROL.toggleX - 0.013, 0.26, 0);
-  controls.add(toggleBase, toggleBezelOuter, toggleBezelInner, toggle, toggleTip);
+  const powerToggle = new THREE.Group();
+  powerToggle.name = 'PowerToggleLever';
+  powerToggle.position.set(TOP_CONTROL.toggleX, 0.08, 0);
+  const powerToggleStem = new THREE.Mesh(new THREE.CapsuleGeometry(0.018, 0.045, 4, 16), brass);
+  powerToggleStem.name = 'PowerToggleStem';
+  powerToggleStem.position.y = 0.035;
+  const toggleTip = new THREE.Mesh(new THREE.SphereGeometry(0.022, 20, 14), brass);
+  toggleTip.name = 'PowerToggleTip';
+  toggleTip.position.y = 0.085;
+  const powerIndicatorMaterial = new THREE.MeshStandardMaterial({
+    color: '#40110e',
+    emissive: '#120000',
+    emissiveIntensity: 0.25,
+    metalness: 0.16,
+    roughness: 0.42,
+  });
+  const powerIndicator = new THREE.Mesh(new THREE.CircleGeometry(0.018, 20), powerIndicatorMaterial);
+  powerIndicator.name = 'PowerToggleIndicator';
+  powerIndicator.rotation.x = -Math.PI / 2;
+  powerIndicator.position.set(TOP_CONTROL.toggleX - 0.14, 0.058, 0);
+  powerToggle.add(powerToggleStem, toggleTip);
+  const setPowered = (powered: boolean): void => {
+    powerToggle.rotation.z = powered ? -0.32 : 0.32;
+    powerIndicatorMaterial.color.set(powered ? '#b5352c' : '#40110e');
+    powerIndicatorMaterial.emissive.set(powered ? '#6e1109' : '#120000');
+    powerIndicatorMaterial.emissiveIntensity = powered ? 1.1 : 0.25;
+  };
+  setPowered(false);
+  controls.add(toggleBase, toggleBezelOuter, toggleBezelInner, powerIndicator, powerToggle);
   topGroup.add(controls);
   const top = addPart('top-control-deck', 'Top brass control deck', cabinet, topGroup, { detachable: true });
   top.position.set(0, outerHalfHeight - 0.095, TOP_CONTROL.z);
@@ -2540,7 +2565,14 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   for (const [id, node] of Object.entries(nodes)) {
     colliders[id] = new THREE.Box3().setFromObject(node);
   }
-  root.userData.sculptRuntime = { nodes, meshes, sockets, colliders, destructionGroups } satisfies SpeakerRuntime;
+  root.userData.sculptRuntime = {
+    nodes,
+    meshes,
+    sockets,
+    colliders,
+    destructionGroups,
+    powerToggle: { node: powerToggle, setPowered },
+  } satisfies SpeakerRuntime;
   root.userData.stage = 'structural-pass';
   return root;
 }
