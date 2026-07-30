@@ -3,7 +3,7 @@
   "zonesDir": "sculpt/noir-layer04-zones",
   "detailInventory": {
     "scanMethod": "grid-3x3",
-    "targetMinDetails": 8,
+    "targetMinDetails": 12,
     "details": [
       {
         "id": "continuous-rounded-shell",
@@ -103,6 +103,39 @@
         "mapsTo": {"type": "component", "ref": "acoustic-chamber/right-rear-cleat"},
         "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c2.png",
         "confidence": 0.84
+      },
+      {
+        "id": "rear-port-open-tunnel",
+        "kind": "hole",
+        "description": "The rear aperture remains open through the full rear board and outer shell depth, exposing a rounded MDF tunnel wall rather than a black image plane.",
+        "region": {"x": 0.52, "y": 0.38, "width": 0.2, "height": 0.18, "units": "normalized"},
+        "scale": "meso",
+        "affects": "rear chamber board and shell",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/rear-port-open-tunnel"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c2.png",
+        "confidence": 0.92
+      },
+      {
+        "id": "compressed-mdf-mounting-bores",
+        "kind": "fastener",
+        "description": "Dark recessed mounting bores with compressed-fibre rims appear on the left wall, rear board and brace faces.",
+        "region": {"x": 0.2, "y": 0.25, "width": 0.22, "height": 0.5, "units": "normalized"},
+        "scale": "detail",
+        "affects": "MDF walls and braces",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/compressed-mdf-mounting-bores"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r1c0.png",
+        "confidence": 0.86
+      },
+      {
+        "id": "rear-floor-cleat",
+        "kind": "raised-ridge",
+        "description": "A narrow connected MDF cleat closes the rear floor-to-wall junction and gives the bottom structure a believable joined edge.",
+        "region": {"x": 0.25, "y": 0.62, "width": 0.5, "height": 0.12, "units": "normalized"},
+        "scale": "detail",
+        "affects": "rear floor joint",
+        "mapsTo": {"type": "component", "ref": "acoustic-chamber/rear-floor-cleat"},
+        "evidenceRef": "sculpt/noir-layer04-zones/zone-r2c1.png",
+        "confidence": 0.82
       }
     ]
   }

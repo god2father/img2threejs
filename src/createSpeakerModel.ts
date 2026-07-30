@@ -373,13 +373,14 @@ export function createSpeakerBlockout(): THREE.Group {
   const chamberMdfNormal = materialTexture('chamber-mdf', 'normal', [1, 1], false, 'layer04-v2', () => refreshChamberMdfPbr());
   const chamberMdfRoughness = materialTexture('chamber-mdf', 'roughness', [1, 1], false, 'layer04-v2', () => refreshChamberMdfPbr());
   const wood = new THREE.MeshStandardMaterial({
-    color: '#d2b08a',
+    color: '#a88a6c',
     map: chamberMdfAlbedo,
     normalMap: chamberMdfNormal,
-    normalScale: new THREE.Vector2(0.38, 0.38),
+    normalScale: new THREE.Vector2(0.48, 0.48),
     roughnessMap: chamberMdfRoughness,
     roughness: 1,
     metalness: 0,
+    envMapIntensity: 0.08,
   });
   wood.userData.pbrChannels = {
     albedo: '/materials/chamber-mdf/chamber-mdf_albedo.png?v=layer04-v2',
@@ -390,8 +391,8 @@ export function createSpeakerBlockout(): THREE.Group {
   refreshChamberMdfPbr = () => { wood.needsUpdate = true; };
   const mdfCutEdge = wood.clone();
   mdfCutEdge.name = 'Compressed MDF cut-edge material';
-  mdfCutEdge.color.set('#b58d68');
-  mdfCutEdge.normalScale.set(0.52, 0.52);
+  mdfCutEdge.color.set('#967050');
+  mdfCutEdge.normalScale.set(0.58, 0.58);
   mdfCutEdge.roughness = 1;
   mdfCutEdge.envMapIntensity = 0.05;
   mdfCutEdge.userData.pbrChannels = {
@@ -859,11 +860,43 @@ export function createSpeakerBlockout(): THREE.Group {
   internalBraces.name = 'InternalBraces';
   const bottomInteriorSurface = -CABINET.frontOpeningHeight / 2 + CABINET.mdfThickness;
   const backInteriorSurface = -outerHalfDepth + CABINET.shellThickness + CABINET.mdfThickness;
+  const mdfBoreMaterial = new THREE.MeshStandardMaterial({
+    color: '#2a1a10',
+    metalness: 0,
+    roughness: 1,
+  });
+  mdfBoreMaterial.name = 'Shadowed MDF mounting bore';
+
+  function addMdfMountingBore(
+    parent: THREE.Object3D,
+    name: string,
+    position: THREE.Vector3Tuple,
+    axis: 'x' | 'y' | 'z',
+    radius = 0.055,
+  ): void {
+    const bore = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius * 0.92, 0.018, 32), mdfBoreMaterial);
+    bore.name = `${name}Cavity`;
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.009, 8, 32), mdfCutEdge);
+    rim.name = `${name}CompressedRim`;
+    if (axis === 'x') {
+      bore.rotation.z = Math.PI / 2;
+      rim.rotation.y = Math.PI / 2;
+    } else if (axis === 'y') {
+      rim.rotation.x = Math.PI / 2;
+    } else {
+      bore.rotation.x = Math.PI / 2;
+    }
+    bore.position.set(...position);
+    rim.position.set(...position);
+    parent.add(bore, rim);
+  }
 
   const leftHorizontalBrace = texturedRounded(1.35, 0.16, 0.42, 0.015, wood, CABINET.mdfTileWorldSize);
   leftHorizontalBrace.name = 'LeftHorizontalBrace';
   leftHorizontalBrace.position.set(-2.095, 0.35, -0.82);
   internalBraces.add(leftHorizontalBrace);
+  addMdfMountingBore(internalBraces, 'LeftBraceMount01', [-2.46, 0.35, -0.6], 'z', 0.035);
+  addMdfMountingBore(internalBraces, 'LeftBraceMount02', [-1.74, 0.35, -0.6], 'z', 0.035);
 
   const centerVerticalBrace = new THREE.Group();
   centerVerticalBrace.name = 'CenterVerticalBrace';
@@ -887,21 +920,39 @@ export function createSpeakerBlockout(): THREE.Group {
   bottomBrace01.name = 'BottomBrace01';
   bottomBrace01.position.set(-0.65, bottomInteriorSurface + 0.08, -0.25);
   internalBraces.add(bottomBrace01);
+  addMdfMountingBore(internalBraces, 'BottomBrace01Mount01', [-0.65, bottomInteriorSurface + 0.17, 0.08], 'y', 0.032);
 
   const bottomBrace02 = texturedRounded(0.18, 0.16, 1.05, 0.015, wood, CABINET.mdfTileWorldSize);
   bottomBrace02.name = 'BottomBrace02';
   bottomBrace02.position.set(1.65, bottomInteriorSurface + 0.08, 0.25);
   internalBraces.add(bottomBrace02);
+  addMdfMountingBore(internalBraces, 'BottomBrace02Mount01', [1.65, bottomInteriorSurface + 0.17, 0.52], 'y', 0.032);
 
   const bottomFrontBrace = texturedRounded(5.3, 0.12, 0.16, 0.015, wood, CABINET.mdfTileWorldSize);
   bottomFrontBrace.name = 'BottomFrontBrace';
   bottomFrontBrace.position.set(0, bottomInteriorSurface + 0.06, 1.36);
   internalBraces.add(bottomFrontBrace);
 
+  const rearBottomCleat = texturedRounded(5.18, 0.12, 0.14, 0.015, wood, CABINET.mdfTileWorldSize);
+  rearBottomCleat.name = 'RearBottomCleat';
+  rearBottomCleat.position.set(0, bottomInteriorSurface + 0.06, backInteriorSurface + 0.08);
+  internalBraces.add(rearBottomCleat);
+
   const rightVerticalBrace = texturedRounded(0.18, 1.2, 0.24, 0.015, wood, CABINET.mdfTileWorldSize);
   rightVerticalBrace.name = 'RightVerticalBrace';
   rightVerticalBrace.position.set(2.35, 0.08, backInteriorSurface + 0.12);
   internalBraces.add(rightVerticalBrace);
+
+  const chamberMountingDetails = new THREE.Group();
+  chamberMountingDetails.name = 'ChamberMountingDetails';
+  const leftWallInnerX = -CABINET.frontOpeningWidth / 2 + CABINET.mdfThickness + 0.01;
+  addMdfMountingBore(chamberMountingDetails, 'LeftWallUpperBore', [leftWallInnerX, 1.17, 1.18], 'x', 0.072);
+  addMdfMountingBore(chamberMountingDetails, 'LeftWallLowerBore', [leftWallInnerX, -1.12, 1.18], 'x', 0.072);
+  addMdfMountingBore(chamberMountingDetails, 'LeftWallPilotBore01', [leftWallInnerX, -1.22, 0.96], 'x', 0.025);
+  addMdfMountingBore(chamberMountingDetails, 'LeftWallPilotBore02', [leftWallInnerX, -1.22, 0.82], 'x', 0.025);
+  addMdfMountingBore(chamberMountingDetails, 'RearBoardUpperBore', [-2.5, 1.2, backInteriorSurface + 0.01], 'z', 0.058);
+  addMdfMountingBore(chamberMountingDetails, 'RearBoardLowerBore', [-2.5, -1.2, backInteriorSurface + 0.01], 'z', 0.058);
+  internalBraces.add(chamberMountingDetails);
   cabinet.add(internalBraces);
 
   const handleRecess = new THREE.Group();
@@ -958,6 +1009,42 @@ export function createSpeakerBlockout(): THREE.Group {
   const rearPortBevel = new THREE.Mesh(rearPortBevelGeometry, [wood, mdfCutEdge]);
   rearPortBevel.name = 'RearPortBevel';
   rearPort.add(rearPortBevel);
+
+  // A deep open ring continues the aperture through the rear board and outer shell.
+  // It preserves a genuine opening while giving the viewer visible MDF wall thickness.
+  const rearPortTunnelShape = new THREE.Shape();
+  appendRoundedRectangle(
+    rearPortTunnelShape,
+    CABINET.rearPortWidth + 0.02,
+    CABINET.rearPortHeight + 0.02,
+    CABINET.rearPortRadius + 0.01,
+  );
+  const rearPortTunnelOpening = new THREE.Path();
+  appendRoundedRectangle(
+    rearPortTunnelOpening,
+    CABINET.rearPortWidth - 0.12,
+    CABINET.rearPortHeight - 0.12,
+    Math.max(0.035, CABINET.rearPortRadius - 0.035),
+    true,
+  );
+  rearPortTunnelShape.holes.push(rearPortTunnelOpening);
+  const rearPortTunnelGeometry = new THREE.ExtrudeGeometry(rearPortTunnelShape, {
+    depth: CABINET.shellThickness + CABINET.mdfThickness,
+    bevelEnabled: true,
+    bevelSegments: 3,
+    bevelSize: 0.012,
+    bevelThickness: 0.012,
+    curveSegments: 24,
+  });
+  rearPortTunnelGeometry.translate(
+    CABINET.rearPortX,
+    CABINET.rearPortY,
+    -outerHalfDepth - 0.012,
+  );
+  applyWorldScaleUvs(rearPortTunnelGeometry, CABINET.mdfTileWorldSize);
+  const rearPortTunnel = new THREE.Mesh(rearPortTunnelGeometry, [mdfCutEdge, mdfBoreMaterial]);
+  rearPortTunnel.name = 'RearPortOpenTunnel';
+  rearPort.add(rearPortTunnel);
   cabinet.add(rearPort);
 
   const frameGroup = new THREE.Group();

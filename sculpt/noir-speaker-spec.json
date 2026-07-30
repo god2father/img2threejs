@@ -1097,9 +1097,9 @@
       "confidence": 0.92,
       "primitive": "box",
       "topologyClass": "conforming-shell",
-      "topologyRationale": "The component reference exposes a thick MDF front cut edge, five independently thick cavity boards, a true rounded rectangular rear port and six asymmetric braces that remain physically connected to the walls, floor or rear board.",
+      "topologyRationale": "The component reference exposes a thick MDF front cut edge, five independently thick cavity boards, a true rounded rectangular rear port with an open tunnel, asymmetric connected braces, compressed mounting bores and front/rear floor cleats.",
       "geometryDescriptor": {
-        "topologyIntent": "Continuous exposed MDF front ring feeding into independently thick top, bottom, left, right and rear boards. The rear opening is cut through both MDF and outer shell. Bracing consists of a wall-connected left horizontal brace, offset full-height centre post with foot, two separated floor rails, a thin front floor cross-brace and a short rear-right vertical cleat.",
+        "topologyIntent": "Continuous exposed MDF front ring feeding into independently thick top, bottom, left, right and rear boards. The rear opening is cut through both MDF and outer shell and continues through a deep open-sided MDF tunnel. Bracing consists of a wall-connected left horizontal brace with fastener bores, offset full-height centre post with foot, two separated floor rails with mounting bores, front and rear floor cleats, a short rear-right vertical cleat, plus side-wall and rear-board mounting bores.",
         "edgeTreatment": {
           "type": "rounded",
           "bevelRadius": 0.025,
@@ -1250,6 +1250,18 @@
         {
           "id": "right-rear-cleat",
           "type": "reference-detail"
+        },
+        {
+          "id": "rear-port-open-tunnel",
+          "type": "reference-detail"
+        },
+        {
+          "id": "compressed-mdf-mounting-bores",
+          "type": "reference-detail"
+        },
+        {
+          "id": "rear-floor-cleat",
+          "type": "reference-detail"
         }
       ],
       "colorMaterialRecipe": {
@@ -1288,7 +1300,10 @@
         "offset-vertical-brace",
         "left-cross-brace",
         "floor-mounting-rails",
-        "right-rear-cleat"
+        "right-rear-cleat",
+        "rear-port-open-tunnel",
+        "compressed-mdf-mounting-bores",
+        "rear-floor-cleat"
       ],
       "fidelityTier": "reference"
     },
