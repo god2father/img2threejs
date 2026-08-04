@@ -333,6 +333,57 @@ export function createSpeakerBlockout(): THREE.Group {
     texture.anisotropy = 8;
     return texture;
   }
+
+  function rearPanelMarkingsTexture(): THREE.CanvasTexture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 1024;
+    const context = canvas.getContext('2d');
+    if (!context) return new THREE.CanvasTexture(canvas);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = '#aaa9a2';
+    context.textBaseline = 'top';
+
+    context.font = "italic 700 92px 'Brush Script MT', 'Snell Roundhand', cursive";
+    context.fillText('NOIR', 150, 125);
+
+    const drawTextBlock = (x: number, y: number, widths: number[], rows: number, lineHeight: number): void => {
+      for (let row = 0; row < rows; row += 1) {
+        context.globalAlpha = 0.44 + (row % 3) * 0.08;
+        context.fillRect(x, y + row * lineHeight, widths[row % widths.length], 5);
+      }
+    };
+    drawTextBlock(720, 130, [380, 420, 345, 405], 13, 24);
+    drawTextBlock(1210, 130, [485, 430, 510, 455], 13, 24);
+    drawTextBlock(720, 465, [390, 345, 420], 6, 23);
+
+    context.globalAlpha = 0.72;
+    context.font = "700 24px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('MODEL NOIR S1', 150, 735);
+    context.fillText('AC INPUT 100–240V  50/60Hz', 150, 772);
+    context.fillText('DESIGNED FOR INDOOR AUDIO USE', 150, 809);
+    context.fillText('SERVICE PORT', 725, 725);
+
+    context.lineWidth = 4;
+    context.strokeStyle = '#aaa9a2';
+    context.strokeRect(1180, 565, 430, 125);
+    context.font = "700 30px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('CAUTION', 1210, 585);
+    context.font = "600 21px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('RISK OF ELECTRIC SHOCK', 1210, 632);
+
+    context.font = "700 46px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('WIRELESS', 1110, 775);
+    context.font = "700 34px 'Arial Narrow', Arial, sans-serif";
+    context.fillText('CE   EAC   ☐   △', 1110, 835);
+
+    context.globalAlpha = 1;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 8;
+    return texture;
+  }
+
   function metalGrilleAlphaMap(): THREE.CanvasTexture {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -993,11 +1044,11 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     handleWidth: 2,
     handleHeight: 0.38,
     handleZ: -0.35,
-    rearPortWidth: 1.25,
-    rearPortHeight: 0.62,
-    rearPortRadius: 0.09,
-    rearPortX: 1.25,
-    rearPortY: 0.1,
+    rearPortWidth: 0.68,
+    rearPortHeight: 1.34,
+    rearPortRadius: 0.3,
+    rearPortX: 1.82,
+    rearPortY: 0.18,
     leatherTileWorldSize: CABINET_LEATHER_TILE_WORLD_SIZE,
     mdfTileWorldSize: 0.82,
     footRadius: 0.12,
@@ -1028,19 +1079,19 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     coverHeight: CABINET.height - 0.65,
     coverDepth: 0.14,
     coverRadius: 0.16,
-    handleWidth: 2,
-    handleHeight: 0.52,
-    handleX: -0.55,
-    handleY: 0.72,
-    iecWidth: 0.72,
-    iecHeight: 0.9,
-    iecX: 2.02,
-    iecY: -0.55,
-    metalWidth: 5.35,
-    metalHeight: 1.72,
-    metalDepth: 0.08,
-    metalRadius: 0.14,
-    metalY: -0.55,
+    portWidth: CABINET.rearPortWidth,
+    portHeight: CABINET.rearPortHeight,
+    portX: CABINET.rearPortX,
+    portY: CABINET.rearPortY,
+    serviceWidth: 0.54,
+    serviceHeight: 0.22,
+    serviceX: 0.48,
+    serviceY: -1.06,
+    powerWidth: 0.38,
+    powerHeight: 0.66,
+    powerDepth: 0.08,
+    powerX: -2.28,
+    powerY: -0.82,
   } as const;
 
   const ASSEMBLED_DEPTH = {
@@ -1049,8 +1100,10 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     // of air between that point and the rear surface of the grille.
     driverBaffle: CABINET.depth / 2 - 0.41,
     grille: CABINET.depth / 2 - 0.01,
-    rearPanel: -CABINET.depth / 2 + 0.09,
-    rearIo: -CABINET.depth / 2 - 0.06,
+    // Seat both rear service panels on one plane with only a tiny render gap
+    // from the cabinet skin. Hardware and connectors can still project outward.
+    rearPanel: -CABINET.depth / 2 + REAR.coverDepth - 0.004,
+    rearIo: -CABINET.depth / 2 - 0.004,
   } as const;
 
   function socket(id: string, parent: THREE.Object3D, position: THREE.Vector3Tuple): void {
@@ -2251,7 +2304,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   amplifier.position.set(0, 0.78, TOP_CONTROL.z);
 
   const rearGroup = new THREE.Group();
-  rearGroup.name = 'LeatherRearCoverAssembly';
+  rearGroup.name = 'ActonStyleRearCoverAssembly';
   const rearCoverShape = new THREE.Shape();
   appendRoundedRectangle(
     rearCoverShape,
@@ -2259,30 +2312,20 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     REAR.coverHeight,
     REAR.coverRadius,
   );
-  const rearHandleHole = new THREE.Path();
-  appendCapsule(
-    rearHandleHole,
-    REAR.handleWidth,
-    REAR.handleHeight,
-    REAR.handleX,
-    REAR.handleY,
+  const rearPortHole = new THREE.Path();
+  appendRoundedRectangle(
+    rearPortHole,
+    REAR.portWidth,
+    REAR.portHeight,
+    REAR.portWidth / 2,
     true,
+    REAR.portX,
+    REAR.portY,
   );
-  rearCoverShape.holes.push(rearHandleHole);
-  const rearIecHole = new THREE.Path();
-  appendChamferedRectangle(
-    rearIecHole,
-    REAR.iecWidth,
-    REAR.iecHeight,
-    0.1,
-    REAR.iecX,
-    REAR.iecY,
-    true,
-  );
-  rearCoverShape.holes.push(rearIecHole);
+  rearCoverShape.holes.push(rearPortHole);
 
   const rearCoverBorePositions: THREE.Vector2Tuple[] = [
-    [-2.7, 1.49], [-0.9, 1.49], [0.9, 1.49], [2.7, 1.49],
+    [-2.7, 1.49], [2.7, 1.49],
     [-2.7, 0], [2.7, 0],
     [-2.7, -1.49], [-0.9, -1.49], [0.9, -1.49], [2.7, -1.49],
   ];
@@ -2301,7 +2344,7 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
   });
   rearCoverGeometry.translate(0, 0, -REAR.coverDepth);
   const rearCoverMesh = new THREE.Mesh(rearCoverGeometry, cabinetLeather);
-  rearCoverMesh.name = 'LeatherRearCoverWithTrueOpenings';
+  rearCoverMesh.name = 'FlatRearCoverWithBassPort';
   rearGroup.add(rearCoverMesh);
 
   const rearSurfaceZ = -REAR.coverDepth - 0.012;
@@ -2312,215 +2355,125 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     rearGroup.add(ring);
   }
 
-  const handleLipShape = new THREE.Shape();
-  appendCapsule(
-    handleLipShape,
-    REAR.handleWidth + 0.22,
-    REAR.handleHeight + 0.2,
-    REAR.handleX,
-    REAR.handleY,
+  const portLipShape = new THREE.Shape();
+  appendRoundedRectangle(
+    portLipShape,
+    REAR.portWidth + 0.18,
+    REAR.portHeight + 0.18,
+    (REAR.portWidth + 0.18) / 2,
+    false,
+    REAR.portX,
+    REAR.portY,
   );
-  const handleLipOpening = new THREE.Path();
-  appendCapsule(
-    handleLipOpening,
-    REAR.handleWidth,
-    REAR.handleHeight,
-    REAR.handleX,
-    REAR.handleY,
+  const portLipOpening = new THREE.Path();
+  appendRoundedRectangle(
+    portLipOpening,
+    REAR.portWidth,
+    REAR.portHeight,
+    REAR.portWidth / 2,
     true,
+    REAR.portX,
+    REAR.portY,
   );
-  handleLipShape.holes.push(handleLipOpening);
-  const handleLipGeometry = new THREE.ExtrudeGeometry(handleLipShape, {
-    depth: 0.05,
+  portLipShape.holes.push(portLipOpening);
+  const portLipGeometry = new THREE.ExtrudeGeometry(portLipShape, {
+    depth: 0.035,
     bevelEnabled: true,
     bevelSegments: 3,
-    bevelSize: 0.018,
-    bevelThickness: 0.012,
+    bevelSize: 0.014,
+    bevelThickness: 0.01,
     curveSegments: 32,
   });
-  handleLipGeometry.translate(0, 0, -REAR.coverDepth - 0.045);
-  const handleLip = new THREE.Mesh(handleLipGeometry, rubber);
-  handleLip.name = 'RearHandleOpeningLip';
-  rearGroup.add(handleLip);
-
-  const iecFrameShape = new THREE.Shape();
-  appendChamferedRectangle(
-    iecFrameShape,
-    REAR.iecWidth + 0.22,
-    REAR.iecHeight + 0.2,
-    0.14,
-    REAR.iecX,
-    REAR.iecY,
+  portLipGeometry.translate(0, 0, -REAR.coverDepth - 0.03);
+  const portLip = new THREE.Mesh(portLipGeometry, rubber);
+  portLip.name = 'VerticalBassReflexPortLip';
+  const portWell = rounded(
+    REAR.portWidth - 0.12,
+    REAR.portHeight - 0.12,
+    0.04,
+    (REAR.portWidth - 0.12) / 2,
+    new THREE.MeshBasicMaterial({ color: '#050606' }),
   );
-  const iecFrameOpening = new THREE.Path();
-  appendChamferedRectangle(
-    iecFrameOpening,
-    REAR.iecWidth,
-    REAR.iecHeight,
-    0.1,
-    REAR.iecX,
-    REAR.iecY,
-    true,
-  );
-  iecFrameShape.holes.push(iecFrameOpening);
-  const iecFrameGeometry = new THREE.ExtrudeGeometry(iecFrameShape, {
-    depth: 0.05,
-    bevelEnabled: true,
-    bevelSegments: 3,
-    bevelSize: 0.015,
-    bevelThickness: 0.012,
-    curveSegments: 18,
-  });
-  iecFrameGeometry.translate(0, 0, -REAR.coverDepth - 0.045);
-  const rearIecFrame = new THREE.Mesh(iecFrameGeometry, rubber);
-  rearIecFrame.name = 'RearCoverPowerInletFrame';
-  rearGroup.add(rearIecFrame);
+  portWell.name = 'VerticalBassReflexPortWell';
+  portWell.position.set(REAR.portX, REAR.portY, -REAR.coverDepth + 0.04);
 
-  const rear = addPart('rear-panel', 'Leather rear cover with handle', cabinet, rearGroup, { detachable: true, explodeGroup: 'rear-stack' });
+  const servicePortFrame = rounded(
+    REAR.serviceWidth + 0.1,
+    REAR.serviceHeight + 0.08,
+    0.035,
+    0.045,
+    rubber,
+  );
+  servicePortFrame.name = 'ServicePortFrame';
+  servicePortFrame.position.set(REAR.serviceX, REAR.serviceY, rearSurfaceZ - 0.012);
+  const servicePortWell = rounded(
+    REAR.serviceWidth,
+    REAR.serviceHeight,
+    0.025,
+    0.035,
+    vinylEdge,
+  );
+  servicePortWell.name = 'ServicePortWell';
+  servicePortWell.position.set(REAR.serviceX, REAR.serviceY, rearSurfaceZ - 0.035);
+
+  const rearMarkings = new THREE.Mesh(
+    new THREE.PlaneGeometry(REAR.coverWidth - 0.28, REAR.coverHeight - 0.22),
+    new THREE.MeshBasicMaterial({
+      map: rearPanelMarkingsTexture(),
+      transparent: true,
+      opacity: 0.78,
+      depthWrite: false,
+      toneMapped: false,
+    }),
+  );
+  rearMarkings.name = 'RearRegulatoryAndModelMarkings';
+  rearMarkings.rotation.y = Math.PI;
+  rearMarkings.position.z = rearSurfaceZ - 0.008;
+  rearMarkings.renderOrder = 2;
+  rearGroup.add(portWell, portLip, servicePortFrame, servicePortWell, rearMarkings);
+
+  const rear = addPart('rear-panel', 'Flat rear cover with bass port', cabinet, rearGroup, { detachable: true, explodeGroup: 'rear-stack' });
   rear.position.z = ASSEMBLED_DEPTH.rearPanel;
 
   const ioGroup = new THREE.Group();
-  ioGroup.name = 'OutermostBrassRearInterfaceAssembly';
-  const rearMetalShape = new THREE.Shape();
-  appendRoundedRectangle(
-    rearMetalShape,
-    REAR.metalWidth,
-    REAR.metalHeight,
-    REAR.metalRadius,
+  ioGroup.name = 'RearPowerInletAssembly';
+  const powerFlange = rounded(
+    REAR.powerWidth,
+    REAR.powerHeight,
+    REAR.powerDepth,
+    0.1,
+    rubber,
   );
-  const rearMetalFastenerPositions: THREE.Vector2Tuple[] = [
-    [-2.48, 0.68], [0, 0.68], [2.48, 0.68],
-    [-2.48, -0.68], [0, -0.68], [2.48, -0.68],
-  ];
-  for (const [x, y] of rearMetalFastenerPositions) {
-    const hole = new THREE.Path();
-    hole.absarc(x, y, 0.065, 0, Math.PI * 2, true);
-    rearMetalShape.holes.push(hole);
-  }
-  for (const [x, radius] of [
-    [-2.18, 0.075], [-1.43, 0.18], [-0.48, 0.13], [0.28, 0.13], [1.12, 0.14],
-  ] as const) {
-    const hole = new THREE.Path();
-    hole.absarc(x, 0, radius, 0, Math.PI * 2, true);
-    rearMetalShape.holes.push(hole);
-  }
-  const rearMetalIecHole = new THREE.Path();
-  appendChamferedRectangle(
-    rearMetalIecHole,
-    0.58,
-    0.72,
-    0.09,
-    2.05,
-    0,
-    true,
+  powerFlange.name = 'FigureEightPowerInletFlange';
+  powerFlange.position.z = -REAR.powerDepth / 2;
+  const powerRecess = rounded(
+    REAR.powerWidth - 0.12,
+    REAR.powerHeight - 0.12,
+    0.035,
+    0.07,
+    vinylEdge,
   );
-  rearMetalShape.holes.push(rearMetalIecHole);
-  const rearMetalGeometry = new THREE.ExtrudeGeometry(rearMetalShape, {
-    depth: REAR.metalDepth,
-    bevelEnabled: true,
-    bevelSegments: 4,
-    bevelSize: 0.018,
-    bevelThickness: 0.014,
-    curveSegments: 28,
-  });
-  rearMetalGeometry.translate(0, 0, -REAR.metalDepth);
-  const ioPlate = new THREE.Mesh(rearMetalGeometry, controlPlateBrass);
-  ioPlate.name = 'BrushedBrassOutermostRearPanel';
-  ioGroup.add(ioPlate);
-
-  const metalSurfaceZ = -REAR.metalDepth - 0.018;
-  for (const [index, [x, y]] of rearMetalFastenerPositions.entries()) {
-    const material = index === 1 || index === 4 ? driverFrameMetal : silverHardware;
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.066, 0.017, 10, 28), material);
-    ring.name = `RearMetalFastenerRing${index + 1}`;
-    ring.position.set(x, y, metalSurfaceZ);
-    const center = cylinder(0.038, 0.036, 0.024, index === 1 || index === 4 ? driverFrameMetal : vinylEdge);
-    center.name = `RearMetalFastener${index + 1}`;
-    center.position.set(x, y, metalSurfaceZ - 0.012);
-    ioGroup.add(ring, center);
-  }
-
-  const rearToggleBase = new THREE.Mesh(new THREE.TorusGeometry(0.105, 0.026, 10, 30), brassDark);
-  rearToggleBase.name = 'RearToggleBase';
-  rearToggleBase.position.set(-2.18, 0, metalSurfaceZ);
-  const toggleStem = cylinder(0.044, 0.05, 0.18, brass);
-  toggleStem.name = 'RearToggleStem';
-  toggleStem.position.set(-2.18, 0, metalSurfaceZ - 0.09);
-  toggleStem.rotation.y = -0.18;
-  ioGroup.add(rearToggleBase, toggleStem);
-
-  const mainJackBody = cylinder(0.2, 0.2, 0.12, brassDark);
-  mainJackBody.name = 'RearKnurledAudioSocket';
-  mainJackBody.position.set(-1.43, 0, metalSurfaceZ - 0.055);
-  const mainJackRing = new THREE.Mesh(new THREE.TorusGeometry(0.145, 0.03, 10, 32), brass);
-  mainJackRing.name = 'RearKnurledAudioSocketRing';
-  mainJackRing.position.set(-1.43, 0, metalSurfaceZ - 0.12);
-  const mainJackWell = cylinder(0.085, 0.085, 0.025, vinylEdge);
-  mainJackWell.name = 'RearKnurledAudioSocketWell';
-  mainJackWell.position.set(-1.43, 0, metalSurfaceZ - 0.14);
-  ioGroup.add(mainJackBody, mainJackRing, mainJackWell);
-
-  const bindingRed = new THREE.MeshStandardMaterial({ color: '#b2261e', metalness: 0.22, roughness: 0.4 });
-  const bindingBlack = new THREE.MeshStandardMaterial({ color: '#17191b', metalness: 0.26, roughness: 0.5 });
-  for (const [name, x, material] of [
-    ['Positive', -0.48, bindingRed],
-    ['Negative', 0.28, bindingBlack],
-  ] as const) {
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.04, 12, 36), material);
-    collar.name = `${name}BindingPostCollar`;
-    collar.position.set(x, 0, metalSurfaceZ);
-    const post = cylinder(0.078, 0.078, 0.11, brass);
-    post.name = `${name}BindingPost`;
-    post.position.set(x, 0, metalSurfaceZ - 0.055);
-    const well = cylinder(0.038, 0.038, 0.025, vinylEdge);
-    well.name = `${name}BindingPostWell`;
-    well.position.set(x, 0, metalSurfaceZ - 0.12);
-    ioGroup.add(collar, post, well);
-  }
-
-  const auxRing = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.028, 10, 32), brassDark);
-  auxRing.name = 'RearAuxSocketRing';
-  auxRing.position.set(1.12, 0, metalSurfaceZ);
-  const auxWell = cylinder(0.072, 0.072, 0.035, vinylEdge);
-  auxWell.name = 'RearAuxSocketWell';
-  auxWell.position.set(1.12, 0, metalSurfaceZ - 0.045);
-  ioGroup.add(auxRing, auxWell);
-
-  const powerFlange = rounded(0.82, 0.9, 0.13, 0.11, rubber);
-  powerFlange.name = 'RearIecPowerFlange';
-  powerFlange.position.set(2.05, 0, metalSurfaceZ - 0.055);
-  const powerRecess = rounded(0.52, 0.66, 0.08, 0.065, vinylEdge);
-  powerRecess.name = 'RearIecPowerRecess';
-  powerRecess.position.set(2.05, 0, metalSurfaceZ - 0.13);
+  powerRecess.name = 'FigureEightPowerInletRecess';
+  powerRecess.position.z = -REAR.powerDepth - 0.01;
   ioGroup.add(powerFlange, powerRecess);
-  for (const [index, x] of [1.63, 2.47].entries()) {
-    const screwRing = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.014, 8, 24), driverFrameMetal);
-    screwRing.name = `RearIecMountingRing${index + 1}`;
-    screwRing.position.set(x, 0, metalSurfaceZ - 0.13);
-    const screw = cylinder(0.028, 0.026, 0.02, driverFrameMetal);
-    screw.name = `RearIecMountingScrew${index + 1}`;
-    screw.position.set(x, 0, metalSurfaceZ - 0.145);
-    ioGroup.add(screwRing, screw);
+  for (const [index, y] of [-0.13, 0.13].entries()) {
+    const contactWell = cylinder(0.07, 0.07, 0.028, vinylEdge);
+    contactWell.name = `PowerContactWell${index + 1}`;
+    contactWell.position.set(0, y, -REAR.powerDepth - 0.032);
+    const contact = cylinder(0.024, 0.022, 0.032, silverHardware);
+    contact.name = `PowerContact${index + 1}`;
+    contact.position.set(0, y, -REAR.powerDepth - 0.052);
+    ioGroup.add(contactWell, contact);
+  }
+  for (const [index, y] of [-0.28, 0.28].entries()) {
+    const screw = cylinder(0.026, 0.024, 0.022, driverFrameMetal);
+    screw.name = `PowerInletScrew${index + 1}`;
+    screw.position.set(0, y, -REAR.powerDepth - 0.015);
+    ioGroup.add(screw);
   }
 
-  for (const [name, x, symbol] of [
-    ['PositiveMark', -0.48, 'plus'],
-    ['NegativeMark', 0.28, 'minus'],
-  ] as const) {
-    const horizontal = rounded(0.12, 0.018, 0.012, 0.006, vinylEdge);
-    horizontal.name = name;
-    horizontal.position.set(x, 0.32, metalSurfaceZ - 0.01);
-    ioGroup.add(horizontal);
-    if (symbol === 'plus') {
-      const vertical = rounded(0.018, 0.12, 0.012, 0.006, vinylEdge);
-      vertical.name = `${name}Vertical`;
-      vertical.position.set(x, 0.32, metalSurfaceZ - 0.01);
-      ioGroup.add(vertical);
-    }
-  }
-
-  const io = addPart('rear-io-plate', 'Outermost brass rear interface panel', cabinet, ioGroup, { detachable: true, explodeGroup: 'rear-stack' });
-  io.position.set(0, REAR.metalY, ASSEMBLED_DEPTH.rearIo);
+  const io = addPart('rear-io-plate', 'Rear power inlet module', cabinet, ioGroup, { detachable: true, explodeGroup: 'rear-stack' });
+  io.position.set(REAR.powerX, REAR.powerY, ASSEMBLED_DEPTH.rearIo);
 
   const feetGroup = new THREE.Group();
   feetGroup.name = 'FeetAssembly';

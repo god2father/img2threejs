@@ -3,33 +3,136 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#e9e7e2" />
-    <title>NOIR S1 · Exploded Product View</title>
+    <meta name="theme-color" content="#111318" />
+    <meta name="description" content="NOIR S1：一段由滚动驱动的归家聆听体验，以及可交互的程序化音响拆解。" />
+    <title>NOIR S1 · Let the room breathe</title>
   </head>
   <body>
     <main id="app">
-      <canvas id="scene" aria-label="NOIR S1 模块化扬声器比例验收模型"></canvas>
-      <section class="hud" aria-label="产品信息与拆解控制">
-        <p class="eyebrow">NOIR LABS · MODULAR AUDIO</p>
-        <h1>NOIR S1<br /><em>Inside the sound.</em></h1>
-        <p class="summary">黑色软包、孔洞金属网罩、黄铜控制与可维护的声学腔体。点击部件，查看八个真实服务组件的装配关系。</p>
-        <button class="explode-button" id="explode-button" type="button" aria-pressed="false"><span>EXPLODE VIEW</span><i aria-hidden="true">↗</i></button>
-      </section>
-      <aside class="spec-card" aria-label="八个可维护组件">
-        <p class="part-count">8 SERVICE COMPONENTS</p>
-        <div class="part-list">
-          <button class="part-button" type="button" data-part-id="grille" aria-pressed="false"><span>01</span>Metal grille</button>
-          <button class="part-button" type="button" data-part-id="driver-baffle" aria-pressed="false"><span>02</span>Driver baffle</button>
-          <button class="part-button" type="button" data-part-id="acoustic-chamber" aria-pressed="false"><span>03</span>MDF chamber</button>
-          <button class="part-button" type="button" data-part-id="amplifier-board" aria-pressed="false"><span>04</span>Internal PCB</button>
-          <button class="part-button" type="button" data-part-id="top-control-deck" aria-pressed="false"><span>05</span>Top control panel</button>
-          <button class="part-button" type="button" data-part-id="rear-panel" aria-pressed="false"><span>06</span>Rear cover</button>
-          <button class="part-button" type="button" data-part-id="rear-io-plate" aria-pressed="false"><span>07</span>Rear metal I/O</button>
-          <button class="part-button" type="button" data-part-id="isolation-feet" aria-pressed="false"><span>08</span>Feet & hardware</button>
+      <canvas id="scene" aria-label="NOIR S1 音响三维展示；故事结束后可拖动旋转并滚轮缩放"></canvas>
+
+      <section class="story" id="story" aria-label="NOIR S1 归家聆听故事">
+        <div class="story-stage">
+          <div class="atmosphere" aria-hidden="true">
+            <div class="city-glow"></div>
+            <div class="door-shadow"></div>
+            <div class="light-wash"></div>
+            <div class="film-grain"></div>
+            <div class="vignette"></div>
+          </div>
+          <div class="foreground-shoulder" aria-hidden="true"></div>
+          <div class="focus-plane" aria-hidden="true"></div>
+          <div class="shot-transition" aria-hidden="true"></div>
+          <div class="cinema-bars" aria-hidden="true"><span></span><span></span></div>
+
+          <header class="story-header">
+            <a class="wordmark" href="#story" aria-label="NOIR S1 故事开场">NOIR <span>S1</span></a>
+            <p class="sound-state" aria-label="本体验不会播放音频">VISUAL SCORE <span>· MUTED</span></p>
+          </header>
+
+          <ol class="chapter-rail" aria-label="故事章节">
+            <li class="is-active" data-chapter="prologue"><span>01</span>End of day</li>
+            <li data-chapter="home"><span>02</span>Home</li>
+            <li data-chapter="sit"><span>03</span>Unwind</li>
+            <li data-chapter="connect"><span>04</span>Connect</li>
+            <li data-chapter="play"><span>05</span>Play</li>
+            <li data-chapter="release"><span>06</span>Breathe</li>
+          </ol>
+
+          <div class="shot-meta" aria-hidden="true">
+            <span id="shot-number">SHOT 01</span>
+            <p id="shot-label">CITY / LAST LIGHT</p>
+          </div>
+
+          <div class="story-copy story-copy--prologue" data-copy="prologue">
+            <p class="story-kicker"><span>18:47</span> / END OF DAY</p>
+            <h1>Today took<br />more than it gave.</h1>
+            <p class="story-line">电脑关机。地铁把每个人送回各自的沉默里。</p>
+          </div>
+
+          <div class="story-copy story-copy--home" data-copy="home">
+            <p class="story-kicker"><span>19:26</span> / HOME</p>
+            <h2>Door closed.<br />World muted.</h2>
+            <p class="story-line">钥匙落进碗里。门锁咔哒一声，城市忽然退远。</p>
+          </div>
+
+          <div class="story-copy story-copy--sit" data-copy="sit">
+            <p class="story-kicker"><span>19:31</span> / EXHALE</p>
+            <h2>Drop<br />the weight.</h2>
+            <p class="story-line">外套留在扶手。让沙发接住身体，也接住今天剩下的部分。</p>
+          </div>
+
+          <div class="story-copy story-copy--connect" data-copy="connect">
+            <p class="story-kicker"><span>19:33</span> / A SMALL RITUAL</p>
+            <h2>One quiet<br />connection.</h2>
+            <p class="story-line">拇指划过屏幕。熟悉的名字出现，只需要熟悉的那一首。</p>
+          </div>
+
+          <div class="story-copy story-copy--play" data-copy="play">
+            <p class="story-kicker"><span>19:34</span> / NOW PLAYING</p>
+            <h2>Press play.</h2>
+            <p class="story-line">第一拍落下。没有谁需要回复。低频先抵达胸腔。</p>
+          </div>
+
+          <div class="story-copy story-copy--release" data-copy="release">
+            <p class="story-kicker"><span>NOIR S1</span> / HOME, AGAIN</p>
+            <h2>Let the room<br /><em>breathe.</em></h2>
+            <p class="story-line">有些声音不是为了填满空间，而是把空间还给你。</p>
+            <a class="story-cta" href="#explore">EXPLORE THE S1 <span aria-hidden="true">↓</span></a>
+          </div>
+
+          <aside class="phone" id="phone" aria-label="手机蓝牙连接界面">
+            <div class="phone-bar" aria-hidden="true"><span>19:33</span><i></i></div>
+            <div class="phone-screen">
+              <p class="phone-label">MY DEVICES</p>
+              <h2>Bluetooth</h2>
+              <div class="scan-line" aria-hidden="true"></div>
+              <button class="device-row" id="phone-device" type="button" aria-pressed="false" aria-label="连接 NOIR S1 音响">
+                <span class="device-mark" aria-hidden="true">N</span>
+                <span><strong>NOIR S1</strong><small id="device-status">SEARCHING…</small></span>
+                <i aria-hidden="true"></i>
+              </button>
+              <button class="play-control" id="story-play-button" type="button" aria-label="播放视觉音乐段落">
+                <span class="play-symbol" aria-hidden="true"></span>
+                <span><small>READY TO PLAY</small><strong>After the rain</strong></span>
+                <span class="track-time" aria-hidden="true">03:42</span>
+              </button>
+              <p class="phone-note">No audio will play. The room responds visually.</p>
+            </div>
+          </aside>
+
+          <p class="scroll-cue"><span aria-hidden="true"></span>SCROLL TO COME HOME</p>
+          <p class="scene-status" id="scene-status" role="status" aria-live="polite">18:47 · END OF DAY</p>
         </div>
-      </aside>
-      <p class="interaction-hint">DRAG TO ORBIT · SCROLL TO ZOOM</p>
-      <output class="stage-badge" id="stage-badge">ASSEMBLED · INTERACTIVE</output>
+      </section>
+
+      <section class="explore" id="explore" aria-label="NOIR S1 产品拆解探索" aria-hidden="true">
+        <div class="explore-intro">
+          <p>THE OBJECT BEHIND THE MOMENT</p>
+          <span>拖动模型，或选择一个部件继续探索。</span>
+        </div>
+        <div class="hud">
+          <p class="eyebrow">NOIR LABS · MODULAR AUDIO</p>
+          <h2>NOIR S1<br /><em>Inside the sound.</em></h2>
+          <p class="summary">黑色软包、孔洞金属网罩、黄铜控制与可维护的声学腔体。点击部件，查看八个真实服务组件的装配关系。</p>
+          <button class="explode-button" id="explode-button" type="button" aria-pressed="false"><span>EXPLODE VIEW</span><i aria-hidden="true">↗</i></button>
+        </div>
+        <aside class="spec-card" aria-label="八个可维护组件">
+          <p class="part-count">8 SERVICE COMPONENTS</p>
+          <div class="part-list">
+            <button class="part-button" type="button" data-part-id="grille" aria-pressed="false"><span>01</span>Metal grille</button>
+            <button class="part-button" type="button" data-part-id="driver-baffle" aria-pressed="false"><span>02</span>Driver baffle</button>
+            <button class="part-button" type="button" data-part-id="acoustic-chamber" aria-pressed="false"><span>03</span>MDF chamber</button>
+            <button class="part-button" type="button" data-part-id="amplifier-board" aria-pressed="false"><span>04</span>Internal PCB</button>
+            <button class="part-button" type="button" data-part-id="top-control-deck" aria-pressed="false"><span>05</span>Top control panel</button>
+            <button class="part-button" type="button" data-part-id="rear-panel" aria-pressed="false"><span>06</span>Rear cover</button>
+            <button class="part-button" type="button" data-part-id="rear-io-plate" aria-pressed="false"><span>07</span>Rear power inlet</button>
+            <button class="part-button" type="button" data-part-id="isolation-feet" aria-pressed="false"><span>08</span>Feet &amp; hardware</button>
+          </div>
+        </aside>
+        <p class="interaction-hint">DRAG TO ORBIT · SCROLL TO ZOOM</p>
+        <output class="stage-badge" id="stage-badge">ASSEMBLED · INTERACTIVE</output>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
