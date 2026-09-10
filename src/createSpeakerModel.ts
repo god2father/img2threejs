@@ -16,6 +16,10 @@ export type SpeakerRuntime = {
 
 type PartOptions = { detachable?: boolean; explodeGroup?: string };
 
+function publicAssetUrl(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+}
+
 function makeBadgeMaterial(fill = '#e4c17b', stroke = '#3b2b12'): THREE.MeshStandardMaterial {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
@@ -54,7 +58,7 @@ export function createSpeakerBlockout(): THREE.Group {
   const destructionGroups: SpeakerRuntime['destructionGroups'] = {};
 
   const textureLoader = new THREE.TextureLoader();
-  const grilleReferenceTexture = textureLoader.load('/materials/grille-cloth/generated-woven-grille-albedo.png');
+  const grilleReferenceTexture = textureLoader.load(publicAssetUrl('materials/grille-cloth/generated-woven-grille-albedo.png'));
   grilleReferenceTexture.colorSpace = THREE.SRGBColorSpace;
   grilleReferenceTexture.wrapS = THREE.ClampToEdgeWrapping;
   grilleReferenceTexture.wrapT = THREE.ClampToEdgeWrapping;
@@ -138,7 +142,7 @@ export function createSpeakerBlockout(): THREE.Group {
     onLoad?: () => void,
   ): THREE.Texture {
     const revisionQuery = revision ? `?v=${revision}` : '';
-    const texture = textureLoader.load(`/materials/${folder}/${folder}_${suffix}.png${revisionQuery}`, () => {
+    const texture = textureLoader.load(publicAssetUrl(`materials/${folder}/${folder}_${suffix}.png${revisionQuery}`), () => {
       texture.needsUpdate = true;
       onLoad?.();
     });
@@ -492,10 +496,10 @@ export function createSpeakerBlockout(): THREE.Group {
       normalScale: new THREE.Vector2(normalScale * 0.12, normalScale * 0.12),
     });
     material.userData.pbrChannels = {
-      albedo: `/materials/${folder}/${folder}_albedo.png`,
-      roughness: `/materials/${folder}/${folder}_roughness.png`,
-      normal: `/materials/${folder}/${folder}_normal.png`,
-      ambientOcclusion: `/materials/${folder}/${folder}_ao.png`,
+      albedo: publicAssetUrl(`materials/${folder}/${folder}_albedo.png`),
+      roughness: publicAssetUrl(`materials/${folder}/${folder}_roughness.png`),
+      normal: publicAssetUrl(`materials/${folder}/${folder}_normal.png`),
+      ambientOcclusion: publicAssetUrl(`materials/${folder}/${folder}_ao.png`),
       metalness: 'independent procedural scalar map',
       visualState: 'deferred pending reference-calibrated PBR pass; clean scalar preview is active',
     };
@@ -658,9 +662,9 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     envMapIntensity: 0.06,
   });
   cabinetLeather.userData.pbrChannels = {
-    albedo: '/materials/cabinet-tolex-real/cabinet-tolex-real_albedo.png?v=physical-grain-v4',
-    normal: '/materials/cabinet-tolex-real/cabinet-tolex-real_normal.png?v=physical-grain-v4',
-    roughness: '/materials/cabinet-tolex-real/cabinet-tolex-real_roughness.png?v=physical-grain-v4',
+    albedo: publicAssetUrl('materials/cabinet-tolex-real/cabinet-tolex-real_albedo.png?v=physical-grain-v4'),
+    normal: publicAssetUrl('materials/cabinet-tolex-real/cabinet-tolex-real_normal.png?v=physical-grain-v4'),
+    roughness: publicAssetUrl('materials/cabinet-tolex-real/cabinet-tolex-real_roughness.png?v=physical-grain-v4'),
     provenance: 'Generated from the supplied physical amplifier close-up: dense irregular pebble cells, de-lit, contrast-clamped and mathematically seamless.',
   };
   enableTriplanarLeather(cabinetLeather, CABINET_LEATHER_TILE_WORLD_SIZE, 'cabinet-v1');
@@ -738,9 +742,9 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     envMapIntensity: 0.08,
   });
   wood.userData.pbrChannels = {
-    albedo: '/materials/chamber-mdf/chamber-mdf_albedo.png?v=layer04-v2',
-    normal: '/materials/chamber-mdf/chamber-mdf_normal.png?v=layer04-v2',
-    roughness: '/materials/chamber-mdf/chamber-mdf_roughness.png?v=layer04-v2',
+    albedo: publicAssetUrl('materials/chamber-mdf/chamber-mdf_albedo.png?v=layer04-v2'),
+    normal: publicAssetUrl('materials/chamber-mdf/chamber-mdf_normal.png?v=layer04-v2'),
+    roughness: publicAssetUrl('materials/chamber-mdf/chamber-mdf_roughness.png?v=layer04-v2'),
     provenance: 'Generated from a flat MDF-only crop of the approved #04 cabinet reference.',
   };
   refreshChamberMdfPbr = () => { wood.needsUpdate = true; };
@@ -792,10 +796,10 @@ void triplanarUvs( out vec2 uvX, out vec2 uvY, out vec2 uvZ ) {
     metalness: 0.66,
   });
   metalGrille.userData.pbrChannels = {
-    albedo: '/materials/grille-cloth/generated-woven-grille-albedo.png',
-    roughness: '/materials/grille-cloth/grille-cloth_roughness.png',
+    albedo: publicAssetUrl('materials/grille-cloth/generated-woven-grille-albedo.png'),
+    roughness: publicAssetUrl('materials/grille-cloth/grille-cloth_roughness.png'),
     normal: 'procedural interlaced micro-normal (no lettering)',
-    ambientOcclusion: '/materials/grille-cloth/grille-cloth_ao.png',
+    ambientOcclusion: publicAssetUrl('materials/grille-cloth/grille-cloth_ao.png'),
     metalness: 'independent procedural scalar map',
     aperture: 'dense near-opaque optical weave; no intentional driver see-through',
     surfaceResponse: 'procedural interlaced normal + roughness maps at the albedo weave scale',
